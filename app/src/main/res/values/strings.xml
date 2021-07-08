@@ -1,0 +1,39 @@
+<resources>
+    <!--facebook login-->
+    <string name="facebook_app_id">879577766289201</string>
+    <string name="fb_login_protocol_scheme">fb879577766289201</string>
+
+
+    <string name="app_name">Iamin</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="textGroupInsert">GroupInsert</string>
+    <string name="textMerchInsert">MerchInsert</string>
+    <string name="textNoNetwork">no network connection available</string>
+    <string name="textNoMerchsFound">no Merchs found</string>
+    <string name="textCurrency">NT</string>
+    <string name="textEdit">Edit</string>
+    <string name="textDelete">Delete</string>
+    <string name="textDeleteFail">DeleteFail</string>
+    <string name="textDeleteSuccess">DeleteSuccess</string>
+    <string name="textAdd">Add</string>
+    <string name="textNoCameraApp">No Camera App Found</string>
+    <string name="textNoImagesFound">No Images Found</string>
+    <string name="textUpdate">Update</string>
+    <string name="textNoMerchFound">No Merch Found</string>
+    <string name="textGoal">Goal</string>
+    <string name="textMerchDetails">MerchDetails：</string>
+    <string name="textTotalAmount">TotalAmount</string>
+    <string name="textDeadline">Deadline：</string>
+    <string name="textNoGroupsFound">No Groups Found</string>
+    <string name="textGoalNeeds">goal needs：</string>
+    <string name="textGroupUnit">份</string>
+    <string name="textCategory">Category</string>
+    <string name="textContactNumber">聯絡電話</string>
+    <string name="textPaymentMethod">收款方式</string>
+    <string name="textCreditCard">信用卡</string>
+    <string name="textFaceToFace">當面交易</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="textChat">Chat</string>
+    <string name="textHome">Home</string>
+</resources>

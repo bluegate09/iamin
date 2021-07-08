@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="idv.tfp10101.iamin.HomeFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_merchbrowseFragment"
+            app:destination="@id/merchbrowseFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="idv.tfp10101.iamin.ChatFragment"
+        android:label="fragment_chat"
+        tools:layout="@layout/fragment_chat" />
+    <fragment
+        android:id="@+id/logInFragment"
+        android:name="idv.tfp10101.iamin.LogInFragment"
+        android:label="fragment_log_in"
+        tools:layout="@layout/fragment_log_in" >
+        <action
+            android:id="@+id/action_logInFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+        <action
+            android:id="@+id/action_logInFragment_to_phoneAuthFragment"
+            app:destination="@id/phoneAuthFragment" />
+        <action
+            android:id="@+id/action_logInFragment_to_memberCenterFragment"
+            app:destination="@id/memberCenterFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="idv.tfp10101.iamin.SignUpFragment"
+        android:label="fragment_sign_up"
+        tools:layout="@layout/fragment_sign_up" >
+        <action
+            android:id="@+id/action_signUpFragment_to_memberCenterFragment"
+            app:destination="@id/memberCenterFragment" />
+        <action
+            android:id="@+id/action_signUpFragment_to_memberCenterFragment2"
+            app:destination="@id/memberCenterFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/merchbrowseFragment"
+        android:name="idv.tfp10101.iamin.MerchbrowseFragment"
+        android:label="fragment_merchbrowse"
+        tools:layout="@layout/fragment_merchbrowse" />
+    <fragment
+        android:id="@+id/phoneAuthFragment"
+        android:name="idv.tfp10101.iamin.PhoneAuthFragment"
+        android:label="fragment_phone_auth"
+        tools:layout="@layout/fragment_phone_auth" >
+        <action
+            android:id="@+id/action_phoneAuthFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/memberCenterFragment"
+        android:name="idv.tfp10101.iamin.MemberCenterFragment"
+        android:label="fragment_member_center"
+        tools:layout="@layout/fragment_member_center" >
+        <action
+            android:id="@+id/action_memberCenterFragment_to_memeberCenterFollowFragment"
+            app:destination="@id/memeberCenterFollowFragment" />
+        <action
+            android:id="@+id/action_memberCenterFragment_to_memberCenterMyWalletFragment"
+            app:destination="@id/memberCenterMyWalletFragment" />
+        <action
+            android:id="@+id/action_memberCenterFragment_to_memeberCenterProfileFragment"
+            app:destination="@id/memeberCenterProfileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/memeberCenterFollowFragment"
+        android:name="idv.tfp10101.iamin.MemeberCenterFollowFragment"
+        android:label="fragment_memeber_center_follow"
+        tools:layout="@layout/fragment_memeber_center_follow" />
+    <fragment
+        android:id="@+id/memberCenterMyWalletFragment"
+        android:name="idv.tfp10101.iamin.MemberCenterMyWalletFragment"
+        android:label="fragment_member_center_my_wallet"
+        tools:layout="@layout/fragment_member_center_my_wallet" />
+    <fragment
+        android:id="@+id/memeberCenterProfileFragment"
+        android:name="idv.tfp10101.iamin.MemeberCenterProfileFragment"
+        android:label="fragment_memeber_center_profile"
+        tools:layout="@layout/fragment_memeber_center_profile" />
+</navigation>

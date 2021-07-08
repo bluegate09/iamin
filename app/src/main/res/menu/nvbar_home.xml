@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item
+        android:id="@+id/no"
+        android:title="無分類" />
+
+    <item
+        android:id="@+id/food"
+        android:icon="@drawable/food"
+        android:title="美食" />
+
+    <item
+        android:id="@+id/life"
+        android:icon="@drawable/life"
+        android:title="生活用品" />
+    <item
+        android:id="@+id/theerc"
+        android:icon="@drawable/theerc"
+        android:title="3C" />
+    <item
+        android:id="@+id/other"
+        android:icon="@drawable/other"
+        android:title="其他" />
+
+</menu>

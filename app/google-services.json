@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "554016437592",
+    "project_id": "tfp101-iamin",
+    "storage_bucket": "tfp101-iamin.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:554016437592:android:7a05236f69cbaa5e8aa12d",
+        "android_client_info": {
+          "package_name": "idv.tfp10101.iamin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "554016437592-ei4qr2lrtqugeostvhub6u8vqbdr7pa0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "idv.tfp10101.iamin",
+            "certificate_hash": "cf19d9145338c79afcfea3aff133af3005f46d91"
+          }
+        },
+        {
+          "client_id": "554016437592-girdtcfipsmmpfs21rp83tt4smtt3q61.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "idv.tfp10101.iamin",
+            "certificate_hash": "e18a00653eb8e710f63f9e869e23248071a9cc17"
+          }
+        },
+        {
+          "client_id": "554016437592-knnkgci6nu8l8ugs5fed31idptb09r9e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVAG4o2qJ-SZ8NFylpffrvOiLH0BoSEgY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "554016437592-knnkgci6nu8l8ugs5fed31idptb09r9e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
