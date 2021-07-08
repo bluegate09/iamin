@@ -37,7 +37,7 @@ public class SignUpFragment extends Fragment {
         super.onCreate(savedInstanceState);
         activity = getActivity();
         auth = FirebaseAuth.getInstance();
-        member = Member.getInstance();
+        member = Member.getInstance(); 
     }
 
     @Override
