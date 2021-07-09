@@ -11,6 +11,10 @@
     <color name="colorSecondaryLight">#FFE8FF</color>
     <color name="colorBackground">#F2E6E6</color>
     <color name="colorRed">#E53935</color>
+    <color name="primary">#AF8FFF</color>
+    <color name="primaryLight">#E3C0FF</color>
+    <color name="primaryDark">#7D61CD</color>
+
 <!--facebook login要用到的顏色 正常來說gradle dependencies會導入 但是有時候就是不會有-->
     <color name="com_facebook_button_background_color_focused_disabled">#3C5A99</color>
     <color name="com_facebook_button_background_color_focused">#3C5A99</color>
