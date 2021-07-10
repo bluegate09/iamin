@@ -2,6 +2,7 @@ package idv.tfp10101.iamin;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -114,6 +115,7 @@ public class HomeFragment extends Fragment {
         });
 
         //bottomNavigationView.getMenu().setGroupCheckable(0,false,false);
+        //分類Bar監聽
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             //bottombar監聽事件
             @Override
@@ -153,19 +155,19 @@ public class HomeFragment extends Fragment {
                         Toast.makeText(activity, "未分類", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.food:
-                         updata(1,localHomeDatas);
+                        choosesort(1,localHomeDatas);
                         Toast.makeText(activity, "美食", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.life:
-                        updata(2,localHomeDatas);
+                        choosesort(2,localHomeDatas);
                         Toast.makeText(activity, "生活用品", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.theerc:
-                        updata(3,localHomeDatas);
+                        choosesort(3,localHomeDatas);
                         Toast.makeText(activity, "3C", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.other:
-                        updata(4,localHomeDatas);
+                        choosesort(4,localHomeDatas);
                         Toast.makeText(activity, "其他", Toast.LENGTH_SHORT).show();
                         return true;
                 }
@@ -173,8 +175,8 @@ public class HomeFragment extends Fragment {
             }
         });
     }
-    //根據所選的分類下拉更新
-    private void updata(int category_Id,List<HomeData> categoryHomeData){
+    //根據所選的分類去搜尋並可以下拉更新
+    private void choosesort(int category_Id,List<HomeData> categoryHomeData){
         searchView.setQuery("",false);
         List<HomeData> selectHomeData = new ArrayList<>();
         for (HomeData category : categoryHomeData){
@@ -183,6 +185,7 @@ public class HomeFragment extends Fragment {
             }
         }
         List<HomeData> searchHomdData = new ArrayList<>();
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -241,10 +244,13 @@ public class HomeFragment extends Fragment {
     private class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyHomeDataViewHolder>{
         private List<HomeData> rsHomeDatas;
         private LayoutInflater layoutInflater;
+        private final int imageSize;
 
         public HomeAdapter(Context context, List<HomeData> homedatas){
             layoutInflater = LayoutInflater.from(context);
             rsHomeDatas = homedatas;
+            /* 螢幕寬度除以4當作將圖的尺寸 */
+            imageSize = getResources().getDisplayMetrics().widthPixels / 4;
         }
 
         public class MyHomeDataViewHolder extends RecyclerView.ViewHolder{
@@ -257,6 +263,7 @@ public class HomeFragment extends Fragment {
                 txv_group_price = itemView.findViewById(R.id.txv_group_price);
                 txv_group_conditionTime = itemView.findViewById(R.id.txv_group_conditionTime);
                 txv_progress = itemView.findViewById(R.id.txv_progress);
+                imv_group = itemView.findViewById(R.id.imv_group);
                 pr_bar = itemView.findViewById(R.id.pr_bar);
             }
         }
@@ -275,6 +282,12 @@ public class HomeFragment extends Fragment {
         public void onBindViewHolder(@NonNull HomeFragment.HomeAdapter.MyHomeDataViewHolder holder, int position) {
         final HomeData rsHomeData = rsHomeDatas.get(position);
         int GroupID = rsHomeData.getGroupId();
+        Bitmap Groupbitmap = HomeDataControl.getGroupimage(activity,GroupID,imageSize,executor);
+            if (Groupbitmap != null) {
+                holder.imv_group.setImageBitmap(Groupbitmap);
+            } else {
+                holder.imv_group.setImageResource(R.drawable.no_image);
+            }
         holder.txv_group_name.setText(rsHomeData.getName());
         Timestamp ts = rsHomeData.getConditionTime();
         DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");

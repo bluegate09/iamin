@@ -12,12 +12,14 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import idv.tfp10101.iamin.R;
 
 import idv.tfp10101.iamin.network.RemoteAccess;
 
 public class HomeDataControl {
+
     // Singleton
     private static List<HomeData> HomeDatas;
 
@@ -78,23 +80,21 @@ public class HomeDataControl {
         }
     }
     //取得團購瀏覽圖片
-    public static void getAllGroupimg(Context context,int GroupID) {
+    public static Bitmap getGroupimage(Context context, int GroupID, int imageSize, ExecutorService executor) {
         // 如果有網路，就進行 request
         if (RemoteAccess.networkConnected(context)) {
             // 網址 ＆ Action
             String url = RemoteAccess.URL_SERVER + "Home";
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("action", "getAllGroupimg");
+            jsonObject.addProperty("action", "getGroupimage");
             jsonObject.addProperty("groupID",GroupID);
+            jsonObject.addProperty("imageSize", imageSize);
 
             // requst
-            String jsonString = RemoteAccess.getRometeData(url, new Gson().toJson(jsonObject));
-            //明天記得接回傳圖片
-            /** 匿名內部類別實作TypeToken，抓取 泛型 在呼叫方法 */
-            Type listType = new TypeToken<List<HomeData>>(){}.getType();
-            setLocalHomeDatas(new Gson().fromJson(jsonString, listType));
+            return RemoteAccess.getRemoteImage(url,jsonObject.toString(),executor);
         }else {
             Toast.makeText(context, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
+            return null;
         }
     }
 }
