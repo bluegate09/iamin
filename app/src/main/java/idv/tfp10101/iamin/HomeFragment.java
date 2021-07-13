@@ -113,6 +113,13 @@ public class HomeFragment extends Fragment {
                 return true;
             }
         });
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            //開啟動畫
+            swipeRefreshLayout.setRefreshing(true);
+            showHomeData(localHomeDatas);
+            searchView.setQuery("",false);
+            swipeRefreshLayout.setRefreshing(false);
+        });
 
         //bottomNavigationView.getMenu().setGroupCheckable(0,false,false);
         //分類Bar監聽
@@ -123,6 +130,7 @@ public class HomeFragment extends Fragment {
                 switch (item.getItemId()){
                     case R.id.no:
                         searchView.setQuery("",false);
+                        showHomeData(localHomeDatas);
                         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                             @Override
                             public boolean onQueryTextSubmit(String query) {
@@ -150,6 +158,7 @@ public class HomeFragment extends Fragment {
                             //開啟動畫
                             swipeRefreshLayout.setRefreshing(true);
                             showHomeData(localHomeDatas);
+                            searchView.setQuery("",false);
                             swipeRefreshLayout.setRefreshing(false);
                         });
                         Toast.makeText(activity, "未分類", Toast.LENGTH_SHORT).show();
