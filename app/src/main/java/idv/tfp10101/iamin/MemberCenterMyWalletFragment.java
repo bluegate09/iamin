@@ -64,7 +64,7 @@ public class MemberCenterMyWalletFragment extends Fragment {
         super.onCreate(savedInstanceState);
         activity = getActivity();
         member = Member.getInstance();
-        merch = new Merch();
+//        merch = new Merch();
     }
 
     @Override
@@ -159,7 +159,7 @@ public class MemberCenterMyWalletFragment extends Fragment {
                     JsonObject jsonObject = new JsonObject();
                     jsonObject.addProperty("action", "getMyWalletDetail");
                     jsonObject.addProperty("merch", new Gson().toJson(merch));
-                    String jsonIn =  RemoteAccess.getRometeData(url, jsonObject.toString());
+                    String jsonIn =  RemoteAccess.getRemoteData(url, jsonObject.toString());
 
                     TextView text_temp = view.findViewById(R.id.wallettest);
                     text_temp.setText(jsonIn);
@@ -172,7 +172,7 @@ public class MemberCenterMyWalletFragment extends Fragment {
 
                             String temp_name = jsonObject2.getString("NAME");
                             int temp_price = jsonObject2.getInt("PRICE");
-                            merchs.add(i,new Merch(temp_name,temp_price));
+//                            merchs.add(i,new Merch(temp_name,temp_price));
 
                         }
                         showMerchList(merchs);

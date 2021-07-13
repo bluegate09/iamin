@@ -51,7 +51,7 @@ public class HomeDataControl {
             jsonObject.addProperty("action", "getAllHomeData");
 
             // requst
-            String jsonString = RemoteAccess.getRometeData(url, new Gson().toJson(jsonObject));
+            String jsonString = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
             /** 匿名內部類別實作TypeToken，抓取 泛型 在呼叫方法 */
             Type listType = new TypeToken<List<HomeData>>(){}.getType();
             setLocalHomeDatas(new Gson().fromJson(jsonString, listType));
@@ -71,7 +71,7 @@ public class HomeDataControl {
             jsonObject.addProperty("groupID",GroupID);
 
             // requst
-            String jsonString = RemoteAccess.getRometeData(url, new Gson().toJson(jsonObject));
+            String jsonString = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
             /** 匿名內部類別實作TypeToken，抓取 泛型 在呼叫方法 */
             Type listType = new TypeToken<List<HomeData>>(){}.getType();
             setLocalHomeDatas(new Gson().fromJson(jsonString, listType));

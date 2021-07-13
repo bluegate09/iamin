@@ -90,4 +90,113 @@
         android:name="idv.tfp10101.iamin.MemeberCenterProfileFragment"
         android:label="fragment_memeber_center_profile"
         tools:layout="@layout/fragment_memeber_center_profile" />
+    <fragment
+        android:id="@+id/paymentInformationFragment"
+        android:name="idv.tfp10101.iamin.PaymentInformationFragment"
+        android:label="fragment_payment_information"
+        tools:layout="@layout/fragment_payment_information" >
+        <action
+            android:id="@+id/action_paymentInformationFragment_to_merchFragment"
+            app:destination="@id/merchFragment" />
+        <action
+            android:id="@+id/action_paymentInformationFragment_to_groupFragment"
+            app:destination="@id/groupFragment" />
+        <action
+            android:id="@+id/action_paymentInformationFragment_to_reachFragment"
+            app:destination="@id/reachFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/groupFragment"
+        android:name="idv.tfp10101.iamin.GroupFragment"
+        android:label="fragment_group"
+        tools:layout="@layout/fragment_group" >
+        <action
+            android:id="@+id/action_groupFragment_to_merchFragment"
+            app:destination="@id/merchFragment" />
+        <action
+            android:id="@+id/action_groupFragment_to_paymentInformationFragment"
+            app:destination="@id/paymentInformationFragment" />
+        <action
+            android:id="@+id/action_groupFragment_to_reachFragment"
+            app:destination="@id/reachFragment" />
+        <action
+            android:id="@+id/action_groupFragment_to_groupInsertFragment"
+            app:destination="@id/groupInsertFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/merchFragment"
+        android:name="idv.tfp10101.iamin.MerchFragment"
+        android:label="fragment_merch"
+        tools:layout="@layout/fragment_merch" >
+        <action
+            android:id="@+id/action_merchFragment_to_groupFragment"
+            app:destination="@id/groupFragment" />
+        <action
+            android:id="@+id/action_merchFragment_to_paymentInformationFragment"
+            app:destination="@id/paymentInformationFragment" />
+        <action
+            android:id="@+id/action_merchFragment_to_reachFragment"
+            app:destination="@id/reachFragment" />
+        <action
+            android:id="@+id/action_merchFragment_to_merchInsertFragment"
+            app:destination="@id/merchInsertFragment" />
+        <action
+            android:id="@+id/action_merchFragment_to_merchUpdateFragment"
+            app:destination="@id/merchUpdateFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/reachFragment"
+        android:name="idv.tfp10101.iamin.ReachFragment"
+        android:label="fragment_reach"
+        tools:layout="@layout/fragment_reach" >
+        <action
+            android:id="@+id/action_reachFragment_to_merchFragment"
+            app:destination="@id/merchFragment" />
+        <action
+            android:id="@+id/action_reachFragment_to_groupFragment"
+            app:destination="@id/groupFragment" />
+        <action
+            android:id="@+id/action_reachFragment_to_paymentInformationFragment"
+            app:destination="@id/paymentInformationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/merchInsertFragment"
+        android:name="idv.tfp10101.iamin.MerchInsertFragment"
+        android:label="fragment_merch_insert"
+        tools:layout="@layout/fragment_merch_insert" />
+    <fragment
+        android:id="@+id/merchUpdateFragment"
+        android:name="idv.tfp10101.iamin.MerchUpdateFragment"
+        android:label="MerchUpdateFragment" />
+    <fragment
+        android:id="@+id/groupInsertFragment"
+        android:name="idv.tfp10101.iamin.GroupInsertFragment"
+        android:label="fragment_group_insert"
+        tools:layout="@layout/fragment_group_insert" >
+        <action
+            android:id="@+id/action_groupInsertFragment_to_groupInsertLocationFragment"
+            app:destination="@id/groupInsertLocationFragment" />
+        <action
+            android:id="@+id/action_groupInsertFragment_to_groupSelectMFragment"
+            app:destination="@id/groupSelectMFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/groupInsertLocationFragment"
+        android:name="idv.tfp10101.iamin.GroupInsertLocationFragment"
+        android:label="fragment_group_insert_location"
+        tools:layout="@layout/fragment_group_insert_location" />
+    <fragment
+        android:id="@+id/groupSelectMFragment"
+        android:name="idv.tfp10101.iamin.GroupSelectMFragment"
+        android:label="fragment_group_select_m"
+        tools:layout="@layout/fragment_group_select_m" />
+    <fragment
+        android:id="@+id/sellerFragment"
+        android:name="idv.tfp10101.iamin.SellerFragment"
+        android:label="fragment_seller"
+        tools:layout="@layout/fragment_seller" >
+        <action
+            android:id="@+id/action_sellerFragment_to_merchFragment"
+            app:destination="@id/merchFragment" />
+    </fragment>
 </navigation>

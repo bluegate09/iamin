@@ -22,19 +22,17 @@ import idv.tfp10101.iamin.Constants;
  */
 public class RemoteAccess {
     // 根網址
-//    public static String URL_SERVER = "http://10.0.2.2:8080/iamin_JavaServlet/";
+    public static String URL_SERVER = "http://10.0.2.2:8080/iamin_JavaServlet/";
     //實機測試
-    public static String URL_SERVER = "http://192.168.1.101:8080/iamin_JavaServlet/";
-    //  test
+//    public static String URL_SERVER = "http://192.168.1.101:8080/iamin_JavaServlet/";
+
     /**
      * (Json)抓取server資料
      * @param url
      * @param requst
      * @return
      */
-
-    // getRometeData 字打錯了 getRemoteData才對
-    public static String getRometeData(String url, String requst) {
+    public static String getRemoteData(String url, String requst) {
         JsonCallable jsonCallable = new JsonCallable(url, requst);
         // callable 轉 Runnable (FutureTask<> -> Runnable的子代)
         FutureTask<String> task = new FutureTask<>(jsonCallable);

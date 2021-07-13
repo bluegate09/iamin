@@ -1,17 +1,26 @@
 package idv.tfp10101.iamin;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.view.View;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 常用的方法or常數
  */
 public class Constants {
     public static final String TAG = "Iamin_TAG ";
+    public static final int REQ_POSITIONING = 1;
+    public static final int REQ_LOCATION_SETTINGS = 2;
 
     /**
      * 設定RecyclerView的Item間距
@@ -71,5 +80,26 @@ public class Constants {
     public static float getDensity(Context context){
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         return metrics.density;
+    }
+
+    /**
+     * 權限的檢查和詢問
+     */
+    public static void requestPermissions(Activity activity, List<String> permissions) {
+        List<String> requestPermissions = new ArrayList<>();
+
+        for (String permission : permissions) {
+            int result = ContextCompat.checkSelfPermission(activity, permission);
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions.add(permission);
+            }
+        }
+
+        if (!requestPermissions.isEmpty()) {
+            String[] strings= new String[requestPermissions.size()];
+            requestPermissions.toArray(strings);
+
+            ActivityCompat.requestPermissions(activity, strings, REQ_POSITIONING);
+        }
     }
 }
