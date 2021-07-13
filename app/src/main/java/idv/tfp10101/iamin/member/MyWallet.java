@@ -17,14 +17,12 @@ public class MyWallet {
 	private List<MyWallet> groupDetail;
 
 	public MyWallet(String name, int price) {
-		super();
 		this.name = name;
 		this.price = price;
 	}
 
 	public MyWallet(int group_id, String name, int price, int totoalPrice, int deliverStatus, Timestamp startTime,
 			Timestamp updateTime, String category) {
-		super();
 		this.group_id = group_id;
 		this.name = name;
 		this.price = price;

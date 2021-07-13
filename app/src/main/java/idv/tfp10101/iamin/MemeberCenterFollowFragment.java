@@ -122,8 +122,7 @@ public class MemeberCenterFollowFragment extends Fragment {
             String jsonIn = RemoteAccess.getRemoteData(url, jsonObject.toString());
 
 //            Log.d(TAG,"jsonIn: " + jsonIn);
-            Type listType = new TypeToken<List<Member>>() {
-            }.getType();
+            Type listType = new TypeToken<List<Member>>() {}.getType();
 
             members = gson2.fromJson(jsonIn, listType);
 //            Log.d(TAG,"members: " + members);

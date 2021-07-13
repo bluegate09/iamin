@@ -31,4 +31,9 @@
     <string name="textFaceToFace">當面交易</string>
     <string name="textHome">首頁</string>
     <string name="textChat">聊天</string>
+    <string name="alltime">全部時間</string>
+    <string name="no_merch_found">找不到商品</string>
+    <string name="month">Month</string>
+    <string name="year">Year</string>
+    <string name="income">Income</string>
 </resources>

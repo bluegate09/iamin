@@ -47,12 +47,11 @@ public class MemberCenterFragment extends Fragment {
         auth = FirebaseAuth.getInstance();
         member = Member.getInstance();
 
-        String jsonIn = memberRemoteAccess(activity,member,"getMyWallet");
-        Log.d(TAG,"TAG_MyWallet: " + jsonIn);
 
         //從mysql取member data
-//        String jsonIn = memberRemoteAccess(activity, member, "findById");
-
+        String jsonIn = memberRemoteAccess(activity, member, "findById");
+        Member memberObject = gson2.fromJson(jsonIn,Member.class);
+        MemberControl.setMemberData(memberObject);
 
 //        Log.d(TAG,"jsonIn: " + jsonIn);
 
@@ -73,25 +72,6 @@ public class MemberCenterFragment extends Fragment {
         ivPic = view.findViewById(R.id.ivProfilePic);
         rating = view.findViewById(R.id.tvRating);
         followCount = view.findViewById(R.id.tvMCFollowCount);
-
-        if (RemoteAccess.networkConnected(activity)) {
-
-            String url = RemoteAccess.URL_SERVER + "memberServelt";
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("action", "findById");
-            jsonObject.addProperty("member", new Gson().toJson(member));
-
-            String jsonString = RemoteAccess.getRemoteData(url, jsonObject.toString());
-//            Log.d(TAG,"RemoteAccess: " + jsonString);
-            Member memberObject = gson2.fromJson(jsonString,Member.class);
-            MemberControl.setMemberData(memberObject);
-//            Log.d(TAG,"member: " + member.getId());
-
-        } else {
-
-            Toast.makeText(activity, "沒有網路", Toast.LENGTH_SHORT).show();
-
-        }
 
         setTextView();
         setImageView();

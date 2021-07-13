@@ -36,4 +36,9 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="textChat">Chat</string>
     <string name="textHome">Home</string>
+    <string name="alltime">All Time</string>
+    <string name="no_merch_found">no merch found</string>
+    <string name="month">Month</string>
+    <string name="year">Year</string>
+    <string name="income">Income</string>
 </resources>

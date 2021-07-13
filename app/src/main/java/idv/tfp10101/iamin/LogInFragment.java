@@ -97,8 +97,11 @@ public class LogInFragment extends Fragment {
 
         //一般信箱密碼登入
         view.findViewById(R.id.btLogIn).setOnClickListener(v -> {
+
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
+
+            //firebase登入驗證
             firebaseLogIn(email, password);
             member.setEmail(email);
             member.setPassword(password);
