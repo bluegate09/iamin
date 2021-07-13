@@ -72,7 +72,13 @@ public class MerchbrowseFragment extends Fragment {
         //取得商品列表總數
         int total = recyclerViewMerch.getLayoutManager().getItemCount();
         AtomicInteger count = new AtomicInteger();
+        //預設back按鈕不能按
         btn_back.setEnabled(false);
+        //如果商品總數只有1，也將next按鈕設為false
+        if ((total - 1) == 0 ){
+            btn_next.setEnabled(false);
+        }
+        //點選next按鈕跳轉至下一商品，並將back按鈕打開
         btn_next.setOnClickListener(v ->{
             recyclerViewMerch.smoothScrollToPosition(count.incrementAndGet());
             if (count.get() == (total-1)){
