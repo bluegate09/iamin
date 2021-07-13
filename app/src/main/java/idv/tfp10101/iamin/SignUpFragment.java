@@ -22,14 +22,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import idv.tfp10101.iamin.R;
 import idv.tfp10101.iamin.member.Member;
 
+import static idv.tfp10101.iamin.member.MemberControl.firebasedbAddOrReplace;
 import static idv.tfp10101.iamin.member.MemberControl.memberRemoteAccess;
 import static idv.tfp10101.iamin.member.MemberControl.storeMemberIdSharedPreference;
 
 public class SignUpFragment extends Fragment {
     private final static String TAG = "TAG_signup";
     private Activity activity;
+    private FirebaseFirestore db;
     private FirebaseAuth auth;
-    private EditText etEmail,etPassword,etNickname,etPhoneNumber;
+    private EditText etEmail,etPassword,etPassword2,etNickname,etPhoneNumber;
     private Member member;
 
     @Override
@@ -37,7 +39,8 @@ public class SignUpFragment extends Fragment {
         super.onCreate(savedInstanceState);
         activity = getActivity();
         auth = FirebaseAuth.getInstance();
-        member = Member.getInstance(); 
+        member = Member.getInstance();
+        db = FirebaseFirestore.getInstance();
     }
 
     @Override
@@ -52,6 +55,7 @@ public class SignUpFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         etEmail = view.findViewById(R.id.etRegisterEmail);
         etPassword = view.findViewById(R.id.etRegisterPassword);
+        etPassword2 = view.findViewById(R.id.etRegisterPassword2);
         etNickname = view.findViewById(R.id.etRegisterNickname);
         etPhoneNumber = view.findViewById(R.id.etRegisterPhoneNumber);
 
@@ -60,6 +64,7 @@ public class SignUpFragment extends Fragment {
 
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
+            String password2 = etPassword2.getText().toString().trim();
             String nickname = etNickname.getText().toString().trim();
             String phoneNumber = etPhoneNumber.getText().toString().trim();
 
@@ -77,16 +82,15 @@ public class SignUpFragment extends Fragment {
                 member.setPhoneNumber(phoneNumber);
             }
 
-            member.setEmail(email);
-            member.setPassword(password);
-            //firebase創帳號
-            createAccount(member);
+            if(password.equals(password2)){
+                member.setEmail(email);
+                member.setPassword(password);
+                //firebase創帳號
+                createAccount(member);
+            }else{
+                Toast.makeText(activity, "Password need to be the sameconnected", Toast.LENGTH_SHORT).show();
+            }
         });
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
     }
 
     private void createAccount(Member member) {
@@ -100,7 +104,13 @@ public class SignUpFragment extends Fragment {
                         String mySqlMemberId = memberRemoteAccess(activity , member, "signup");
                         storeMemberIdSharedPreference(activity,mySqlMemberId);
                         member.setId(Integer.parseInt(mySqlMemberId));
-                        //移動到首頁
+
+                        //存到MemberId與Uid到firebase
+                        firebasedbAddOrReplace(activity,db,new Member(
+                                 Integer.parseInt(mySqlMemberId)
+                                ,auth.getCurrentUser().getUid()));
+
+                        //移動到會員中心
                         Navigation.findNavController(requireView()).navigate(R.id.action_signUpFragment_to_memberCenterFragment);
                     } else {
                         Toast.makeText(getContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();

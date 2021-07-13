@@ -11,15 +11,6 @@ public class Merch implements Serializable {
     private int price; // 價格
     private String merchDesc; // 商品說明
 
-    public Merch(){
-
-    }
-
-    public Merch(String name, int price) {
-        this.name = name;
-        this.price = price;
-    }
-
     public Merch(int merchId, int memberId, String name, int price, String merchDesc) {
         this.merchId = merchId;
         this.memberId = memberId;

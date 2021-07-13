@@ -3,6 +3,7 @@ package idv.tfp10101.iamin;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -29,7 +30,6 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Set;
 
 import idv.tfp10101.iamin.member.Member;
+import idv.tfp10101.iamin.member.MyWallet;
 import idv.tfp10101.iamin.merch.Merch;
 import idv.tfp10101.iamin.network.RemoteAccess;
 
@@ -53,18 +54,29 @@ public class MemberCenterMyWalletFragment extends Fragment {
     private final static String TAG = "TAG_MyWallet";
     private Activity activity;
     private Member member;
-    private Merch merch;
+    private List<MyWallet> merchs;
     private List<MySqlData> mySqlDataList;
     private List<PieEntry> resultIncomeEntries,defaultIncomeEntries;
     private PieData pieData;
     private RecyclerView rvMerch;
+    private final int[] My_COLORS = {
+            //紅
+            0xFFB54434,
+            //青
+            0xFF006284,
+            //橘
+            0xFFFC9F4D,
+            //綠
+            0xFF2D6D4B,
+            //皮膚
+            0xFFB9887D
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
         member = Member.getInstance();
-        merch = new Merch();
     }
 
     @Override
@@ -80,10 +92,9 @@ public class MemberCenterMyWalletFragment extends Fragment {
         Spinner spinner = view.findViewById(R.id.myWalletSpinner);
 
         rvMerch = view.findViewById(R.id.rvMyWallet);
-        LinearLayoutManager horizontalLayoutManagaer = new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false);
-        rvMerch.setLayoutManager(horizontalLayoutManagaer);
+        rvMerch.setLayoutManager(new LinearLayoutManager(activity));
 
-        Set<String> hash_set = new HashSet<>();
+        Set<String> hash_set_year = new HashSet<>();
         List<String> date = new ArrayList<>();
         resultIncomeEntries = new ArrayList<>();
         defaultIncomeEntries = new ArrayList<>();
@@ -102,9 +113,10 @@ public class MemberCenterMyWalletFragment extends Fragment {
 //                String tmp_name = memberOrder.getString("NAME");
                 String tmp_category = memberOrder.getString("CATEGORY");
                 int tmp_money = memberOrder.getInt("TOTAL");
-                String tmp_time = memberOrder.get("UPDATE_TIME").toString().substring(0,4);
-
-                hash_set.add(tmp_time);
+                //日期 取年
+                String tmp_time = memberOrder.get("UPDATE_TIME").toString();
+                //過濾重複 年
+                hash_set_year.add(tmp_time.substring(0,4));
                 mySqlDataList.add(new MySqlData(tmp_groupId, tmp_time, tmp_category, new PieEntry(tmp_money, tmp_category,tmp_groupId)));
             }
             List<PieEntry> entryList = new ArrayList<>();
@@ -118,7 +130,7 @@ public class MemberCenterMyWalletFragment extends Fragment {
 
         date.add("All Time");
         //排序讓alltime在最上面 java8 addAll()
-        date.addAll(hash_set);
+        date.addAll(hash_set_year);
         Collections.sort(date, (o1, o2) -> {
             if(o1.equals(o2)) //update to make is stable
                 return 0;
@@ -135,7 +147,7 @@ public class MemberCenterMyWalletFragment extends Fragment {
 
         PieChart pieChart = view.findViewById(R.id.pieChart);
         /* 設定可否旋轉 */
-        pieChart.setRotationEnabled(true);
+        pieChart.setRotationEnabled(false);
         /* 設定圓心文字 */
         pieChart.setCenterText("Income");
         /* 設定圓心文字大小 */
@@ -151,50 +163,17 @@ public class MemberCenterMyWalletFragment extends Fragment {
             @Override
             public void onValueSelected(Entry entry, Highlight highlight) {
                 PieEntry pieEntry = (PieEntry) entry;
-                if (RemoteAccess.networkConnected(activity)) {
-
-                    merch.setMerchId((Integer) pieEntry.getData());
-
-                    String url = RemoteAccess.URL_SERVER + "memberServelt";
-                    JsonObject jsonObject = new JsonObject();
-                    jsonObject.addProperty("action", "getMyWalletDetail");
-                    jsonObject.addProperty("merch", new Gson().toJson(merch));
-                    String jsonIn =  RemoteAccess.getRometeData(url, jsonObject.toString());
-
-                    TextView text_temp = view.findViewById(R.id.wallettest);
-                    text_temp.setText(jsonIn);
-                    List<Merch> merchs = new ArrayList<>();
-
-                    try {
-                        JSONArray jsonArray = new JSONArray(jsonIn);
-                        for(int i = 0; i < jsonArray.length(); i++){
-                            JSONObject jsonObject2 = jsonArray.getJSONObject(i);
-
-                            String temp_name = jsonObject2.getString("NAME");
-                            int temp_price = jsonObject2.getInt("PRICE");
-                            merchs.add(i,new Merch(temp_name,temp_price));
-
-                        }
-                        showMerchList(merchs);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                } else {
-                    Toast.makeText(activity, "沒有網路", Toast.LENGTH_SHORT).show();
-                }
-//                Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
+                showMerchList(merchs);
             }
             @Override
             public void onNothingSelected() {
-
             }
         });
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                //spinner選項 select all 選擇所有時間
                 if(position == 0){
 //                    Log.d(TAG,"defaultIncomeEntries " + defaultIncomeEntries);
                     pieData = setPieData(defaultIncomeEntries);
@@ -202,7 +181,8 @@ public class MemberCenterMyWalletFragment extends Fragment {
                     String selected = spinner.getAdapter().getItem(position) + "";
                     resultIncomeEntries.clear();
                     for(int i = 0; i < mySqlDataList.size(); i++){
-                        if(mySqlDataList.get(i).time.equals(selected)){
+                        //時間比對 年
+                        if(mySqlDataList.get(i).time.substring(0,4).equals(selected)){
                             resultIncomeEntries.add(mySqlDataList.get(i).entries);
                         }
                     }
@@ -234,7 +214,7 @@ public class MemberCenterMyWalletFragment extends Fragment {
     }
 
 
-    private static class MerchAdapter extends RecyclerView.Adapter<MerchAdapter.MyViewHolder> {
+    private class MerchAdapter extends RecyclerView.Adapter<MerchAdapter.MyViewHolder> {
         private final LayoutInflater layoutInflater;
         private List<Merch> merchs;
 
@@ -247,14 +227,15 @@ public class MemberCenterMyWalletFragment extends Fragment {
             this.merchs = merchs;
         }
 
-        static class MyViewHolder extends RecyclerView.ViewHolder {
+        class MyViewHolder extends RecyclerView.ViewHolder {
             TextView tvName, tvPrice;
+            View background;
 
             MyViewHolder(View itemView) {
                 super(itemView);
+                background = itemView.findViewById(R.id.walletViewBackgroundColor);
                 tvName = itemView.findViewById(R.id.nameWallet);
                 tvPrice = itemView.findViewById(R.id.priceWallet);
-
             }
         }
 
@@ -277,29 +258,22 @@ public class MemberCenterMyWalletFragment extends Fragment {
 //            Log.d(TAG,"tvPrice: " + merch.getPrice()+" ooo");
             myViewHolder.tvName.setText(merch.getName() + "");
             myViewHolder.tvPrice.setText(merch.getPrice() +"");
-
         }
     }
 
     private PieData setPieData(List<PieEntry> entries) {
         //從這裡給資料
         PieDataSet pieDataSet = new PieDataSet(entries, "");
-
+//        pieDataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
         pieDataSet.setValueTextColor(Color.BLUE);
         pieDataSet.setValueTextSize(20);
         //間距
-        pieDataSet.setSliceSpace(2);
-
+        pieDataSet.setSliceSpace(0);
         //自己建立
-        final int[] My_COLORS = {
-                Color.rgb(207, 248, 246), Color.rgb(148, 212, 212), Color.rgb(136, 180, 187),
-                Color.rgb(118, 174, 175), Color.rgb(42, 109, 130)
-        };
 
         /* 官定顏色範本只有5種顏色，不過可以將多個官定範本顏色疊加 */
         //
-        pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
-
+        pieDataSet.setColors(My_COLORS);
         return new PieData(pieDataSet);
     }
 

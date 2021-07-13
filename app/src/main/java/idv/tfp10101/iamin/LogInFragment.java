@@ -37,6 +37,8 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -73,7 +75,6 @@ public class LogInFragment extends Fragment {
                 .requestEmail()
                 .build();
         client = GoogleSignIn.getClient(activity, options);
-
     }
 
     @Override
@@ -137,17 +138,20 @@ public class LogInFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-//        FirebaseUser currentUser = auth.getCurrentUser();
-//        if(currentUser != null){
-//            SharedPreferences pref = activity.getSharedPreferences("member_ID",
-//                    MODE_PRIVATE);
-//            int mySqlMemberId = pref.getInt("member_ID", -1);
-//            member = Member.getInstance();
-//            member.setId(mySqlMemberId);
-//            Log.d(TAG,mySqlMemberId +"member_ID");
-//            Navigation.findNavController(requireView())
-//                    .navigate(R.id.action_logInFragment_to_memberCenterFragment);
-//        }
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if(currentUser != null){
+            SharedPreferences pref = activity.getSharedPreferences("member_ID",
+                    MODE_PRIVATE);
+            int mySqlMemberId = pref.getInt("member_ID", -1);
+            //小於0代表出問題 所以return
+            if(mySqlMemberId < 0){
+                return;
+            }
+            member.setId(mySqlMemberId);
+            Log.d(TAG,mySqlMemberId +"member_ID");
+            Navigation.findNavController(requireView())
+                    .navigate(R.id.action_logInFragment_to_memberCenterFragment);
+        }
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
