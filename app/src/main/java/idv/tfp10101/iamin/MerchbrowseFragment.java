@@ -7,7 +7,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -18,10 +17,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +36,7 @@ public class MerchbrowseFragment extends Fragment {
     private int id;
     private List<Merch> localMerchs;
     private RecyclerView recyclerViewMerch;
-    private Button but_buy;
+    private Button btn_buy,btn_back,btn_next;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,18 +65,41 @@ public class MerchbrowseFragment extends Fragment {
         if (localMerchs == null || localMerchs.isEmpty()) {
             Toast.makeText(activity, R.string.textNoGroupsFound, Toast.LENGTH_SHORT).show();
         }
-        showMerchs(localMerchs);
-    }
-
-    private void findView(View view) {
-        recyclerViewMerch = view.findViewById(R.id.recyclerViewMerch);
         recyclerViewMerch.setLayoutManager(new StaggeredGridLayoutManager(1,RecyclerView.HORIZONTAL));
         PagerSnapHelper pagerSnapHelper = new PagerSnapHelper();
         pagerSnapHelper.attachToRecyclerView(recyclerViewMerch);
+        showMerchs(localMerchs);
+        //取得商品列表總數
+        int total = recyclerViewMerch.getLayoutManager().getItemCount();
+        AtomicInteger count = new AtomicInteger();
+        //預設back按鈕不能按
+        btn_back.setEnabled(false);
+        //如果商品總數只有1，也將next按鈕設為false
+        if ((total - 1) == 0 ){
+            btn_next.setEnabled(false);
+        }
+        //點選next按鈕跳轉至下一商品，並將back按鈕打開
+        btn_next.setOnClickListener(v ->{
+            recyclerViewMerch.smoothScrollToPosition(count.incrementAndGet());
+            if (count.get() == (total-1)){
+                btn_next.setEnabled(false);
+            }
+            btn_back.setEnabled(true);
+        });
+        btn_back.setOnClickListener(v ->{
+            recyclerViewMerch.smoothScrollToPosition(count.decrementAndGet());
+            if (count.get() == 0){
+                btn_back.setEnabled(false);
+            }
+            btn_next.setEnabled(true);
+        });
+        getOrder();
+    }
 
-        but_buy = view.findViewById(R.id.but_buy);
-        but_buy.setOnClickListener(v ->{
-           Map<Merch,Integer> maps = ((MerchAdapter) recyclerViewMerch.getAdapter()).getMerchsMap();
+    //取得買家下單
+    private void getOrder(){
+        btn_buy.setOnClickListener(v ->{
+            Map<Merch,Integer> maps = ((MerchAdapter) recyclerViewMerch.getAdapter()).getMerchsMap();
             Log.d("TAGGGGGGGGGG", String.valueOf(maps.size()));
             Toast.makeText(activity, String.valueOf(maps), Toast.LENGTH_SHORT).show();
             for (Map.Entry<Merch, Integer> entry : maps.entrySet()) {
@@ -86,8 +107,17 @@ public class MerchbrowseFragment extends Fragment {
                 int merchID = merch.getMerchId();
                 int amount = entry.getValue();
             }
-
         });
+    }
+    private void findView(View view) {
+        recyclerViewMerch = view.findViewById(R.id.recyclerViewMerch);
+//        GridLayoutManager gridLayoutManager = new GridLayoutManager(activity,2);
+//        recyclerViewMerch.setLayoutManager(gridLayoutManager);
+
+        btn_buy = view.findViewById(R.id.btn_buy);
+        btn_back = view.findViewById(R.id.btn_back);
+        btn_next = view.findViewById(R.id.btn_next);
+
     }
 
     private void showMerchs(List<Merch> localMerchs) {
@@ -122,7 +152,7 @@ public class MerchbrowseFragment extends Fragment {
             TextView txv_merch_name,txv_merch_price,txv_commodity_description;
             EditText edt_amount;
             RecyclerView rvMerchimage;
-            Button btn_sub,btn_add;
+            ImageView btn_sub,btn_add;
             public MyMerchViewHolder(@NonNull View itemView) {
                 super(itemView);
                 txv_merch_name = itemView.findViewById(R.id.txv_merch_name);
@@ -162,7 +192,7 @@ public class MerchbrowseFragment extends Fragment {
         String merch_desc = rsMerch.getMerchDesc();
 
         holder.txv_merch_name.setText(merch_name);
-        holder.txv_merch_price.setText(String.valueOf(merch_price));
+        holder.txv_merch_price.setText("價格:"+String.valueOf(merch_price));
         holder.txv_commodity_description.setText("商品說明:\n"+merch_desc);
 
         holder.btn_sub.setOnClickListener(v ->{
