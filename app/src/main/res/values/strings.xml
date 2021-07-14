@@ -49,4 +49,6 @@
     <string name="income">Income</string>
     <string name="textNoSellerFound">No Seller Found</string>
     <string name="textImageDownloadFail">Image Download Fail</string>
+    <string name="textSellerName">Seller Name</string>
+    <string name="textAa">Aa</string>
 </resources>

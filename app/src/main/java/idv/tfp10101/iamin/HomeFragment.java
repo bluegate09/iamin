@@ -83,7 +83,7 @@ public class HomeFragment extends Fragment {
 
         //呼叫
         HomeDataControl.getAllGroup(activity);
-        localGroups = HomeDataControl.getLocalHomeDatas();
+        localGroups = HomeDataControl.getLocalGroups();
         if (localGroups == null || localGroups.isEmpty()) {
             Toast.makeText(activity, R.string.textNoGroupsFound, Toast.LENGTH_SHORT).show();
         }
