@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
@@ -55,14 +56,40 @@ public class MemberControl {
         }
     }
 
-    public static void setMemberData(Member member, JsonObject setter){
-        member.setEmail(setter.get("EMAIL").getAsString());
-        member.setNickname(setter.get("NICKNAME").getAsString());
-        member.setPassword(setter.get("PASSWORD").getAsString());
-        member.setPhoneNumber(setter.get("PHONE").getAsString());
-        member.setRating(Double.parseDouble(setter.get("RATING").getAsString()));
-        member.setFollow_count(Integer.parseInt(setter.get("FOLLOW_COUNT").getAsString()));
-        member.setUpdateDate(Timestamp.valueOf(setter.get("UPDATE_TIME").getAsString()));
+    public static void setMemberData(Member member2){
+        Member.getInstance().setEmail(member2.getEmail());
+        Member.getInstance().setNickname(member2.getNickname());
+        Member.getInstance().setPassword(member2.getPassword());
+        Member.getInstance().setPhoneNumber(member2.getPhoneNumber());
+        Member.getInstance().setRating(member2.getRating());
+        Member.getInstance().setFollow_count(member2.getFollow_count());
+        Member.getInstance().setUpdateTime(member2.getUpdateTime());
+
+
+//        member.setEmail(setter.get("EMAIL").getAsString());
+//        member.setNickname(setter.get("NICKNAME").getAsString());
+//        member.setPassword(setter.get("PASSWORD").getAsString());
+//        member.setPhoneNumber(setter.get("PHONE").getAsString());
+//        member.setRating(Double.parseDouble(setter.get("RATING").getAsString()));
+//        member.setFollow_count(Integer.parseInt(setter.get("FOLLOW_COUNT").getAsString()));
+//        member.setUpdateTime(Timestamp.valueOf(setter.get("UPDATE_TIME").getAsString()));
     }
+
+    public static void firebasedbAddOrReplace(Context context,FirebaseFirestore db,final Member member) {
+        // 如果Firestore沒有該ID的Document就建立新的，已經有就更新內容
+        db.collection("members").document(member.getId()+"").set(member)
+                .addOnCompleteListener(task1 -> {
+                    if (task1.isSuccessful()) {
+                        Log.d(TAG, "Inserted with ID: " + member.getId());
+                        Toast.makeText(context, "Inserted with ID: " + member.getId(), Toast.LENGTH_SHORT).show();
+                        // 新增完畢回上頁
+                    } else {
+                        Log.e(TAG, "message: " + task1.getException().getMessage());
+                        Toast.makeText(context, "message: " + task1.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+
 
 }

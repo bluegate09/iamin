@@ -78,6 +78,24 @@
             android:hint="Password">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etRegisterPassword2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:inputType="textPassword" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            app:passwordToggleEnabled="true"
+            app:startIconDrawable="@drawable/lock"
+            app:helperText="Required*"
+            app:helperTextTextColor="#80FF0000"
+            android:hint="Password">
+
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etRegisterPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

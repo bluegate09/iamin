@@ -16,15 +16,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.network.RemoteAccess;
 
+import static android.content.Context.MODE_PRIVATE;
 import static idv.tfp10101.iamin.member.MemberControl.memberRemoteAccess;
 
 public class MemberCenterFragment extends Fragment {
@@ -34,6 +37,8 @@ public class MemberCenterFragment extends Fragment {
     private TextView nickname, email, rating, followCount;
     private ImageView ivPic;
     private Member member;
+    private Gson gson2 = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
+//    private Gson gson=  new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,19 +47,14 @@ public class MemberCenterFragment extends Fragment {
         auth = FirebaseAuth.getInstance();
         member = Member.getInstance();
 
-        Log.d(TAG, "MemberCenter_OnCreate");
 
         //從mysql取member data
         String jsonIn = memberRemoteAccess(activity, member, "findById");
-        JsonObject setter = new Gson().fromJson(jsonIn, JsonObject.class);
-        MemberControl.setMemberData(member, setter);
+        Member memberObject = gson2.fromJson(jsonIn,Member.class);
+        MemberControl.setMemberData(memberObject);
 
-    }
+//        Log.d(TAG,"jsonIn: " + jsonIn);
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "MemberCenter_OnDestroy");
     }
 
     @Override
@@ -91,21 +91,19 @@ public class MemberCenterFragment extends Fragment {
         //前往賣家中心
 //        view.findViewById(R.id.btMCSellerCenter).setOnClickListener(v ->
 //                Navigation.findNavController(v).navigate(R.id.action_memberCenter_to_MC_SellerCenter));
-        //前往帳戶管理
-//        view.findViewById(R.id.btMCBankAccount).setOnClickListener(v ->
-//                Navigation.findNavController(v).navigate(R.id.action_memberCenter_to_MC_BankAccount));
 
         //登出
         view.findViewById(R.id.btMCLogout).setOnClickListener(v -> {
             //登出 firebase google facbook
             auth.signOut();
-
+            //刪除 SharedPreferences 裡的member_ID
+            activity.getSharedPreferences("member_ID",MODE_PRIVATE).edit().remove("member_ID").apply();
             //防止回到上一頁
             NavController navController = Navigation.findNavController(v);
             navController.popBackStack(R.id.logInFragment, true);
             navController.popBackStack(R.id.homeFragment, true);
             navController.popBackStack(R.id.memberCenterFragment, true);
-            navController.navigate(R.id.logInFragment);
+            navController.navigate(R.id.homeFragment);
 
         });
     }
@@ -116,9 +114,9 @@ public class MemberCenterFragment extends Fragment {
 
         //有更新才去資料庫撈新資料
         if (!member.isUpdate()) {
-            String jsonIn = memberRemoteAccess(activity, member, "findById");
-            JsonObject setter = new Gson().fromJson(jsonIn, JsonObject.class);
-            MemberControl.setMemberData(member, setter);
+            Gson gson = new Gson();
+//            String jsonIn = memberRemoteAccess(activity, member, "findById");
+//            member = gson.fromJson(jsonIn,Member.class);
             Log.d(TAG, "OnCreate: " + member.isUpdate());
             member.setUpdate(true);
         }

@@ -177,17 +177,6 @@
                 android:textAlignment="textStart" />
 
             <Button
-                android:id="@+id/btMCBankAccount"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:text="BankAccount"
-                android:textAlignment="textStart" />
-
-            <Button
                 android:id="@+id/btMCMyWallet"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

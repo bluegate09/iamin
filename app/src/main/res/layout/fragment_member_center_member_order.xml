@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MemberCenterMemberOrderFragment"
+    android:padding="8dp">
+
+    <SearchView
+        android:id="@+id/svOrderSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/searchview_background"
+        android:iconifiedByDefault="false"
+        android:queryBackground="@android:color/transparent"
+        android:queryHint="Search" />
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/toggleButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="8dp">
+        <Button
+            android:id="@+id/btOderOngoing"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Ongoing"
+            android:backgroundTint="#FFC107"
+            />
+        <Button
+            android:id="@+id/btOrderReach"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Reach"
+            android:backgroundTint="@color/teal_200"
+            />
+        <Button
+            android:id="@+id/btOrderFailed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Failed"
+            android:backgroundTint="#8C1111"
+            />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvMemberOrderList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/white"
+        android:padding="4dp" />
+</LinearLayout>

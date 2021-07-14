@@ -56,7 +56,7 @@ public class MemeberCenterProfileFragment extends Fragment {
         super.onCreate(savedInstanceState);
         activity = getActivity();
         member = Member.getInstance();
-//        Log.d(TAG,"MC_Profile_OnCreate");
+        Log.d(TAG,"MC_Profile_OnCreate member: " + member.getNickname());
 
     }
 
@@ -112,6 +112,7 @@ public class MemeberCenterProfileFragment extends Fragment {
 
             //mysql更新修改後的資訊
             sendInfotoMysql(member);
+            //mysql設定 有按修改按鍵回上一頁才會回資料庫
             Member.getInstance().setUpdate(false);
             Log.d(TAG,member.isUpdate()+"");
         });

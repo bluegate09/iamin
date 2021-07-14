@@ -2,7 +2,6 @@ package idv.tfp10101.iamin;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
@@ -12,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,12 +21,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -35,8 +38,6 @@ import java.util.concurrent.Executors;
 import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.network.RemoteAccess;
 
-import static android.content.Context.MODE_PRIVATE;
-
 public class MemeberCenterFollowFragment extends Fragment {
     private final static String TAG = "TAG_MC_Follow";
     private ExecutorService executor;
@@ -44,17 +45,14 @@ public class MemeberCenterFollowFragment extends Fragment {
     private Member member_ID;
     private RecyclerView rvMember;
     private List<Member> members;
+    private Gson gson2 = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
+//    private Gson gson=  new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
-        SharedPreferences pref = activity.getSharedPreferences("member_ID",
-                MODE_PRIVATE);
-        int mySqlMemberId = pref.getInt("member_ID", -1);
         member_ID = Member.getInstance();
-        member_ID.setId(mySqlMemberId);
-
         int numProcs = Runtime.getRuntime().availableProcessors();
         executor = Executors.newFixedThreadPool(numProcs);
     }
@@ -115,6 +113,7 @@ public class MemeberCenterFollowFragment extends Fragment {
 
     private List<Member> getMembers() {
         List<Member> members = new ArrayList<>();
+
         if (RemoteAccess.networkConnected(activity)) {
             String url = RemoteAccess.URL_SERVER + "memberServelt";
             JsonObject jsonObject = new JsonObject();
@@ -122,24 +121,11 @@ public class MemeberCenterFollowFragment extends Fragment {
             jsonObject.addProperty("member", new Gson().toJson(member_ID));
             String jsonIn = RemoteAccess.getRemoteData(url, jsonObject.toString());
 
-            //string to jsonArray
-            try {
-                JSONArray jsonArray = new JSONArray(jsonIn);
-                for(int i = 0; i < jsonArray.length(); i++){
-                    JSONObject jsonObject2 = jsonArray.getJSONObject(i);
-//                    Log.d(TAG, jsonObject2.toString() + "<------------- jsonObject2.toString()");
+//            Log.d(TAG,"jsonIn: " + jsonIn);
+            Type listType = new TypeToken<List<Member>>() {}.getType();
 
-                    int id = jsonObject2.getInt("MEMBER_ID");
-                    String temp_nickname = jsonObject2.getString("NICKNAME");
-                    double temp_rating = jsonObject2.getDouble("RATING");
-                    int temp_followCount = jsonObject2.getInt("FOLLOW_COUNT");
-
-                    members.add(i,new Member(id,temp_followCount,temp_rating,temp_nickname));
-
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            members = gson2.fromJson(jsonIn, listType);
+//            Log.d(TAG,"members: " + members);
 
         } else {
             Toast.makeText(activity,"No network", Toast.LENGTH_SHORT).show();
@@ -190,16 +176,22 @@ public class MemeberCenterFollowFragment extends Fragment {
         @Override //幾筆跑幾次
         public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int position) {
             final Member member = members.get(position);
+
+            String ratingText = "RATING: " + member.getRating();
+            String followCountText = "Follower: "+member.getFollow_count();
+
             myViewHolder.tvNickname.setText(member.getNickname());
-            myViewHolder.tvRating.setText("RATING: " + member.getRating());
-            myViewHolder.tvFollowCount.setText("Follower: "+member.getFollow_count());
+            myViewHolder.tvRating.setText(ratingText);
+            myViewHolder.tvFollowCount.setText(followCountText);
             myViewHolder.tvStatus.setText("TODO");
             myViewHolder.tvFollowBt.setOnClickListener(v -> {
 
                 String url = RemoteAccess.URL_SERVER + "memberServelt";
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("action", "follow");
+                //追蹤的member_id
                 jsonObject.addProperty("follwer_id",member.getId());
+                //登入的id
                 jsonObject.addProperty("member", new Gson().toJson(member_ID));
                 RemoteAccess.getRemoteData(url, jsonObject.toString());
                 members = getMembers();
@@ -211,7 +203,6 @@ public class MemeberCenterFollowFragment extends Fragment {
             });
 
             String url = RemoteAccess.URL_SERVER + "memberServelt";
-
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("action", "getImage");
             jsonObject.addProperty("member", new Gson().toJson(member));

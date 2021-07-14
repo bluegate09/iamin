@@ -15,9 +15,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Spinner;
+import android.widget.AutoCompleteTextView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,14 +30,11 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -44,8 +42,7 @@ import java.util.List;
 import java.util.Set;
 
 import idv.tfp10101.iamin.member.Member;
-import idv.tfp10101.iamin.merch.Merch;
-import idv.tfp10101.iamin.network.RemoteAccess;
+import idv.tfp10101.iamin.member.MyWallet;
 
 import static idv.tfp10101.iamin.member.MemberControl.memberRemoteAccess;
 
@@ -53,18 +50,41 @@ public class MemberCenterMyWalletFragment extends Fragment {
     private final static String TAG = "TAG_MyWallet";
     private Activity activity;
     private Member member;
-    private Merch merch;
-    private List<MySqlData> mySqlDataList;
-    private List<PieEntry> resultIncomeEntries,defaultIncomeEntries;
+    private List<MyWallet> myWallets;
+    private List<PieEntry> defaultIncomeEntries;
     private PieData pieData;
-    private RecyclerView rvMerch;
+    private AutoCompleteTextView monthDropDown;
+    private RecyclerView rvMyWallet;
+    private String selectMonth;
+    private TextView yearTitle;
+    private ImageButton leftArrow,rightArrow;
+    private int i = 1;
+    private final Gson gson2 = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
+
+    private final int[] My_COLORS = {
+            //紅
+            0xFFB54434,
+            //青
+            0xFF006284,
+            //橘
+            0xFFFC9F4D,
+            //綠
+            0xFF2D6D4B,
+            //皮膚
+            0xFFB9887D
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
         member = Member.getInstance();
-//        merch = new Merch();
+
+        //從mysql拿資料
+        String jsonIn = memberRemoteAccess(activity,member,"getMyWallet");
+        Type listType = new TypeToken<List<MyWallet>>() {}.getType();
+        myWallets = gson2.fromJson(jsonIn,listType);
+//        Log.d(TAG,"MyWallets: " + myWallets.toString());
     }
 
     @Override
@@ -77,67 +97,55 @@ public class MemberCenterMyWalletFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Spinner spinner = view.findViewById(R.id.myWalletSpinner);
+        monthDropDown = view.findViewById(R.id.monthAutoCompleteTextView);
+        yearTitle = view.findViewById(R.id.myWalletTextTitle);
 
-        rvMerch = view.findViewById(R.id.rvMyWallet);
-        LinearLayoutManager horizontalLayoutManagaer = new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false);
-        rvMerch.setLayoutManager(horizontalLayoutManagaer);
+        leftArrow = view.findViewById(R.id.myWalletLeftArrow);
+        rightArrow = view.findViewById(R.id.myWalletRightArrow);
 
-        Set<String> hash_set = new HashSet<>();
-        List<String> date = new ArrayList<>();
-        resultIncomeEntries = new ArrayList<>();
+        rvMyWallet = view.findViewById(R.id.rvMyWallet);
+        rvMyWallet.setLayoutManager(new LinearLayoutManager(activity));
+
+        Set<String> hash_set_year = new HashSet<>();
+        Set<String> hash_set_month = new HashSet<>();
+        List<String> date_year = new ArrayList<>();
+        List<String> date_month = new ArrayList<>();
+
         defaultIncomeEntries = new ArrayList<>();
-        mySqlDataList = new ArrayList<>();
+        defaultIncomeEntries = getMyWalletEntries(myWallets);
 
-        //從mysql拿資料
-        String jsonIn = memberRemoteAccess(activity,member,"getMyWallet");
-        Log.d(TAG,jsonIn);
 
-        try {
-            JSONArray jsonArray = new JSONArray(jsonIn);
-            for(int i = 0; i < jsonArray.length(); i++) {
-                JSONObject memberOrder = jsonArray.getJSONObject(i);
 
-                int tmp_groupId = memberOrder.getInt("GROUP_ID");
-//                String tmp_name = memberOrder.getString("NAME");
-                String tmp_category = memberOrder.getString("CATEGORY");
-                int tmp_money = memberOrder.getInt("TOTAL");
-                String tmp_time = memberOrder.get("UPDATE_TIME").toString().substring(0,4);
-
-                hash_set.add(tmp_time);
-                mySqlDataList.add(new MySqlData(tmp_groupId, tmp_time, tmp_category, new PieEntry(tmp_money, tmp_category,tmp_groupId)));
-            }
-            List<PieEntry> entryList = new ArrayList<>();
-            for(int i = 0; i < mySqlDataList.size(); i++){
-                entryList.add(mySqlDataList.get(i).entries);
-            }
-            defaultIncomeEntries = new ArrayList<>(entryList);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        //把xxxx年取出來 存入SET 因為不重複
+        for(MyWallet tmp : myWallets){
+           hash_set_year.add(tmp.getUpdateTime().toString().substring(0,4));
         }
 
-        date.add("All Time");
-        //排序讓alltime在最上面 java8 addAll()
-        date.addAll(hash_set);
-        Collections.sort(date, (o1, o2) -> {
-            if(o1.equals(o2)) //update to make is stable
-                return 0;
-            if(o1.equals("All Time"))
-                return -1;
-            if(o2.equals("All Time"))
-                return 1;
-            return o1.compareTo(o2);
-        });
+        for(MyWallet tmp : myWallets){
+            hash_set_month.add(tmp.getUpdateTime().toString().substring(6,7));
+        }
+        //  標題不加ALL
+//        date_year.add(getString(R.string.alltime));
+        date_year.addAll(hash_set_year);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(activity,
-                android.R.layout.simple_list_item_1, date);
-        spinner.setAdapter(adapter);
+        date_month.add(getString(R.string.alltime));
+        date_month.addAll(hash_set_month);
+
+        //排序讓alltime在最上面 java8 addAll()
+        sort(date_year);
+        sort(date_month);
+
+        //刷新rvView
+        showWalletList(myWallets);
+        //最新年份
+        yearTitle.setText(date_year.get(date_year.size()-1));
+        handleArrowButton(view);
 
         PieChart pieChart = view.findViewById(R.id.pieChart);
         /* 設定可否旋轉 */
-        pieChart.setRotationEnabled(true);
+        pieChart.setRotationEnabled(false);
         /* 設定圓心文字 */
-        pieChart.setCenterText("Income");
+        pieChart.setCenterText(getString(R.string.income));
         /* 設定圓心文字大小 */
         pieChart.setCenterTextSize(25);
 
@@ -150,198 +158,177 @@ public class MemberCenterMyWalletFragment extends Fragment {
         pieChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
             public void onValueSelected(Entry entry, Highlight highlight) {
-                PieEntry pieEntry = (PieEntry) entry;
-                if (RemoteAccess.networkConnected(activity)) {
-
-                    merch.setMerchId((Integer) pieEntry.getData());
-
-                    String url = RemoteAccess.URL_SERVER + "memberServelt";
-                    JsonObject jsonObject = new JsonObject();
-                    jsonObject.addProperty("action", "getMyWalletDetail");
-                    jsonObject.addProperty("merch", new Gson().toJson(merch));
-                    String jsonIn =  RemoteAccess.getRemoteData(url, jsonObject.toString());
-
-                    TextView text_temp = view.findViewById(R.id.wallettest);
-                    text_temp.setText(jsonIn);
-                    List<Merch> merchs = new ArrayList<>();
-
-                    try {
-                        JSONArray jsonArray = new JSONArray(jsonIn);
-                        for(int i = 0; i < jsonArray.length(); i++){
-                            JSONObject jsonObject2 = jsonArray.getJSONObject(i);
-
-                            String temp_name = jsonObject2.getString("NAME");
-                            int temp_price = jsonObject2.getInt("PRICE");
-//                            merchs.add(i,new Merch(temp_name,temp_price));
-
-                        }
-                        showMerchList(merchs);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                } else {
-                    Toast.makeText(activity, "沒有網路", Toast.LENGTH_SHORT).show();
-                }
-//                Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
             }
             @Override
             public void onNothingSelected() {
-
             }
         });
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        pieData = setPieData(defaultIncomeEntries);
+        pieChart.setData(pieData);
+        pieChart.invalidate();
 
-                if(position == 0){
-//                    Log.d(TAG,"defaultIncomeEntries " + defaultIncomeEntries);
-                    pieData = setPieData(defaultIncomeEntries);
-                }else{
-                    String selected = spinner.getAdapter().getItem(position) + "";
-                    resultIncomeEntries.clear();
-                    for(int i = 0; i < mySqlDataList.size(); i++){
-                        if(mySqlDataList.get(i).time.equals(selected)){
-                            resultIncomeEntries.add(mySqlDataList.get(i).entries);
-                        }
-                    }
-                    pieData = setPieData(resultIncomeEntries);
-                    //                Toast.makeText(activity, selected +" position", Toast.LENGTH_SHORT).show();
-                }
+        //月dropdown
+        ArrayAdapter<String> adapterMonth = new ArrayAdapter<>(activity,
+                R.layout.mywallet_dropdown, date_month);
+        monthDropDown.setAdapter(adapterMonth);
+
+        monthDropDown.setOnItemClickListener((parent, view1, position, id) -> {
+            if(position == 0){
+                pieData = setPieData(defaultIncomeEntries);
                 pieChart.setData(pieData);
                 pieChart.invalidate();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+                showWalletList(myWallets);
+            }else{
+                List<MyWallet> tmpList = new ArrayList<>();
+                selectMonth = monthDropDown.getAdapter().getItem(position) + "";
+                for(MyWallet tmp : myWallets) {
+                    if(selectMonth.equals(tmp.getUpdateTime().toString().substring(6,7))) {
+                        tmpList.add(tmp);
+                    }
+                }
+                pieData = setPieData(getMyWalletEntries(tmpList));
+                pieChart.setData(pieData);
+                pieChart.invalidate();
+                showWalletList(tmpList);
             }
         });
+
+        int position = date_year.size();
+        view.findViewById(R.id.myWalletRightArrow).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                date_year.get(position-i);
+                i++;
+                if(date_year.get(0).equals(yearTitle.toString())){
+                       leftArrow.setVisibility(View.INVISIBLE);
+                       leftArrow.setEnabled(false);
+                }else{
+                    leftArrow.setVisibility(View.VISIBLE);
+                    leftArrow.setEnabled(true);
+                }
+            }
+        });
+        view.findViewById(R.id.myWalletLeftArrow).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                date_year.get(position+i);
+                i--;
+                if(date_year.get(0).equals(yearTitle.toString())){
+                    rightArrow.setVisibility(View.INVISIBLE);
+                    rightArrow.setEnabled(false);
+                }else{
+                    rightArrow.setVisibility(View.VISIBLE);
+                    rightArrow.setEnabled(true);
+                }
+
+            }
+        });
+
 
     }
 
-    private void showMerchList(List<Merch> merchs) {
-        if (merchs == null || merchs.isEmpty()) {
-            Toast.makeText(activity,"no merch found", Toast.LENGTH_SHORT).show();
+    private void handleArrowButton(View view) {
+
+    }
+
+    //排序
+    private void sort(List<String> date) {
+        Collections.sort(date, (o1, o2) -> {
+            if(o1.equals(o2)) //update to make is stable
+                return 0;
+            if(o1.equals(getString(R.string.alltime)))
+                return -1;
+            if(o2.equals(getString(R.string.alltime)))
+                return 1;
+            return o1.compareTo(o2);
+        });
+    }
+
+    private void showWalletList(List<MyWallet> myWallets) {
+        if (myWallets == null || myWallets.isEmpty()) {
+            Toast.makeText(activity, R.string.no_merch_found+"", Toast.LENGTH_SHORT).show();
         }
-        MerchAdapter merchAdapter = (MerchAdapter) rvMerch.getAdapter();
+        MyWalletAdapter merchAdapter = (MyWalletAdapter) rvMyWallet.getAdapter();
         if (merchAdapter == null) {
-            rvMerch.setAdapter(new MerchAdapter(activity, merchs));
+            rvMyWallet.setAdapter(new MyWalletAdapter(activity, myWallets));
         } else {
-            merchAdapter.setMerchs(merchs);
+            merchAdapter.setMyWallets(myWallets);
             merchAdapter.notifyDataSetChanged();
         }
     }
 
-
-    private static class MerchAdapter extends RecyclerView.Adapter<MerchAdapter.MyViewHolder> {
+    private class MyWalletAdapter extends RecyclerView.Adapter<MyWalletAdapter.MyViewHolder> {
         private final LayoutInflater layoutInflater;
-        private List<Merch> merchs;
+        private List<MyWallet> myWallets;
 
-        MerchAdapter(Context context, List<Merch> merchs) {
+        MyWalletAdapter(Context context, List<MyWallet> myWallets) {
             layoutInflater = LayoutInflater.from(context);
-            this.merchs = merchs;
+            this.myWallets = myWallets;
         }
 
-        void setMerchs(List<Merch> merchs) {
-            this.merchs = merchs;
+        void setMyWallets(List<MyWallet> myWallets) {
+            this.myWallets = myWallets;
         }
 
-        static class MyViewHolder extends RecyclerView.ViewHolder {
+        class MyViewHolder extends RecyclerView.ViewHolder {
             TextView tvName, tvPrice;
+            View background;
 
             MyViewHolder(View itemView) {
                 super(itemView);
+                background = itemView.findViewById(R.id.walletViewBackgroundColor);
                 tvName = itemView.findViewById(R.id.nameWallet);
                 tvPrice = itemView.findViewById(R.id.priceWallet);
-
             }
         }
 
         @Override
         public int getItemCount() {
-            return merchs == null ? 0 : merchs.size();
+            return myWallets == null ? 0 : myWallets.size();
         }
 
         @NonNull
         @Override
-        public MerchAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public MyWalletAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View itemView = layoutInflater.inflate(R.layout.item_view_member_center_mywallet, parent, false);
             return new MyViewHolder(itemView);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull MerchAdapter.MyViewHolder myViewHolder, int position) {
-            final Merch merch = merchs.get(position);
-//            Log.d(TAG,"tvName: " + merch.getName()+" ooo");
-//            Log.d(TAG,"tvPrice: " + merch.getPrice()+" ooo");
-            myViewHolder.tvName.setText(merch.getName() + "");
-            myViewHolder.tvPrice.setText(merch.getPrice() +"");
-
+        public void onBindViewHolder(@NonNull MyWalletAdapter.MyViewHolder myViewHolder, int position) {
+            final MyWallet myWallet = myWallets.get(position);
+            myViewHolder.tvName.setText(myWallet.getCategory());
+            myViewHolder.tvPrice.setText(myWallet.getTotoalPrice()+"");
+            myViewHolder.background.setBackgroundColor(My_COLORS[position]);
         }
     }
 
     private PieData setPieData(List<PieEntry> entries) {
         //從這裡給資料
         PieDataSet pieDataSet = new PieDataSet(entries, "");
-
+//        pieDataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
         pieDataSet.setValueTextColor(Color.BLUE);
         pieDataSet.setValueTextSize(20);
         //間距
-        pieDataSet.setSliceSpace(2);
-
+        pieDataSet.setSliceSpace(0);
         //自己建立
-        final int[] My_COLORS = {
-                Color.rgb(207, 248, 246), Color.rgb(148, 212, 212), Color.rgb(136, 180, 187),
-                Color.rgb(118, 174, 175), Color.rgb(42, 109, 130)
-        };
 
         /* 官定顏色範本只有5種顏色，不過可以將多個官定範本顏色疊加 */
         //
-        pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
-
+        pieDataSet.setColors(My_COLORS);
         return new PieData(pieDataSet);
     }
 
-    private static class MySqlData{
+    private List<PieEntry> getMyWalletEntries(List<MyWallet> myWallets) {
+        List<PieEntry> myWalletsEntries = new ArrayList<>();
 
-        int group_id;
-        String time,category;
-        PieEntry entries;
-
-        public MySqlData() {
+        for(int i = 0; i < myWallets.size(); i++) {
+            myWalletsEntries.add(new PieEntry(myWallets.get(i).getTotoalPrice(), myWallets.get(i).getCategory()));
         }
-
-        public MySqlData(int group_id, String time, String category, PieEntry entries) {
-            this.group_id = group_id;
-            this.time = time;
-            this.category = category;
-            this.entries = entries;
-        }
-
-        public int getGroup_id() {
-            return group_id;
-        }
-
-        public void setGroup_id(int group_id) {
-            this.group_id = group_id;
-        }
-
-        public String getTime() {
-            return time;
-        }
-
-        public void setTime(String time) {
-            this.time = time;
-        }
-
-        public PieEntry getEntries() {
-            return entries;
-        }
-
-        public void setEntries(PieEntry entries) {
-            this.entries = entries;
-        }
+        return myWalletsEntries;
     }
 
 }
