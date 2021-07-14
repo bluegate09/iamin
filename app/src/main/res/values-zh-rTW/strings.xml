@@ -42,4 +42,6 @@
     <string name="month">Month</string>
     <string name="year">Year</string>
     <string name="income">Income</string>
+    <string name="textNoSellerFound">No Seller Found</string>
+    <string name="textImageDownloadFail">Image Download Fail</string>
 </resources>
