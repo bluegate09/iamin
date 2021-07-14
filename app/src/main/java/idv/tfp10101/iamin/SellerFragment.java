@@ -97,6 +97,8 @@ public class SellerFragment extends Fragment {
 
         findViews(view);
 
+        // 一開始先判斷
+
         /** 設定預設memberId */
         // 跟server抓取所有Group
         GroupControl.getAllGroupByMemberId(activity, 1);

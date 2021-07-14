@@ -608,6 +608,9 @@ public class GroupInsertFragment extends Fragment {
                     showLinearLayoutMerchs(giavd.MerchsId());
 
                     /** 地址的處理 */
+                    // 清空
+                    giavd.Lats().clear();
+                    giavd.Lngs().clear();
                     // 緯度[]
                     double[] latArr = bundle.getDoubleArray("lats");
                     // 經度[]
