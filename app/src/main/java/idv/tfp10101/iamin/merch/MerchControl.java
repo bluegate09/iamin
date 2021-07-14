@@ -220,7 +220,7 @@ public class MerchControl {
         // 如果有網路，就進行 request
         if (RemoteAccess.networkConnected(context)) {
             // 網址 ＆ Action
-            String url = RemoteAccess.URL_SERVER + "Merch";
+            String url = RemoteAccess.URL_SERVER + "Merchbrowse";
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("action", "getAllByGroupIdId");
             jsonObject.addProperty("groupId", groupId);

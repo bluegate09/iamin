@@ -16,69 +16,70 @@ import java.util.concurrent.ExecutorService;
 
 import idv.tfp10101.iamin.R;
 
+import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.network.RemoteAccess;
 
 public class HomeDataControl {
 
     // Singleton
-    private static List<HomeData> HomeDatas;
+    private static List<Group> Groups;
 
-    public static List<HomeData> getLocalHomeDatas(){
-        if (HomeDatas == null) {
-            HomeDatas = new ArrayList<>();
+    public static List<Group> getLocalHomeDatas(){
+        if (Groups == null) {
+            Groups = new ArrayList<>();
         }
-        return HomeDatas;
+        return Groups;
     }
 
     /**
      * 存入首頁的團購資料
-     * @param homedatas
+     * @param groups
      */
-    public static void setLocalHomeDatas(List<HomeData> homedatas){
-        if (HomeDatas == null) {
-            HomeDatas = new ArrayList<>();
+    public static void setLocalGroup(List<Group> groups){
+        if (Groups == null) {
+            Groups = new ArrayList<>();
         }
-        HomeDatas = homedatas;
+        Groups = groups;
     }
 
 
-    public static void getAllHomeData(Context context) {
+    public static void getAllGroup(Context context) {
         // 如果有網路，就進行 request
         if (RemoteAccess.networkConnected(context)) {
             // 網址 ＆ Action
             String url = RemoteAccess.URL_SERVER + "Home";
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("action", "getAllHomeData");
+            jsonObject.addProperty("action", "getAllGroup");
 
             // requst
             String jsonString = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
             /** 匿名內部類別實作TypeToken，抓取 泛型 在呼叫方法 */
-            Type listType = new TypeToken<List<HomeData>>(){}.getType();
-            setLocalHomeDatas(new Gson().fromJson(jsonString, listType));
+            Type listType = new TypeToken<List<Group>>(){}.getType();
+            setLocalGroup(new Gson().fromJson(jsonString, listType));
 
         }else {
             Toast.makeText(context, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
         }
     }
 
-    public static void getAllGroupPrice(Context context,int GroupID) {
-        // 如果有網路，就進行 request
-        if (RemoteAccess.networkConnected(context)) {
-            // 網址 ＆ Action
-            String url = RemoteAccess.URL_SERVER + "Home";
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("action", "getAllGroupPrice");
-            jsonObject.addProperty("groupID",GroupID);
-
-            // requst
-            String jsonString = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
-            /** 匿名內部類別實作TypeToken，抓取 泛型 在呼叫方法 */
-            Type listType = new TypeToken<List<HomeData>>(){}.getType();
-            setLocalHomeDatas(new Gson().fromJson(jsonString, listType));
-        }else {
-            Toast.makeText(context, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
-        }
-    }
+//    public static void getAllGroupPrice(Context context,int GroupID) {
+//        // 如果有網路，就進行 request
+//        if (RemoteAccess.networkConnected(context)) {
+//            // 網址 ＆ Action
+//            String url = RemoteAccess.URL_SERVER + "Home";
+//            JsonObject jsonObject = new JsonObject();
+//            jsonObject.addProperty("action", "getAllGroupPrice");
+//            jsonObject.addProperty("groupID",GroupID);
+//
+//            // requst
+//            String jsonString = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
+//            /** 匿名內部類別實作TypeToken，抓取 泛型 在呼叫方法 */
+//            Type listType = new TypeToken<List<HomeData>>(){}.getType();
+//            setLocalHomeDatas(new Gson().fromJson(jsonString, listType));
+//        }else {
+//            Toast.makeText(context, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
+//        }
+//    }
     //取得團購瀏覽圖片
     public static Bitmap getGroupimage(Context context, int GroupID, int imageSize, ExecutorService executor) {
         // 如果有網路，就進行 request
