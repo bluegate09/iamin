@@ -196,6 +196,7 @@ public class ChatFragment extends Fragment {
 
 
             final User user = users.get(position);
+            Log.d(TAG, user.getImagePath());
             if (user.getImagePath() == null ) {
                 holder.ivSeller.setImageResource(R.drawable.avatar);
             } else {
@@ -206,7 +207,7 @@ public class ChatFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("user", user);
 
-//                Navigation.findNavController(v).navigate(R.id.action_chatFragment_to_messageFragment, bundle);
+                Navigation.findNavController(v).navigate(R.id.action_chatFragment_to_messageFragment, bundle);
             });
         }
     }
