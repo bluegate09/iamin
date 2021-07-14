@@ -27,8 +27,23 @@
     <string name="textCategory">類別</string>
     <string name="textContactNumber">聯絡電話</string>
     <string name="textPaymentMethod">收款方式</string>
-    <string name="textCreditCard">信用卡</string>
+    <string name="textCreditcard">信用卡</string>
     <string name="textFaceToFace">當面交易</string>
+    <string name="textPrivacyFlag">隱私設定</string>
+    <string name="textPrivacyOff">公開</string>
+    <string name="textPrivacyOn">非公開</string>
+    <string name="textNoGroupCategorieFound">找不到種類清單</string>
+    <string name="textGroupAddLocation">新增</string>
+    <string name="textLocationNotFound">找不到地址</string>
     <string name="textHome">首頁</string>
     <string name="textChat">聊天</string>
+    <string name="alltime">全部時間</string>
+    <string name="no_merch_found">找不到商品</string>
+    <string name="month">Month</string>
+    <string name="year">Year</string>
+    <string name="income">Income</string>
+    <string name="textSellerName">SellerName</string>
+    <string name="textAa">Aa</string>
+    <string name="textNoSellerFound">No Seller Found</string>
+    <string name="textImageDownloadFail">Image Download Fail</string>
 </resources>

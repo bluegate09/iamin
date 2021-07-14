@@ -30,11 +30,25 @@
     <string name="textCategory">Category</string>
     <string name="textContactNumber">聯絡電話</string>
     <string name="textPaymentMethod">收款方式</string>
-    <string name="textCreditCard">信用卡</string>
+    <string name="textCreditcard">信用卡</string>
     <string name="textFaceToFace">當面交易</string>
+    <string name="textPrivacyFlag">PrivacyFlag</string>
+    <string name="textPrivacyOff">PrivacyOff</string>
+    <string name="textPrivacyOn">PrivacyOn</string>
+    <string name="textNoGroupCategorieFound">No GroupCategorie Found</string>
+    <string name="textGroupAddLocation">新增</string>
+    <string name="textLocationNotFound">找不到地址</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="textChat">Chat</string>
     <string name="textHome">Home</string>
+    <string name="alltime">All Time</string>
+    <string name="no_merch_found">no merch found</string>
+    <string name="month">Month</string>
+    <string name="year">Year</string>
+    <string name="income">Income</string>
+    <string name="textSellerName">SellerName</string>
     <string name="textAa">Aa</string>
+    <string name="textNoSellerFound">No Seller Found</string>
+    <string name="textImageDownloadFail">Image Download Fail</string>
 </resources>
