@@ -44,6 +44,7 @@ public class MerchFragment extends Fragment {
     private ImageView imageViewPaymentPag;
     // 物件
     private List<Merch> localMerchs;
+    private List<Merch> searchMerchs;
 
     /**
      * 取得xml元件
@@ -83,6 +84,8 @@ public class MerchFragment extends Fragment {
         activity.setTitle("商品清單");
         // 取得Resources
         resources = getResources();
+        // 初始化儲存變數
+        searchMerchs = new ArrayList<>();
 
         return inflater.inflate(R.layout.fragment_merch, container, false);
     }
@@ -164,10 +167,15 @@ public class MerchFragment extends Fragment {
      */
     private void handleSwipeRefresh() {
         swipeRefreshLayoutMerch.setOnRefreshListener(() -> {
+            // 重新跟server抓資料
             MerchControl.getAllMerchByMemberId(activity, 1);
             // 播放動畫
             swipeRefreshLayoutMerch.setRefreshing(true);
-            showMerchs(localMerchs);
+            if (!searchMerchs.isEmpty()) {
+                showMerchs(searchMerchs);
+            }else {
+                showMerchs(localMerchs);
+            }
             swipeRefreshLayoutMerch.setRefreshing(false);
         });
     }
@@ -184,11 +192,12 @@ public class MerchFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                // 清空
+                searchMerchs.clear();
                 // 如果搜尋條件為空字串，就顯示原始資料；否則就顯示搜尋後結果
                 if (newText.isEmpty()) {
                     showMerchs(localMerchs);
                 } else {
-                    List<Merch> searchMerchs = new ArrayList<>();
                     // 搜尋原始資料內有無包含關鍵字(不區別大小寫)
                     for (Merch merch : localMerchs) {
                         // 強制轉大寫，contains() -> 是否包含()

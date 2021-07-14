@@ -107,18 +107,18 @@ public class MainActivity extends AppCompatActivity {
         NavController navController =
                 Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
-        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-            if (
-
-                    navController.getCurrentDestination().getId() == R.id.homeFragment ||
-                            navController.getCurrentDestination().getId() == R.id.chatFragment ||
-                            navController.getCurrentDestination().getId() == R.id.logInFragment
-            ) {
-                bottomNavigationView.setVisibility(View.VISIBLE);
-            } else {
-                bottomNavigationView.setVisibility(View.GONE);
-            }
-        });
+//        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+//            if (
+//
+//                    navController.getCurrentDestination().getId() == R.id.homeFragment ||
+//                            navController.getCurrentDestination().getId() == R.id.chatFragment ||
+//                            navController.getCurrentDestination().getId() == R.id.logInFragment
+//            ) {
+//                bottomNavigationView.setVisibility(View.VISIBLE);
+//            } else {
+//                bottomNavigationView.setVisibility(View.GONE);
+//            }
+//        });
     }
 
 

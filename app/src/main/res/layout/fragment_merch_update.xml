@@ -54,7 +54,7 @@
                 android:digits="0987654321"
                 android:ems="10"
                 android:hint="優惠價(阿拉伯數字)"
-                android:inputType="textPersonName"
+                android:inputType="number"
                 android:singleLine="true"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"

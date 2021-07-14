@@ -59,7 +59,7 @@ public class MerchInsertFragment extends Fragment {
     private Resources resources;
     // 元件
     private RecyclerView recyclerViewMerchInsert;
-    private Button buttonMrechInsertImg;
+    private ImageView imageViewMrechInsertImg;
     private EditText editTextMerchInsertName;
     private EditText editTextMerchInsertPrice;
     private EditText editTextMerchInsertDesc;
@@ -76,7 +76,7 @@ public class MerchInsertFragment extends Fragment {
      * @param view Activity下的view
      */
     private void findViews(View view) {
-        buttonMrechInsertImg = view.findViewById(R.id.buttonMrechInsertImg);
+        imageViewMrechInsertImg = view.findViewById(R.id.imageViewMrechInsertImg);
         editTextMerchInsertName = view.findViewById(R.id.editTextMerchInsertName);
         editTextMerchInsertPrice = view.findViewById(R.id.editTextMerchInsertPrice);
         editTextMerchInsertDesc = view.findViewById(R.id.editTextMerchInsertDesc);
@@ -184,7 +184,7 @@ public class MerchInsertFragment extends Fragment {
      * (限5張)
      */
     private void habdleAddImage() {
-        buttonMrechInsertImg.setOnClickListener(view -> {
+        imageViewMrechInsertImg.setOnClickListener(view -> {
             // 不能超過五張
             if (imgCount >= IMAGE_MAX) {
                 Toast.makeText(activity, "超出5張上限", Toast.LENGTH_SHORT).show();
