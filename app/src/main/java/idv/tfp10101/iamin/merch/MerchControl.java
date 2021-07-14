@@ -54,7 +54,7 @@ public class MerchControl {
             jsonObject.addProperty("memberId", memberId);
 
             // requst
-            String jsonString = RemoteAccess.getRometeData(url, new Gson().toJson(jsonObject));
+            String jsonString = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
             /** 匿名內部類別實作TypeToken，抓取 泛型 在呼叫方法 */
             Type listType = new TypeToken<List<Merch>>(){}.getType();
             setLocalMerchs(new Gson().fromJson(jsonString, listType));
@@ -79,7 +79,7 @@ public class MerchControl {
             jsonObject.addProperty("id", id);
 
             // requst
-            result = RemoteAccess.getRometeData(url, new Gson().toJson(jsonObject));
+            result = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
 
             return Integer.parseInt(result);
         }else {
@@ -117,7 +117,7 @@ public class MerchControl {
                 jsonObject.add("arrImgBase64", jsonArray);
             }
             // requst
-            String result = RemoteAccess.getRometeData(url, new Gson().toJson(jsonObject));
+            String result = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
 
             return Integer.parseInt(result);
         }else {
@@ -142,7 +142,7 @@ public class MerchControl {
             jsonObject.addProperty("action", "getImages");
             jsonObject.addProperty("id", id);
             // requst (網址, 傳送資料)
-            String jsonString = RemoteAccess.getRometeData(url, new Gson().toJson(jsonObject));
+            String jsonString = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
             /** 匿名內部類別實作TypeToken，抓取 泛型 在呼叫方法 */
             Type listType = new TypeToken<List<byte[]>>(){}.getType();
             return new Gson().fromJson(jsonString, listType);
@@ -179,7 +179,7 @@ public class MerchControl {
                 jsonObject.add("arrImgBase64", jsonArray);
             }
             // requst
-            String result = RemoteAccess.getRometeData(url, new Gson().toJson(jsonObject));
+            String result = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
 
             return Integer.parseInt(result);
         }else {
@@ -198,7 +198,7 @@ public class MerchControl {
             jsonObject.addProperty("groupId", groupId);
 
             // requst
-            String jsonString = RemoteAccess.getRometeData(url, new Gson().toJson(jsonObject));
+            String jsonString = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
             /** 匿名內部類別實作TypeToken，抓取 泛型 在呼叫方法 */
             Type listType = new TypeToken<List<Merch>>(){}.getType();
             setLocalMerchs(new Gson().fromJson(jsonString, listType));

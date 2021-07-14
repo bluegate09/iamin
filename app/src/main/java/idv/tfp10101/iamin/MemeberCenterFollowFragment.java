@@ -120,7 +120,7 @@ public class MemeberCenterFollowFragment extends Fragment {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("action", "getFollowMember");
             jsonObject.addProperty("member", new Gson().toJson(member_ID));
-            String jsonIn = RemoteAccess.getRometeData(url, jsonObject.toString());
+            String jsonIn = RemoteAccess.getRemoteData(url, jsonObject.toString());
 
             //string to jsonArray
             try {
@@ -201,7 +201,7 @@ public class MemeberCenterFollowFragment extends Fragment {
                 jsonObject.addProperty("action", "follow");
                 jsonObject.addProperty("follwer_id",member.getId());
                 jsonObject.addProperty("member", new Gson().toJson(member_ID));
-                RemoteAccess.getRometeData(url, jsonObject.toString());
+                RemoteAccess.getRemoteData(url, jsonObject.toString());
                 members = getMembers();
                 showFollowMember(members);
 

@@ -25,7 +25,7 @@ public class MemberControl {
             jsonObject.addProperty("action", value);
             jsonObject.addProperty("member", new Gson().toJson(member));
 
-            return RemoteAccess.getRometeData(url, jsonObject.toString());
+            return RemoteAccess.getRemoteData(url, jsonObject.toString());
         } else {
             Toast.makeText(context, "沒有網路", Toast.LENGTH_SHORT).show();
             return "";

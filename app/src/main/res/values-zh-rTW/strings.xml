@@ -1,27 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Group_MySQL_Bowen_Android</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="app_name">+1團購</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="textGroupInsert">GroupInsert</string>
-    <string name="textMerchInsert">MerchInsert</string>
+    <string name="textGroupInsert">新增團購</string>
+    <string name="textMerchInsert">新增商品</string>
     <string name="textNoNetwork">no network connection available</string>
-    <string name="textNoMerchsFound">no Merchs found</string>
+    <string name="textNoMerchsFound">找不到商品清單</string>
     <string name="textCurrency">NT</string>
-    <string name="textEdit">Edit</string>
-    <string name="textDelete">Delete</string>
-    <string name="textDeleteFail">DeleteFail</string>
-    <string name="textDeleteSuccess">DeleteSuccess</string>
-    <string name="textAdd">Add</string>
-    <string name="textNoCameraApp">No Camera App Found</string>
-    <string name="textNoImagesFound">No Images Found</string>
-    <string name="textUpdate">Update</string>
-    <string name="textNoMerchFound">No Merch Found</string>
-    <string name="textGoal">Goal</string>
-    <string name="textMerchDetails">MerchDetails：</string>
-    <string name="textTotalAmount">TotalAmount</string>
-    <string name="textDeadline">Deadline：</string>
-    <string name="textNoGroupsFound">No Groups Found</string>
+    <string name="textEdit">編輯</string>
+    <string name="textDelete">刪除</string>
+    <string name="textDeleteFail">刪除失敗</string>
+    <string name="textDeleteSuccess">刪除成功</string>
+    <string name="textAdd">新增</string>
+    <string name="textNoCameraApp">找不到 Camera App</string>
+    <string name="textNoImagesFound">找不到圖片清單</string>
+    <string name="textUpdate">更新</string>
+    <string name="textNoMerchFound">找不到商品</string>
+    <string name="textGoal">目標</string>
+    <string name="textMerchDetails">商品：</string>
+    <string name="textTotalAmount">總金額</string>
+    <string name="textDeadline">截止時間：</string>
+    <string name="textNoGroupsFound">找不到團購清單</string>
     <string name="textGoalNeeds">目標 份數：</string>
     <string name="textGroupUnit">份</string>
     <string name="textCategory">類別</string>
@@ -42,8 +41,8 @@
     <string name="month">Month</string>
     <string name="year">Year</string>
     <string name="income">Income</string>
-    <string name="textSellerName">SellerName</string>
-    <string name="textAa">Aa</string>
     <string name="textNoSellerFound">No Seller Found</string>
     <string name="textImageDownloadFail">Image Download Fail</string>
+    <string name="textSellerName">Seller Name</string>
+    <string name="textAa">Aa</string>
 </resources>

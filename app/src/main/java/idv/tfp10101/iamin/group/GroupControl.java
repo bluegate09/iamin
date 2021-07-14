@@ -44,7 +44,7 @@ public class GroupControl {
             jsonObject.addProperty("memberId", memberId);
 
             // requst
-            String jsonString = RemoteAccess.getRometeData(url, new Gson().toJson(jsonObject));
+            String jsonString = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
             /** 匿名內部類別實作TypeToken，抓取 泛型 在呼叫方法 */
             Type listType = new TypeToken<List<Group>>(){}.getType();
             setLocalGroup(new Gson().fromJson(jsonString, listType));
@@ -62,7 +62,7 @@ public class GroupControl {
             jsonObject.addProperty("action", "getAll");
 
             // requst
-            String jsonString = RemoteAccess.getRometeData(url, new Gson().toJson(jsonObject));
+            String jsonString = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
             /** 匿名內部類別實作TypeToken，抓取 泛型 在呼叫方法 */
             Type listType = new TypeToken<List<Group>>(){}.getType();
             setLocalGroup(new Gson().fromJson(jsonString, listType));

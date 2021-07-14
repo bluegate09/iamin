@@ -261,7 +261,7 @@ public class MemeberCenterProfileFragment extends Fragment {
             }
             int count;
             //開thread 抓資料
-            String result = RemoteAccess.getRometeData(url, jsonObject.toString());
+            String result = RemoteAccess.getRemoteData(url, jsonObject.toString());
             try{
                 count = Integer.parseInt(result);
             }catch(NumberFormatException ex){

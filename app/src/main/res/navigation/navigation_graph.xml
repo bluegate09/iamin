@@ -18,7 +18,14 @@
         android:id="@+id/chatFragment"
         android:name="idv.tfp10101.iamin.ChatFragment"
         android:label="fragment_chat"
-        tools:layout="@layout/fragment_chat" />
+        tools:layout="@layout/fragment_chat" >
+        <action
+            android:id="@+id/action_chatFragment_to_messageFragment"
+            app:destination="@id/messageFragment" />
+        <action
+            android:id="@+id/action_chatFragment_to_logInFragment"
+            app:destination="@id/logInFragment" />
+    </fragment>
     <fragment
         android:id="@+id/logInFragment"
         android:name="idv.tfp10101.iamin.LogInFragment"
@@ -207,9 +214,4 @@
         android:name="idv.tfp10101.iamin.MessageFragment"
         android:label="fragment_message"
         tools:layout="@layout/fragment_message" />
-    <fragment
-        android:id="@+id/memberCenterMemberOrderFragment"
-        android:name="idv.tfp10101.iamin.MemberCenterMemberOrderFragment"
-        android:label="fragment_member_center_member_order"
-        tools:layout="@layout/fragment_member_center_member_order" />
 </navigation>
