@@ -22,7 +22,8 @@ public class User implements Serializable {
     }
 
     public User() {
-        
+
+
     }
 
     public User(String id, String name, String email, String password, String phonenumber, String imagePath, String token) {
