@@ -40,7 +40,7 @@
                     android:layout_alignParentStart="true"
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="55dp"
-                    android:text="welcome back"
+                    android:text="@string/welcome_back"
                     android:textSize="30sp"
                     android:textStyle="bold" />
             </RelativeLayout>
@@ -57,7 +57,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="8dp"
-                    android:hint="Email"
+                    android:hint="@string/email"
                     app:startIconDrawable="@drawable/email">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -72,7 +72,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
-                    android:hint="Password"
+                    android:hint="@string/password"
                     app:startIconDrawable="@drawable/lock">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -97,7 +97,7 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:minHeight="0dp"
-                        android:text="Forget Password"
+                        android:text="@string/forget_password"
                         android:textSize="12sp" />
 
                     <Button
@@ -107,7 +107,7 @@
                         android:layout_marginHorizontal="20dp"
                         android:layout_marginVertical="20dp"
                         android:layout_weight="1.5"
-                        android:text="Login" />
+                        android:text="@string/login" />
                 </LinearLayout>
 
                 <Button
@@ -118,7 +118,7 @@
                     android:layout_gravity="end"
                     android:gravity="center"
                     android:minHeight="0dp"
-                    android:text="Don\'t have an account yet? Register Now!"
+                    android:text="@string/don_t_have_an_account_yet_register_now"
                     android:textSize="12sp" />
 
                 <Button
@@ -129,7 +129,7 @@
                     android:layout_gravity="end"
                     android:gravity="center"
                     android:minHeight="0dp"
-                    android:text="Authenticate with phone number"
+                    android:text="@string/authenticate_with_phone_number"
                     android:textSize="12sp" />
 
                 <TextView
@@ -137,7 +137,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="40dp"
                     android:gravity="center"
-                    android:text="------------------ use other method ------------------" />
+                    android:text="@string/use_other_method" />
 
             </LinearLayout>
 
@@ -152,7 +152,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="60dp"
-                    android:text="SignInWithFB" />
+                    android:text="@string/signinwithfb" />
 
                 <com.developer.gbuttons.GoogleSignInButton
                     android:id="@+id/btSignInGoogle"

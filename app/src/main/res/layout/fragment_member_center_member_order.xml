@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Ongoing"
+            android:text="@string/ongoing"
             android:backgroundTint="#FFC107"
             />
         <Button
@@ -39,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Reach"
+            android:text="@string/reach"
             android:backgroundTint="@color/teal_200"
             />
         <Button
@@ -47,7 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Failed"
+            android:text="@string/failed"
             android:backgroundTint="#8C1111"
             />
     </com.google.android.material.button.MaterialButtonToggleGroup>

@@ -5,11 +5,15 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 
 import idv.tfp10101.iamin.network.RemoteAccess;
 
@@ -56,6 +60,7 @@ public class MemberControl {
         }
     }
 
+    //將member資料存入
     public static void setMemberData(Member member2){
         Member.getInstance().setEmail(member2.getEmail());
         Member.getInstance().setNickname(member2.getNickname());
@@ -65,17 +70,19 @@ public class MemberControl {
         Member.getInstance().setFollow_count(member2.getFollow_count());
         Member.getInstance().setUpdateTime(member2.getUpdateTime());
 
-
-//        member.setEmail(setter.get("EMAIL").getAsString());
-//        member.setNickname(setter.get("NICKNAME").getAsString());
-//        member.setPassword(setter.get("PASSWORD").getAsString());
-//        member.setPhoneNumber(setter.get("PHONE").getAsString());
-//        member.setRating(Double.parseDouble(setter.get("RATING").getAsString()));
-//        member.setFollow_count(Integer.parseInt(setter.get("FOLLOW_COUNT").getAsString()));
-//        member.setUpdateTime(Timestamp.valueOf(setter.get("UPDATE_TIME").getAsString()));
     }
 
     public static void firebasedbAddOrReplace(Context context,FirebaseFirestore db,final Member member) {
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("id", member.getuUId());
+        db.collection("Users").document(member.getuUId()).set(hashMap)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "user into firebase success: " + member.getId());
+                    } else {
+                        Log.e(TAG, "message: " + task.getException().getMessage());
+                    }
+                });
         // 如果Firestore沒有該ID的Document就建立新的，已經有就更新內容
         db.collection("members").document(member.getId()+"").set(member)
                 .addOnCompleteListener(task1 -> {
@@ -90,6 +97,19 @@ public class MemberControl {
                 });
     }
 
+    //取得會員資訊
+    public static void getMemberData(Context context,Member member){
+
+        final Gson gson2 = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
+
+        SharedPreferences pref = context.getSharedPreferences("member_ID", MODE_PRIVATE);
+        int mySqlMemberId = pref.getInt("member_ID", -1);
+        member.setId(mySqlMemberId);
+
+        String jsonIn = memberRemoteAccess(context, member, "findById");
+        Member memberObject = gson2.fromJson(jsonIn,Member.class);
+        MemberControl.setMemberData(memberObject);
+    }
 
 
 }

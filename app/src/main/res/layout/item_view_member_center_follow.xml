@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:padding="4dp"
-                android:text="Nickname"
+                android:text="@string/nickname"
                 android:textSize="40dp" />
 
             <TextView
@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:padding="4dp"
-                android:text="Rating"
+                android:text="@string/rating"
                 android:textSize="20dp" />
 
             <TextView
@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:padding="4dp"
-                android:text="Follow Count"
+                android:text="@string/follow_count"
                 android:textSize="20dp" />
 
             <TextView
@@ -67,7 +67,7 @@
             android:layout_gravity="bottom"
             android:padding="20dp"
             android:layout_marginBottom="8dp"
-            android:text="new" />
+            android:text="new!" />
 
 
     </LinearLayout>
