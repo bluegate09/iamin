@@ -99,4 +99,6 @@
     <string name="textImageDownloadFail">Image Download Fail</string>
     <string name="textSellerName">Seller Name</string>
     <string name="textAa">Aa</string>
+    <string name="textUploadSuccess">Upload Success</string>
+    <string name="textUploadFail">Upload Fail</string>
 </resources>

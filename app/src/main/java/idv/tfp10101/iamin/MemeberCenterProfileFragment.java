@@ -29,6 +29,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.yalantis.ucrop.UCrop;
@@ -36,9 +40,11 @@ import com.yalantis.ucrop.UCrop;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.network.RemoteAccess;
+import idv.tfp10101.iamin.user.User;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -49,6 +55,9 @@ public class MemeberCenterProfileFragment extends Fragment {
     private Member member;
     private ImageView ivPic;
     private byte[] image;
+    private FirebaseFirestore db;
+    private FirebaseStorage storage;
+    private User user;
     private Uri contentUri; // 拍照需要的Uri
 
     @Override
@@ -56,7 +65,10 @@ public class MemeberCenterProfileFragment extends Fragment {
         super.onCreate(savedInstanceState);
         activity = getActivity();
         member = Member.getInstance();
-        Log.d(TAG,"MC_Profile_OnCreate member: " + member.getNickname());
+        db = FirebaseFirestore.getInstance();
+        storage = FirebaseStorage.getInstance();
+        user = User.getInstance();
+//        Log.d(TAG,"MC_Profile_OnCreate member: " + member.getNickname());
 
     }
 
@@ -227,6 +239,7 @@ public class MemeberCenterProfileFragment extends Fragment {
         if (result.getResultCode() == RESULT_OK && result.getData() != null) {
             // 截圖的Uri
             Uri cropImageUri = UCrop.getOutput(result.getData());
+            uploadImage(cropImageUri);
             if (cropImageUri != null) {
                 Bitmap bitmap = null;
                 try {
@@ -249,6 +262,29 @@ public class MemeberCenterProfileFragment extends Fragment {
 
 
     private void sendInfotoMysql(Member member) {
+
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                if (task.getResult() != null) {
+                    String token = task.getResult();
+                    HashMap<String, String> hashMap = new HashMap<>();
+                    hashMap.put("id", member.getuUId());
+                    hashMap.put("email", member.getEmail());
+                    hashMap.put("name", member.getNickname());
+                    hashMap.put("phonenumber", member.getPhoneNumber());
+                    hashMap.put("token", token);
+                    db.collection("Users").document(member.getuUId()).set(hashMap)
+                            .addOnCompleteListener(task1 -> {
+                                if (task1.isSuccessful()) {
+                                    Log.d(TAG, "user into firebase success: " + member.getId());
+                                } else {
+                                    Log.e(TAG, "message: " + task.getException().getMessage());
+                                }
+                            });
+                }
+            }
+        });
+
         if (RemoteAccess.networkConnected(activity)) {
             String url = RemoteAccess.URL_SERVER + "memberServelt";
             JsonObject jsonObject = new JsonObject();
@@ -277,6 +313,40 @@ public class MemeberCenterProfileFragment extends Fragment {
         } else {
             Toast.makeText(activity, "No net work", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void uploadImage(Uri imageUri) {
+        // 取得storage根目錄位置
+        StorageReference rootRef = storage.getReference();
+        final String imagePath = getString(R.string.app_name) + "/images/" + System.currentTimeMillis();
+        // 建立當下目錄的子路徑
+        final StorageReference imageRef = rootRef.child(imagePath);
+        // 將儲存在uri的照片上傳
+        imageRef.putFile(imageUri)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        String message = getString(R.string.textUploadSuccess);
+                        Log.d(TAG, message);
+                        user.setImagePath(imagePath);
+                        db.collection("Users").document(member.getuUId())
+                                .update("imagePath", imagePath).addOnCompleteListener(task1 -> {
+                            if (task1.isSuccessful()) {
+                                Log.d(TAG, "imagePath to firebase success");
+                            } else {
+                                Log.d(TAG, "imagePath to firebase fail");
+                            }
+                        });
+//                        Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
+                        // 下載剛上傳好的照片
+//                        downloadImage(imagePath);
+                    } else {
+                        String message = task.getException() == null ?
+                                getString(R.string.textUploadFail) :
+                                task.getException().getMessage();
+                        Log.e(TAG, "message: " + message);
+//                        Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
 }
