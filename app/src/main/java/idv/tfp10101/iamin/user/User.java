@@ -16,6 +16,7 @@ public class User implements Serializable {
 
         if(userInstance == null){
             userInstance = new User();
+
         }
         return userInstance;
     }
