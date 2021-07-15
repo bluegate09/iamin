@@ -602,7 +602,7 @@ public class GroupInsertFragment extends Fragment {
                 .setFragmentResultListener("requestLocationKey", this, (requestKey, bundle) -> {
                     // 畫面移動到指定的位置
                     scrollViewMain.scrollTo(0, imageViewAddLocation.getTop());
-
+                    
                     GroupInsertAddViewData giavd = GroupInsertAddViewData.getGroupInsertAddViewData();
                     /** 商品清單處理 */
                     showLinearLayoutMerchs(giavd.MerchsId());
