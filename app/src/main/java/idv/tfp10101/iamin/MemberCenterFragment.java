@@ -91,10 +91,16 @@ public class MemberCenterFragment extends Fragment {
         //前往賣家中心
 //        view.findViewById(R.id.btMCSellerCenter).setOnClickListener(v ->
 //                Navigation.findNavController(v).navigate(R.id.action_memberCenter_to_MC_SellerCenter));
+        //回到賣家
+        view.findViewById(R.id.btBacktoHomepage).setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_merchbrowseFragment));
 
         //登出
         view.findViewById(R.id.btMCLogout).setOnClickListener(v -> {
-            //登出 firebase google facbook
+            Log.d(TAG,"member: " + member.getId());
+            //update登出時間
+            MemberControl.memberRemoteAccess(activity,member,"logout");
+            //登出
             auth.signOut();
             //刪除 SharedPreferences 裡的member_ID
             activity.getSharedPreferences("member_ID",MODE_PRIVATE).edit().remove("member_ID").apply();
@@ -105,6 +111,7 @@ public class MemberCenterFragment extends Fragment {
             navController.popBackStack(R.id.memberCenterFragment, true);
             navController.navigate(R.id.homeFragment);
 
+
         });
     }
 
@@ -112,14 +119,13 @@ public class MemberCenterFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        //有更新才去資料庫撈新資料
-        if (!member.isUpdate()) {
             Gson gson = new Gson();
-//            String jsonIn = memberRemoteAccess(activity, member, "findById");
-//            member = gson.fromJson(jsonIn,Member.class);
-            Log.d(TAG, "OnCreate: " + member.isUpdate());
+            String jsonIn = memberRemoteAccess(activity, member, "findById");
+            member = gson.fromJson(jsonIn,Member.class);
+            MemberControl.setMemberData(member);
+//            Log.d(TAG, "OnCreate: " + member.isUpdate());
             member.setUpdate(true);
-        }
+
 
     }
 

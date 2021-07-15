@@ -12,6 +12,6 @@
         android:title="@string/textChat" />
     <item
         android:id="@+id/logInFragment"
-        android:icon="@drawable/icon_user"
-        android:title="MemberCenter" />
+        android:icon="@drawable/member_center"
+        android:title="@string/membercenter" />
 </menu>

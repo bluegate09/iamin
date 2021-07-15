@@ -67,6 +67,8 @@ public class Member implements Serializable {
         this.FCM_token = FCM_token;
     }
 
+
+
     public int getId() {
         return id;
     }
@@ -202,4 +204,5 @@ public class Member implements Serializable {
     public void setUpdate(boolean update) {
         this.update = update;
     }
+
 }

@@ -5,6 +5,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 
@@ -61,16 +62,26 @@ public class MainActivity extends AppCompatActivity {
                 Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-            if (
-
-                    navController.getCurrentDestination().getId() == R.id.homeFragment ||
-                            navController.getCurrentDestination().getId() == R.id.chatFragment ||
-                            navController.getCurrentDestination().getId() == R.id.logInFragment
-            ) {
-                bottomNavigationView.setVisibility(View.VISIBLE);
-            } else {
+            if(destination.getId() == R.id.memberCenterMyWalletFragment||
+               destination.getId() == R.id.logInFragment||
+               destination.getId() == R.id.signUpFragment||
+               destination.getId() == R.id.phoneAuthFragment||
+               destination.getId() == R.id.memeberCenterProfileFragment
+            ){
                 bottomNavigationView.setVisibility(View.GONE);
+            }else{
+                bottomNavigationView.setVisibility(View.VISIBLE);
             }
+
+//            if (
+//                    navController.getCurrentDestination().getId() == R.id.homeFragment ||
+//                    navController.getCurrentDestination().getId() == R.id.chatFragment
+//                            || navController.getCurrentDestination().getId() == R.id.logInFragment
+//            ) {
+//                bottomNavigationView.setVisibility(View.VISIBLE);
+//            } else {
+//                bottomNavigationView.setVisibility(View.GONE);
+//            }
         });
     }
 }
