@@ -13,6 +13,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import java.sql.Timestamp;
+import java.util.HashMap;
 
 import idv.tfp10101.iamin.network.RemoteAccess;
 
@@ -30,7 +31,6 @@ public class MemberControl {
             jsonObject.addProperty("member", new Gson().toJson(member));
 
             return RemoteAccess.getRemoteData(url, jsonObject.toString());
-
         } else {
             Toast.makeText(context, "沒有網路", Toast.LENGTH_SHORT).show();
             return "";
@@ -73,6 +73,16 @@ public class MemberControl {
     }
 
     public static void firebasedbAddOrReplace(Context context,FirebaseFirestore db,final Member member) {
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("id", member.getuUId());
+        db.collection("Users").document(member.getuUId()).set(hashMap)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "user into firebase success: " + member.getId());
+                    } else {
+                        Log.e(TAG, "message: " + task.getException().getMessage());
+                    }
+                });
         // 如果Firestore沒有該ID的Document就建立新的，已經有就更新內容
         db.collection("members").document(member.getId()+"").set(member)
                 .addOnCompleteListener(task1 -> {

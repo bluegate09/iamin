@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:ignore="StateListReachable">
+
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <!--圓角-->
+            <corners android:radius="10dp" />
+            <!--顏色-->
+            <solid android:color="@color/colorSecondary_darker" />
+            <!--邊框-->
+            <stroke android:width="1dp" android:color="@color/black" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <!-- 圓角 -->
+            <corners android:radius="10dp" />
+            <!--顏色-->
+            <solid android:color="@color/colorSecondary" />
+            <!-- 邊框 -->
+            <stroke android:width="1dp" android:color="@color/black" />
+        </shape>
+    </item>
+
+</selector>

@@ -57,7 +57,7 @@ public class HomeFragment extends Fragment {
     private BottomNavigationView bottomNavigationView;
     private ExecutorService executor;
     private RecyclerView recyclerViewGroup;
-    private List<HomeData> localHomeDatas;
+    private List<Group> localGroups;
     private SwipeRefreshLayout swipeRefreshLayout;
     private SearchView searchView;
     @Override
@@ -107,13 +107,13 @@ public class HomeFragment extends Fragment {
         findView(view);
 
         //呼叫
-        HomeDataControl.getAllHomeData(activity);
-        localHomeDatas = HomeDataControl.getLocalHomeDatas();
-        if (localHomeDatas == null || localHomeDatas.isEmpty()) {
+        HomeDataControl.getAllGroup(activity);
+        localGroups = HomeDataControl.getLocalGroups();
+        if (localGroups == null || localGroups.isEmpty()) {
             Toast.makeText(activity, R.string.textNoGroupsFound, Toast.LENGTH_SHORT).show();
         }
 
-        showHomeData(localHomeDatas);
+        showGroup(localGroups);
         //輸入監聽
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -123,17 +123,17 @@ public class HomeFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                List<HomeData> searchHomdData = new ArrayList<>();
+                List<Group> searchGroup = new ArrayList<>();
                 if (newText.equals("")){
-                    showHomeData(localHomeDatas);
+                    showGroup(localGroups);
                 }else {
                     // 搜尋原始資料內有無包含關鍵字(不區別大小寫)
-                    for (HomeData homeData : localHomeDatas) {
-                        if (homeData.getName().toUpperCase().contains(newText.toUpperCase())) {
-                            searchHomdData.add(homeData);
+                    for (Group group : localGroups) {
+                        if (group.getName().toUpperCase().contains(newText.toUpperCase())) {
+                            searchGroup.add(group);
                         }
                     }
-                    showHomeData(searchHomdData);
+                    showGroup(searchGroup);
                 }
                 return true;
             }
@@ -141,7 +141,7 @@ public class HomeFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(() -> {
             //開啟動畫
             swipeRefreshLayout.setRefreshing(true);
-            showHomeData(localHomeDatas);
+            showGroup(localGroups);
             searchView.setQuery("",false);
             swipeRefreshLayout.setRefreshing(false);
         });
@@ -155,7 +155,7 @@ public class HomeFragment extends Fragment {
                 switch (item.getItemId()){
                     case R.id.no:
                         searchView.setQuery("",false);
-                        showHomeData(localHomeDatas);
+                        showGroup(localGroups);
                         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                             @Override
                             public boolean onQueryTextSubmit(String query) {
@@ -164,17 +164,17 @@ public class HomeFragment extends Fragment {
 
                             @Override
                             public boolean onQueryTextChange(String newText) {
-                                List<HomeData> searchHomdData = new ArrayList<>();
+                                List<Group> searchGroup = new ArrayList<>();
                                 if (newText.equals("")){
-                                    showHomeData(localHomeDatas);
+                                    showGroup(localGroups);
                                 }else {
                                     // 搜尋原始資料內有無包含關鍵字(不區別大小寫)
-                                    for (HomeData homeData : localHomeDatas) {
-                                        if (homeData.getName().toUpperCase().contains(newText.toUpperCase())) {
-                                            searchHomdData.add(homeData);
+                                    for (Group group : localGroups) {
+                                        if (group.getName().toUpperCase().contains(newText.toUpperCase())) {
+                                            searchGroup.add(group);
                                         }
                                     }
-                                    showHomeData(searchHomdData);
+                                    showGroup(searchGroup);
                                 }
                                 return true;
                             }
@@ -182,26 +182,26 @@ public class HomeFragment extends Fragment {
                         swipeRefreshLayout.setOnRefreshListener(() -> {
                             //開啟動畫
                             swipeRefreshLayout.setRefreshing(true);
-                            showHomeData(localHomeDatas);
+                            showGroup(localGroups);
                             searchView.setQuery("",false);
                             swipeRefreshLayout.setRefreshing(false);
                         });
                         Toast.makeText(activity, "未分類", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.food:
-                        choosesort(1,localHomeDatas);
+                        choosesort(1,localGroups);
                         Toast.makeText(activity, "美食", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.life:
-                        choosesort(2,localHomeDatas);
+                        choosesort(2,localGroups);
                         Toast.makeText(activity, "生活用品", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.theerc:
-                        choosesort(3,localHomeDatas);
+                        choosesort(3,localGroups);
                         Toast.makeText(activity, "3C", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.other:
-                        choosesort(4,localHomeDatas);
+                        choosesort(4,localGroups);
                         Toast.makeText(activity, "其他", Toast.LENGTH_SHORT).show();
                         return true;
                 }
@@ -210,15 +210,15 @@ public class HomeFragment extends Fragment {
         });
     }
     //根據所選的分類去搜尋並可以下拉更新
-    private void choosesort(int category_Id,List<HomeData> categoryHomeData){
+    private void choosesort(int category_Id,List<Group> categoryGroup){
         searchView.setQuery("",false);
-        List<HomeData> selectHomeData = new ArrayList<>();
-        for (HomeData category : categoryHomeData){
-            if (category.getGroup_category_Id() == category_Id){
-                selectHomeData.add(category);
+        List<Group> selectGroup = new ArrayList<>();
+        for (Group category : categoryGroup){
+            if (category.getCategoryId() == category_Id){
+                selectGroup.add(category);
             }
         }
-        List<HomeData> searchHomdData = new ArrayList<>();
+        List<Group> searchGroup = new ArrayList<>();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -229,40 +229,40 @@ public class HomeFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (newText.equals("")){
-                    showHomeData(selectHomeData);
+                    showGroup(searchGroup);
                 }else {
                     // 搜尋原始資料內有無包含關鍵字(不區別大小寫)
-                    for (HomeData homeData : selectHomeData) {
-                        if (homeData.getName().toUpperCase().contains(newText.toUpperCase())) {
-                            searchHomdData.add(homeData);
+                    for (Group group : searchGroup) {
+                        if (group.getName().toUpperCase().contains(newText.toUpperCase())) {
+                            searchGroup.add(group);
                         }
                     }
-                    showHomeData(searchHomdData);
+                    showGroup(searchGroup);
                 }
                 return true;
             }
         });
-        showHomeData(selectHomeData);
+        showGroup(selectGroup);
 
         swipeRefreshLayout.setOnRefreshListener(() ->{
             swipeRefreshLayout.setRefreshing(true);
             searchView.setQuery("",false);
-            showHomeData(selectHomeData);
+            showGroup(selectGroup);
             swipeRefreshLayout.setRefreshing(false);
         });
     }
 
-    private void showHomeData(List<HomeData> localHomeDatas) {
+    private void showGroup(List<Group> localGroups) {
         /** RecyclerView */
         // 檢查
         HomeFragment.HomeAdapter groupAdapter = (HomeFragment.HomeAdapter) recyclerViewGroup.getAdapter();
         if (groupAdapter == null) {
-            recyclerViewGroup.setAdapter(new HomeFragment.HomeAdapter(activity, localHomeDatas));
+            recyclerViewGroup.setAdapter(new HomeFragment.HomeAdapter(activity, localGroups));
             int px = (int) Constants.convertDpToPixel(8, activity); // 間距 8 dp
             recyclerViewGroup.addItemDecoration(new Constants.SpacesItemDecoration("bottom", px));
         }else{
             // 資訊重新載入刷新
-            groupAdapter.setHomeDatas(localHomeDatas);
+            groupAdapter.setGroups(localGroups);
             groupAdapter.notifyDataSetChanged();
         }
     }
@@ -276,13 +276,13 @@ public class HomeFragment extends Fragment {
     }
 
     private class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyHomeDataViewHolder>{
-        private List<HomeData> rsHomeDatas;
+        private List<Group> rsGroups;
         private LayoutInflater layoutInflater;
         private final int imageSize;
 
-        public HomeAdapter(Context context, List<HomeData> homedatas){
+        public HomeAdapter(Context context, List<Group> groups){
             layoutInflater = LayoutInflater.from(context);
-            rsHomeDatas = homedatas;
+            rsGroups = groups;
             /* 螢幕寬度除以4當作將圖的尺寸 */
             imageSize = getResources().getDisplayMetrics().widthPixels / 4;
         }
@@ -301,8 +301,8 @@ public class HomeFragment extends Fragment {
                 pr_bar = itemView.findViewById(R.id.pr_bar);
             }
         }
-        public void setHomeDatas(List<HomeData> HomeDatas) {
-            rsHomeDatas = HomeDatas;
+        public void setGroups(List<Group> Groups) {
+            rsGroups = Groups;
         }
 
         @NonNull
@@ -314,28 +314,22 @@ public class HomeFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull HomeFragment.HomeAdapter.MyHomeDataViewHolder holder, int position) {
-        final HomeData rsHomeData = rsHomeDatas.get(position);
-        int GroupID = rsHomeData.getGroupId();
+        final Group rsGroup = rsGroups.get(position);
+        int GroupID = rsGroup.getGroupId();
         Bitmap Groupbitmap = HomeDataControl.getGroupimage(activity,GroupID,imageSize,executor);
             if (Groupbitmap != null) {
                 holder.imv_group.setImageBitmap(Groupbitmap);
             } else {
                 holder.imv_group.setImageResource(R.drawable.no_image);
             }
-        holder.txv_group_name.setText(rsHomeData.getName());
-        Timestamp ts = rsHomeData.getConditionTime();
+        holder.txv_group_name.setText(rsGroup.getName());
+        Timestamp ts = rsGroup.getConditionTime();
         DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
         holder.txv_group_conditionTime.setText("結單日期:"+"\n"+sdf.format(ts));
-        holder.pr_bar.setMax(rsHomeData.getGoal());
-        holder.pr_bar.setProgress(rsHomeData.getProgress());
-        holder.txv_progress.setText("("+String.valueOf(rsHomeData.getProgress())+"/"+String.valueOf(rsHomeData.getGoal())+")");
-            //發送商品價格請求
-            HomeDataControl.getAllGroupPrice(activity,GroupID);
-            List<HomeData> prices = HomeDataControl.getLocalHomeDatas();
-            List<Integer> price = prices.get(0).getPrice();
-            int min = price.get(0);
-            int max = price.get(price.size()-1);
-            holder.txv_group_price.setText("價格:"+String.valueOf(min)+"~"+String.valueOf(max));
+        holder.pr_bar.setMax(rsGroup.getGoal());
+        holder.pr_bar.setProgress(rsGroup.getProgress());
+        holder.txv_progress.setText("("+String.valueOf(rsGroup.getProgress())+"/"+String.valueOf(rsGroup.getGoal())+")");
+
 
             //設定點擊商品觸發
             holder.itemView.setOnClickListener(v ->{
@@ -349,7 +343,7 @@ public class HomeFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return rsHomeDatas == null ? 0 : rsHomeDatas.size();
+            return rsGroups == null ? 0 : rsGroups.size();
         }
     }
 
