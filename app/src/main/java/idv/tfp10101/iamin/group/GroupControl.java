@@ -50,6 +50,9 @@ public class GroupControl {
 
             // requst
             String jsonString = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
+            if (jsonString == null) {
+                return;
+            }
             /** 匿名內部類別實作TypeToken，抓取 泛型 在呼叫方法 */
             Type listType = new TypeToken<List<Group>>(){}.getType();
             setLocalGroup(new Gson().fromJson(jsonString, listType));

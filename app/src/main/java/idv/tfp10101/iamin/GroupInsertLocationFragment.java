@@ -38,6 +38,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 
@@ -65,6 +67,8 @@ public class GroupInsertLocationFragment extends Fragment {
     private Geocoder geocoder;
     // Google Map 的操作與設定
     private GoogleMap map;
+    // 地圖標記
+    List<Marker> markers;
 
     // 元件
     private SearchView searchViewLocation;
@@ -122,6 +126,13 @@ public class GroupInsertLocationFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         findViews(view);
+
+        // 每次都重置
+        lats = null;
+        lngs = null;
+        newLats = null;
+        newLngs = null;
+        markers = new ArrayList<>();
 
         // Bundle 資料抓取
         Bundle bundle = getArguments();
@@ -267,6 +278,9 @@ public class GroupInsertLocationFragment extends Fragment {
                     // 儲存地址名稱
                     Address = query;
                     // 取得 緯經度
+                    if (lat == address.getLatitude() && lng == address.getLongitude()) {
+                        return false;
+                    }
                     lat = address.getLatitude();
                     lng = address.getLongitude();
                     Toast.makeText(activity, "Lat: " + lat + " Lng: " + lng, Toast.LENGTH_SHORT).show();
@@ -274,7 +288,7 @@ public class GroupInsertLocationFragment extends Fragment {
                     cameraSetting();
                     // 加入標記
                     addMarker(lat, lng, Address);
-                    return true;
+                    return false;
                 }else {
                     Address = "";
                     return false;
@@ -332,6 +346,8 @@ public class GroupInsertLocationFragment extends Fragment {
             map = googleMap;
             // 標示先前所選擇的地址
             handleMarkers(lats, lngs);
+            // 讓所有標記都能顯示在畫面上
+            handleMarkersInView();
         });
     }
 
@@ -361,10 +377,15 @@ public class GroupInsertLocationFragment extends Fragment {
      */
     private void addMarker(double lat, double lng, String address) {
         LatLng position = new LatLng(lat, lng);
-        map.addMarker(new MarkerOptions()
+        Marker marker = map.addMarker(new MarkerOptions()
                 .position(position)
                 .title("12345")
                 .snippet(address));
+
+        markers.add(marker);
+
+        // 讓所有標記都能顯示在畫面上
+        handleMarkersInView();
     }
 
     /**
@@ -377,12 +398,34 @@ public class GroupInsertLocationFragment extends Fragment {
             return;
         }
         for (int i = 0; i < lats.length; i++) {
+            int number = i + 1;
             LatLng position = new LatLng(lats[i], lngs[i]);
-            map.addMarker(new MarkerOptions()
+            Marker marker = map.addMarker(new MarkerOptions()
                     .position(position)
-                    .title("地址：" + i++)
+                    .title("地址：" + number)
                     .snippet(""));
+
+            markers.add(marker);
         }
+    }
+
+    /**
+     * 讓所有標記都能顯示在畫面上
+     */
+    private void handleMarkersInView() {
+        if (markers.isEmpty()) {
+            return;
+        }
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (Marker marker : markers) {
+            builder.include(marker.getPosition());
+        }
+        LatLngBounds bounds = builder.build();
+
+        int padding = 100; // 以像素為單位從地圖邊緣偏移
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+
+        map.animateCamera(cu);
     }
 
     /**

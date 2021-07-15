@@ -1,5 +1,8 @@
 package idv.tfp10101.iamin.member;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -104,7 +107,6 @@ public class MyWallet {
 	public void setGroupDetail(List<MyWallet> groupDetail) {
 		this.groupDetail = groupDetail;
 	}
-	
-	
-	
+
+
 }

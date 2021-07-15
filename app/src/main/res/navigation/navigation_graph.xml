@@ -69,6 +69,9 @@
         <action
             android:id="@+id/action_phoneAuthFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_phoneAuthFragment_to_memberCenterFragment"
+            app:destination="@id/memberCenterFragment" />
     </fragment>
     <fragment
         android:id="@+id/memberCenterFragment"
@@ -84,6 +87,9 @@
         <action
             android:id="@+id/action_memberCenterFragment_to_memeberCenterProfileFragment"
             app:destination="@id/memeberCenterProfileFragment" />
+        <action
+            android:id="@+id/action_memberCenterFragment_to_merchbrowseFragment"
+            app:destination="@id/merchbrowseFragment" />
     </fragment>
     <fragment
         android:id="@+id/memeberCenterFollowFragment"
@@ -94,12 +100,21 @@
         android:id="@+id/memberCenterMyWalletFragment"
         android:name="idv.tfp10101.iamin.MemberCenterMyWalletFragment"
         android:label="fragment_member_center_my_wallet"
-        tools:layout="@layout/fragment_member_center_my_wallet" />
+        tools:layout="@layout/fragment_member_center_my_wallet" >
+        <action
+            android:id="@+id/action_memberCenterMyWalletFragment_to_memberCenterMyWalletDetailsFragment"
+            app:destination="@id/memberCenterMyWalletDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/memeberCenterProfileFragment"
         android:name="idv.tfp10101.iamin.MemeberCenterProfileFragment"
         android:label="fragment_memeber_center_profile"
         tools:layout="@layout/fragment_memeber_center_profile" />
+    <fragment
+        android:id="@+id/memberCenterMyWalletDetailsFragment"
+        android:name="idv.tfp10101.iamin.MemberCenterMyWalletDetailsFragment"
+        android:label="fragment_member_center_my_wallet_details"
+        tools:layout="@layout/fragment_member_center_my_wallet_details" />
     <fragment
         android:id="@+id/paymentInformationFragment"
         android:name="idv.tfp10101.iamin.PaymentInformationFragment"

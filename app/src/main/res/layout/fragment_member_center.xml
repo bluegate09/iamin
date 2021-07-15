@@ -18,7 +18,6 @@
             android:id="@+id/ivProfilePic"
             android:layout_width="120dp"
             android:layout_height="120dp"
-            android:contentDescription="UserPortrait"
             android:layout_centerVertical="true"
             android:padding="8dp"
             app:civ_border_width="2dp"
@@ -30,21 +29,34 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/ivProfilePic"
-            android:text="UserName"
+            android:text="@string/username"
             android:textSize="34sp"
             android:layout_marginTop="65dp"
             android:layout_marginStart="8dp"/>
 
-        <TextView
-            android:id="@+id/mcEmail"
-            android:layout_width="wrap_content"
+        <ScrollView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/mcUsername"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="2dp"
-            android:layout_toEndOf="@id/ivProfilePic"
-            android:text="Account"
-            android:textSize="24sp" />
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="20dp"
+            android:layout_toEndOf="@+id/ivProfilePic">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/mcEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/account"
+                    android:textSize="24sp" />
+            </LinearLayout>
+        </ScrollView>
 
     </RelativeLayout>
 
@@ -82,7 +94,7 @@
                     android:layout_below="@id/heartIcon"
                     android:layout_centerInParent="true"
                     android:includeFontPadding="false"
-                    android:text="followCount"
+                    android:text="@string/followcount"
                     android:textSize="20sp" />
             </RelativeLayout>
 
@@ -116,7 +128,7 @@
                     android:layout_below="@id/rating"
                     android:layout_centerInParent="true"
                     android:includeFontPadding="false"
-                    android:text="score"
+                    android:text="@string/score"
                     android:textSize="20sp" />
             </RelativeLayout>
 
@@ -140,7 +152,7 @@
                 android:layout_marginEnd="8dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
-                android:text="Profile"
+                android:text="@string/profile"
                 android:textAlignment="textStart" />
 
             <Button
@@ -151,7 +163,7 @@
                 android:layout_marginEnd="8dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
-                android:text="Follow"
+                android:text="@string/follow"
                 android:textAlignment="textStart" />
 
             <Button
@@ -162,7 +174,7 @@
                 android:layout_marginEnd="8dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
-                android:text="SellerCenter"
+                android:text="@string/sellercenter"
                 android:textAlignment="textStart" />
 
             <Button
@@ -173,7 +185,7 @@
                 android:layout_marginEnd="8dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
-                android:text="OrderList"
+                android:text="@string/orderlist"
                 android:textAlignment="textStart" />
 
             <Button
@@ -184,7 +196,17 @@
                 android:layout_marginEnd="8dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
-                android:text="MyWallet"
+                android:text="@string/mywallet"
+                android:textAlignment="textStart" />
+            <Button
+                android:id="@+id/btBacktoHomepage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:text="@string/homepage"
                 android:textAlignment="textStart" />
 
             <Button
@@ -196,7 +218,7 @@
                 android:layout_marginEnd="8dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
-                android:text="Logout"
+                android:text="@string/logout"
                 android:textAlignment="textStart" />
         </LinearLayout>
     </ScrollView>

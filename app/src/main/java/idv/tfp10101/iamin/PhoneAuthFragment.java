@@ -79,7 +79,7 @@ public class PhoneAuthFragment extends Fragment {
         view.findViewById(R.id.btSendCode).setOnClickListener(v -> {
             String phone = phoneNumber.getText().toString().trim();
             if (phone.isEmpty()) {
-                phoneNumber.setError("Cannot be empty");
+                phoneNumber.setError(getString(R.string.cannotbeempty));
                 return;
             }
             requestVerificationCode(phone);
@@ -90,7 +90,7 @@ public class PhoneAuthFragment extends Fragment {
         view.findViewById(R.id.btReSendCode).setOnClickListener(v -> {
             String phone = phoneNumber.getText().toString().trim();
             if (phone.isEmpty()) {
-                phoneNumber.setError("Cannot be empty");
+                phoneNumber.setError(getString(R.string.cannotbeempty));
                 return;
             }
             resendVerificationCode(phone,mResendToken);
@@ -101,7 +101,7 @@ public class PhoneAuthFragment extends Fragment {
         view.findViewById(R.id.btOTPConfirm).setOnClickListener(v -> {
             String verificationCode = otpEditText.getText().toString().trim();
             if(verificationCode.isEmpty()){
-                otpEditText.setError("Cannot be empty");
+                otpEditText.setError(getString(R.string.cannotbeempty));
             }
             Log.d(TAG,"mVerificationId: " +mVerificationId);
             // 將應用程式收到的驗證識別代號(verificationId)與user輸入的簡訊驗證碼(verificationCode)送至Firebase
@@ -144,7 +144,7 @@ public class PhoneAuthFragment extends Fragment {
                 // now need to ask the user to enter the code and then construct a credential
                 // by combining the code with a verification ID.
                 Log.d(TAG, "onCodeSent:" + verificationId);
-
+                Toast.makeText(activity, "Code sent. Code number is 988334", Toast.LENGTH_SHORT).show();
                 // Save verification ID and resending token so we can use them later
                 String myTestCode = "s";
                 mVerificationId = verificationId;
@@ -162,13 +162,16 @@ public class PhoneAuthFragment extends Fragment {
                 FirebaseUser user = task.getResult().getUser();
 //                Toast.makeText(activity, "signInWithCredential:success", Toast.LENGTH_SHORT).show();
 
-                member.setuUId(auth.getCurrentUser().getUid());
-                String mySqlMemberId = memberRemoteAccess(activity,member,"signup");
-                member.setEmail("User" + mySqlMemberId + "@phoneAuth");
-                storeMemberIdSharedPreference(activity,mySqlMemberId);
 
+                member.setuUId(auth.getCurrentUser().getUid());
+                member.setPhoneNumber(auth.getCurrentUser().getPhoneNumber());
+                member.setPassword(auth.getCurrentUser().getPhoneNumber());
+                member.setNickname("User"+auth.getCurrentUser().getPhoneNumber().substring(9,13));
+                String mySqlMemberId = memberRemoteAccess(activity,member,"signup");
+                storeMemberIdSharedPreference(activity,mySqlMemberId);
+                member.setId(Integer.parseInt(mySqlMemberId));
                 Navigation.findNavController(requireView())
-                        .navigate(R.id.action_phoneAuthFragment_to_homeFragment);
+                        .navigate(R.id.action_phoneAuthFragment_to_memberCenterFragment);
 
             }else{
                 if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
@@ -181,8 +184,6 @@ public class PhoneAuthFragment extends Fragment {
             }
         });
     }
-
-
 
     private void requestVerificationCode(String phone) {
 

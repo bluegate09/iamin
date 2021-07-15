@@ -107,18 +107,28 @@ public class MainActivity extends AppCompatActivity {
         NavController navController =
                 Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
-//        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+            if(destination.getId() == R.id.memberCenterMyWalletFragment||
+               destination.getId() == R.id.logInFragment||
+               destination.getId() == R.id.signUpFragment||
+               destination.getId() == R.id.phoneAuthFragment||
+               destination.getId() == R.id.memeberCenterProfileFragment
+            ){
+                bottomNavigationView.setVisibility(View.GONE);
+            }else{
+                bottomNavigationView.setVisibility(View.VISIBLE);
+            }
+
 //            if (
-//
 //                    navController.getCurrentDestination().getId() == R.id.homeFragment ||
-//                            navController.getCurrentDestination().getId() == R.id.chatFragment ||
-//                            navController.getCurrentDestination().getId() == R.id.logInFragment
+//                    navController.getCurrentDestination().getId() == R.id.chatFragment
+//                            || navController.getCurrentDestination().getId() == R.id.logInFragment
 //            ) {
 //                bottomNavigationView.setVisibility(View.VISIBLE);
 //            } else {
 //                bottomNavigationView.setVisibility(View.GONE);
 //            }
-//        });
+        });
     }
 
 

@@ -123,7 +123,6 @@ public class MemeberCenterFollowFragment extends Fragment {
 
 //            Log.d(TAG,"jsonIn: " + jsonIn);
             Type listType = new TypeToken<List<Member>>() {}.getType();
-
             members = gson2.fromJson(jsonIn, listType);
 //            Log.d(TAG,"members: " + members);
 
@@ -148,7 +147,7 @@ public class MemeberCenterFollowFragment extends Fragment {
 
         class MyViewHolder extends RecyclerView.ViewHolder {
             ImageView imageView;
-            TextView tvNickname, tvRating, tvFollowCount, tvFollowBt, tvStatus, tvfollowBt;
+            TextView tvNickname, tvRating, tvFollowCount, tvFollowBt, tvStatus;
 
             MyViewHolder(View itemView) {
                 super(itemView);
@@ -183,7 +182,7 @@ public class MemeberCenterFollowFragment extends Fragment {
             myViewHolder.tvNickname.setText(member.getNickname());
             myViewHolder.tvRating.setText(ratingText);
             myViewHolder.tvFollowCount.setText(followCountText);
-            myViewHolder.tvStatus.setText("TODO");
+            myViewHolder.tvStatus.setText("");
             myViewHolder.tvFollowBt.setOnClickListener(v -> {
 
                 String url = RemoteAccess.URL_SERVER + "memberServelt";

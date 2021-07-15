@@ -2,7 +2,7 @@ package idv.tfp10101.iamin;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
@@ -26,6 +26,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.protobuf.Empty;
 
 import java.sql.Timestamp;
@@ -41,9 +43,12 @@ import idv.tfp10101.iamin.Data.HomeData;
 import idv.tfp10101.iamin.Data.HomeDataControl;
 import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.group.GroupControl;
+import idv.tfp10101.iamin.member.Member;
+import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.merch.Merch;
 import idv.tfp10101.iamin.merch.MerchControl;
 
+import static android.content.Context.MODE_PRIVATE;
 import static android.media.CamcorderProfile.get;
 
 
@@ -76,6 +81,27 @@ public class HomeFragment extends Fragment {
         activity.setTitle("首頁");
         view = inflater.inflate(R.layout.fragment_home, container, false);
         return view;
+    }
+    /*
+    取得會員資料
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+        //先前有登入就取會員資料
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser != null){
+            SharedPreferences pref = activity.getSharedPreferences("member_ID",
+                    MODE_PRIVATE);
+            int mySqlMemberId = pref.getInt("member_ID", -1);
+            //小於0代表出問題 所以return
+            if(mySqlMemberId < 0){
+                return;
+            }
+            Member member = Member.getInstance();
+            member.setId(mySqlMemberId);
+            MemberControl.getMemberData(activity,member);
+        }
     }
 
     @Override

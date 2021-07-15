@@ -32,20 +32,20 @@
                     android:id="@+id/textView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Title"
+                    android:text="@string/title"
                     android:textSize="40dp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Price"
+                    android:text="@string/price"
                     android:textSize="30dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Time"
+                    android:text="@string/time"
                     android:textSize="30dp" />
 
                 <RelativeLayout
@@ -70,7 +70,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Loaction"
+                    android:text="@string/loaction"
                     android:textSize="30dp" />
 
 
@@ -87,7 +87,7 @@
         android:layout_margin="8dp"
         android:background="@color/colorRed"
         android:padding="8dp"
-        android:text="status"
+        android:text="@string/status"
         android:textSize="30dp" />
 
 </androidx.cardview.widget.CardView>

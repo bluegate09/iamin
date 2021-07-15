@@ -17,7 +17,7 @@
         android:background="@drawable/searchview_background"
         android:iconifiedByDefault="false"
         android:queryBackground="@android:color/transparent"
-        android:queryHint="Search" />
+        android:queryHint="@string/search" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvFollowRecyclerView"
