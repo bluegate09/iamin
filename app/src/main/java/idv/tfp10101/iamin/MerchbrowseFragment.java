@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,9 @@ import idv.tfp10101.iamin.merch.MerchControl;
 public class MerchbrowseFragment extends Fragment {
     private Activity activity;
     private View view;
-    private int id;
+    private int groupID,sellerID,progress,goal,payment_method,group_status,condition_count;
+    private String contact_number,caution;
+    private Timestamp condition_Time;
     private List<Merch> localMerchs;
     private RecyclerView recyclerViewMerch;
     private Button btn_buy,btn_back,btn_next;
@@ -57,10 +60,23 @@ public class MerchbrowseFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         findView(view);
-
-        Bundle bundle = getArguments();
-        id = bundle.getInt("GroupID");
-        MerchControl.getAllMerchByGroupId(activity,id);
+        HashMap<String,Object> GrouphashMap;
+        //取得HomeData打包過來的資料
+        Bundle bundleMap = getArguments();
+        if (bundleMap != null){
+            GrouphashMap = (HashMap<String, Object>) bundleMap.getSerializable("Group");
+            groupID = (Integer) GrouphashMap.get("GroupID");//取得團購ID
+            sellerID = (Integer) GrouphashMap.get("SellerID");//取得賣家ID
+            progress = (Integer) GrouphashMap.get("Progress");//取得當前進度
+            goal = (Integer) GrouphashMap.get("Goal");//取得當前目標
+            contact_number = (String) GrouphashMap.get("Contact_Number");//取得團購聯絡電話
+            payment_method = (Integer) GrouphashMap.get("Payment_Method");//取得付款方法
+            group_status = (Integer) GrouphashMap.get("Group_status");//取得團購狀態
+            caution = (String) GrouphashMap.get("Caution");//取得注意事項
+            condition_count = (Integer) GrouphashMap.get("Condition_count");//取得停單份數
+            condition_Time = (Timestamp) GrouphashMap.get("Condition_Time");//取得停單時間
+        }
+        MerchControl.getAllMerchByGroupId(activity,groupID);
         localMerchs = MerchControl.getLocalMerchs();
         if (localMerchs == null || localMerchs.isEmpty()) {
             Toast.makeText(activity, R.string.textNoGroupsFound, Toast.LENGTH_SHORT).show();
@@ -101,11 +117,12 @@ public class MerchbrowseFragment extends Fragment {
         btn_buy.setOnClickListener(v ->{
             Map<Merch,Integer> maps = ((MerchAdapter) recyclerViewMerch.getAdapter()).getMerchsMap();
             Log.d("TAGGGGGGGGGG", String.valueOf(maps.size()));
-            Toast.makeText(activity, String.valueOf(maps), Toast.LENGTH_SHORT).show();
+
             for (Map.Entry<Merch, Integer> entry : maps.entrySet()) {
                 Merch merch = entry.getKey();
                 int merchID = merch.getMerchId();
                 int amount = entry.getValue();
+                Toast.makeText(activity, merch.getName()+"數量:"+String.valueOf(amount), Toast.LENGTH_SHORT).show();
             }
         });
     }

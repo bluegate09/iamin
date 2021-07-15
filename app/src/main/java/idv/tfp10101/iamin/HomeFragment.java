@@ -2,6 +2,7 @@ package idv.tfp10101.iamin;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
@@ -31,6 +32,7 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -310,9 +312,21 @@ public class HomeFragment extends Fragment {
             holder.itemView.setOnClickListener(v ->{
                 // Toast.makeText(activity, String.valueOf(id), Toast.LENGTH_SHORT).show();
 
-                Bundle bundle = new Bundle();
-                bundle.putInt("GroupID",GroupID);
-                Navigation.findNavController(v).navigate(R.id.merchbrowseFragment,bundle);
+                HashMap<String,Object> GrouphashMap = new HashMap<>();
+                GrouphashMap.put("GroupID",rsGroup.getGroupId());//打包團購ID
+                GrouphashMap.put("SellerID",rsGroup.getMemberId());//打包團購發起人ID
+                GrouphashMap.put("Progress",rsGroup.getProgress());//打包團購進度
+                GrouphashMap.put("Goal",rsGroup.getGoal());//打包團購目標
+                GrouphashMap.put("Contact_Number",rsGroup.getContactNumber());//打包團購聯絡電話
+                GrouphashMap.put("Payment_Method",rsGroup.getPaymentMethod());//打包付款方式
+                GrouphashMap.put("Group_status",rsGroup.getGroupStatus());//打包團購狀態
+                GrouphashMap.put("Caution",rsGroup.getCaution());//打包注意事項
+                GrouphashMap.put("Condition_count",rsGroup.getConditionCount());//打包停單份數
+                GrouphashMap.put("Condition_Time",rsGroup.getConditionTime());//打包停單時間
+                Bundle bundleMap = new Bundle();
+                bundleMap.putSerializable("Group",GrouphashMap);
+
+                Navigation.findNavController(v).navigate(R.id.merchbrowseFragment,bundleMap);
             });
         }
 
