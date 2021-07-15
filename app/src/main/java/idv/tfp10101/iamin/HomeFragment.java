@@ -61,6 +61,7 @@ public class HomeFragment extends Fragment {
     private List<Group> localGroups;
     private SwipeRefreshLayout swipeRefreshLayout;
     private SearchView searchView;
+    private int mySqlMemberId;//取得當前使用者會員ID
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,7 +79,6 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // 取得Activity參考
         activity = getActivity();
-        activity.setTitle("首頁");
         view = inflater.inflate(R.layout.fragment_home, container, false);
         return view;
     }
@@ -93,7 +93,7 @@ public class HomeFragment extends Fragment {
         if(currentUser != null){
             SharedPreferences pref = activity.getSharedPreferences("member_ID",
                     MODE_PRIVATE);
-            int mySqlMemberId = pref.getInt("member_ID", -1);
+            mySqlMemberId = pref.getInt("member_ID", -1);
             //小於0代表出問題 所以return
             if(mySqlMemberId < 0){
                 return;
@@ -113,7 +113,7 @@ public class HomeFragment extends Fragment {
         HomeDataControl.getAllGroup(activity);
         localGroups = HomeDataControl.getLocalGroups();
         if (localGroups == null || localGroups.isEmpty()) {
-            Toast.makeText(activity, R.string.textNoGroupsFound, Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity,"找不到團購", Toast.LENGTH_SHORT).show();
         }
 
         showGroup(localGroups);
@@ -291,13 +291,12 @@ public class HomeFragment extends Fragment {
         }
 
         public class MyHomeDataViewHolder extends RecyclerView.ViewHolder{
-            TextView txv_group_name,txv_group_price,txv_group_conditionTime,txv_progress;
+            TextView txv_group_name,txv_group_conditionTime,txv_progress;
             ImageView imv_group;
             ProgressBar pr_bar;
             public MyHomeDataViewHolder(@NonNull View itemView) {
                 super(itemView);
                 txv_group_name = itemView.findViewById(R.id.txv_group_name);
-                txv_group_price = itemView.findViewById(R.id.txv_group_price);
                 txv_group_conditionTime = itemView.findViewById(R.id.txv_group_conditionTime);
                 txv_progress = itemView.findViewById(R.id.txv_progress);
                 imv_group = itemView.findViewById(R.id.imv_group);

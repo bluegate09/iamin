@@ -1,7 +1,10 @@
 package idv.tfp10101.iamin;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,25 +24,34 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import idv.tfp10101.iamin.member.Member;
+import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.merch.Merch;
 import idv.tfp10101.iamin.merch.MerchControl;
+
+import static android.content.Context.MODE_PRIVATE;
 
 
 public class MerchbrowseFragment extends Fragment {
     private Activity activity;
     private View view;
     private int groupID,sellerID,progress,goal,payment_method,group_status,condition_count;
+    private int buyerChoose;//買家選擇的付款方式 1->面交,2->信用卡
     private String contact_number,caution;
     private Timestamp condition_Time;
     private List<Merch> localMerchs;
     private RecyclerView recyclerViewMerch;
     private Button btn_buy,btn_back,btn_next;
+    private int mySqlMemberId;//取得當前使用者會員ID
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +66,24 @@ public class MerchbrowseFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_merchbrowse, container, false);
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser != null){
+            SharedPreferences pref = activity.getSharedPreferences("member_ID",
+                    MODE_PRIVATE);
+            mySqlMemberId = pref.getInt("member_ID", -1);
+            //小於0代表出問題 所以return
+            if(mySqlMemberId < 0){
+                return;
+            }
+            Member member = Member.getInstance();
+            member.setId(mySqlMemberId);
+            MemberControl.getMemberData(activity,member);
+        }
     }
 
     @Override
@@ -109,22 +139,75 @@ public class MerchbrowseFragment extends Fragment {
             }
             btn_next.setEnabled(true);
         });
-        getOrder();
+
+        btn_buy.setOnClickListener(v ->{
+            AlertDialog.Builder payment_methodDialog = new AlertDialog.Builder(activity);
+            switch (payment_method) {
+                case 1:
+                    payment_methodDialog
+                            .setTitle("團購付款方式")
+                            .setMessage("該團購只支援面交")
+                            .setPositiveButton("去買單!!",(dialog, which) -> {
+                                buyerChoose = 1;
+                                getOrder();
+                            })
+                            .setNegativeButton("我在想一下",(dialog, which) -> {return;})
+                            .setCancelable(false)
+                            .show();
+                    break;
+                case 2:
+                    payment_methodDialog
+                            .setTitle("團購付款方式")
+                            .setMessage("該團購只支援信用卡")
+                            .setPositiveButton("去買單!!",(dialog, which) -> {
+                                buyerChoose = 2;
+                                getOrder();
+                            })
+                            .setNegativeButton("我在想一下",(dialog, which) -> {return;})
+                            .setCancelable(false)
+                            .show();
+                    break;
+                case 3:
+                    final String[] payment_method = {"面交","信用卡交易"};
+                    final boolean[] select = new boolean[payment_method.length];
+                    buyerChoose = -1;
+                    payment_methodDialog
+
+                            .setTitle("團購付款方式")
+                            .setSingleChoiceItems(payment_method, -1, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    buyerChoose = which;
+                                }
+                            })
+                            .setPositiveButton("去買單!!",(dialog, which) -> {
+                                String restult = "你選擇了:";
+                                if (buyerChoose == -1){
+                                    Toast.makeText(activity, "選取失敗", Toast.LENGTH_SHORT).show();
+                                }else{
+                                    Toast.makeText(activity, restult+payment_method[buyerChoose++], Toast.LENGTH_SHORT).show();
+                                }
+                                Toast.makeText(activity, String.valueOf(buyerChoose), Toast.LENGTH_SHORT).show();
+                            })
+                            .setNegativeButton("我在想一下",(dialog, which) -> {return;})
+                            .setCancelable(false)
+                            .show();
+                    break;
+
+            }
+        });
     }
 
     //取得買家下單
     private void getOrder(){
-        btn_buy.setOnClickListener(v ->{
-            Map<Merch,Integer> maps = ((MerchAdapter) recyclerViewMerch.getAdapter()).getMerchsMap();
-            Log.d("TAGGGGGGGGGG", String.valueOf(maps.size()));
-
+        Map<Merch,Integer> maps = ((MerchAdapter) recyclerViewMerch.getAdapter()).getMerchsMap();
+        Log.d("TAGGGGGGGGGG", String.valueOf(maps.size()));
             for (Map.Entry<Merch, Integer> entry : maps.entrySet()) {
                 Merch merch = entry.getKey();
                 int merchID = merch.getMerchId();
                 int amount = entry.getValue();
                 Toast.makeText(activity, merch.getName()+"數量:"+String.valueOf(amount), Toast.LENGTH_SHORT).show();
             }
-        });
     }
     private void findView(View view) {
         recyclerViewMerch = view.findViewById(R.id.recyclerViewMerch);
