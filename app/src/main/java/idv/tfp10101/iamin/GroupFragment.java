@@ -34,6 +34,7 @@ import java.util.List;
 
 import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.group.GroupControl;
+import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.merch.Merch;
 import idv.tfp10101.iamin.merch.MerchControl;
 
@@ -50,6 +51,7 @@ public class GroupFragment extends Fragment {
     private ImageView imageViewSuccessPag;
     private ImageView imageViewPaymentPag;
     // 物件
+    private Member member;
     private List<Group> localGroups;
 
     /**
@@ -104,7 +106,8 @@ public class GroupFragment extends Fragment {
 
         findViews(view);
 
-        /** 設定預設memberId */
+        /** 抓取會員ID */
+        
         // 跟server抓取所有Group
         GroupControl.getAllGroupByMemberId(activity, 1);
         localGroups = GroupControl.getLocalGroup();

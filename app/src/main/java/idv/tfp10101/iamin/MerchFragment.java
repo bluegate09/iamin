@@ -268,6 +268,10 @@ public class MerchFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             final Merch rvMerch = rvMerchs.get(position); // 第幾個merch
+            // 如果字數太長就縮小字體
+            if (rvMerch.getName().length() > 15) {
+                holder.textViewName.setTextSize(18);
+            }
             holder.textViewName.setText(rvMerch.getName());
             holder.textViewPrice.setText(String.valueOf(rvMerch.getPrice())); // int -> str
             Log.d(Constants.TAG, "BindViewHolder: " + rvMerch.getName());
