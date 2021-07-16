@@ -602,12 +602,15 @@ public class GroupInsertFragment extends Fragment {
                 .setFragmentResultListener("requestLocationKey", this, (requestKey, bundle) -> {
                     // 畫面移動到指定的位置
                     scrollViewMain.scrollTo(0, imageViewAddLocation.getTop());
-
+                    
                     GroupInsertAddViewData giavd = GroupInsertAddViewData.getGroupInsertAddViewData();
                     /** 商品清單處理 */
                     showLinearLayoutMerchs(giavd.MerchsId());
 
                     /** 地址的處理 */
+                    // 清空
+                    giavd.Lats().clear();
+                    giavd.Lngs().clear();
                     // 緯度[]
                     double[] latArr = bundle.getDoubleArray("lats");
                     // 經度[]

@@ -36,6 +36,7 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -81,11 +82,12 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // 取得Activity參考
         activity = getActivity();
-        activity.setTitle("首頁");
         view = inflater.inflate(R.layout.fragment_home, container, false);
         return view;
     }
-
+    /*
+    取得會員資料
+     */
     @Override
     public void onStart() {
         super.onStart();
@@ -119,7 +121,7 @@ public class HomeFragment extends Fragment {
         HomeDataControl.getAllGroup(activity);
         localGroups = HomeDataControl.getLocalGroups();
         if (localGroups == null || localGroups.isEmpty()) {
-            Toast.makeText(activity, R.string.textNoGroupsFound, Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity,"找不到團購", Toast.LENGTH_SHORT).show();
         }
 
         showGroup(localGroups);
@@ -297,13 +299,12 @@ public class HomeFragment extends Fragment {
         }
 
         public class MyHomeDataViewHolder extends RecyclerView.ViewHolder{
-            TextView txv_group_name,txv_group_price,txv_group_conditionTime,txv_progress;
+            TextView txv_group_name,txv_group_conditionTime,txv_progress;
             ImageView imv_group;
             ProgressBar pr_bar;
             public MyHomeDataViewHolder(@NonNull View itemView) {
                 super(itemView);
                 txv_group_name = itemView.findViewById(R.id.txv_group_name);
-                txv_group_price = itemView.findViewById(R.id.txv_group_price);
                 txv_group_conditionTime = itemView.findViewById(R.id.txv_group_conditionTime);
                 txv_progress = itemView.findViewById(R.id.txv_progress);
                 imv_group = itemView.findViewById(R.id.imv_group);
@@ -344,9 +345,21 @@ public class HomeFragment extends Fragment {
             holder.itemView.setOnClickListener(v ->{
                 // Toast.makeText(activity, String.valueOf(id), Toast.LENGTH_SHORT).show();
 
-                Bundle bundle = new Bundle();
-                bundle.putInt("GroupID",GroupID);
-                Navigation.findNavController(v).navigate(R.id.merchbrowseFragment,bundle);
+                HashMap<String,Object> GrouphashMap = new HashMap<>();
+                GrouphashMap.put("GroupID",rsGroup.getGroupId());//打包團購ID
+                GrouphashMap.put("SellerID",rsGroup.getMemberId());//打包團購發起人ID
+                GrouphashMap.put("Progress",rsGroup.getProgress());//打包團購進度
+                GrouphashMap.put("Goal",rsGroup.getGoal());//打包團購目標
+                GrouphashMap.put("Contact_Number",rsGroup.getContactNumber());//打包團購聯絡電話
+                GrouphashMap.put("Payment_Method",rsGroup.getPaymentMethod());//打包付款方式
+                GrouphashMap.put("Group_status",rsGroup.getGroupStatus());//打包團購狀態
+                GrouphashMap.put("Caution",rsGroup.getCaution());//打包注意事項
+                GrouphashMap.put("Condition_count",rsGroup.getConditionCount());//打包停單份數
+                GrouphashMap.put("Condition_Time",rsGroup.getConditionTime());//打包停單時間
+                Bundle bundleMap = new Bundle();
+                bundleMap.putSerializable("Group",GrouphashMap);
+
+                Navigation.findNavController(v).navigate(R.id.merchbrowseFragment,bundleMap);
             });
         }
 
