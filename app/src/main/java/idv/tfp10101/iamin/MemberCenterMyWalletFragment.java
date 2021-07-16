@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Set;
 
 import idv.tfp10101.iamin.member.Member;
+import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.member.MyWallet;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -84,7 +85,7 @@ public class MemberCenterMyWalletFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d(TAG,"onCreate");
         activity = getActivity();
-        member = Member.getInstance();
+        member = MemberControl.getInstance();
         //從mysql拿資料
         String jsonIn = memberRemoteAccess(activity,member,"getMyWallet");
         Type listType = new TypeToken<List<MyWallet>>() {}.getType();

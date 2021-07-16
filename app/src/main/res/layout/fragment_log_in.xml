@@ -101,6 +101,9 @@
                         android:textSize="12sp" />
 
                     <Button
+                        android:background="@drawable/bg_black_border_button"
+                        app:backgroundTint="@null"
+                        android:textColor="@color/black"
                         android:id="@+id/btLogIn"
                         android:layout_width="0dp"
                         android:layout_height="65dp"

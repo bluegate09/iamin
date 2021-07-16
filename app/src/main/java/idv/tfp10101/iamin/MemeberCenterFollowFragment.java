@@ -36,13 +36,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import idv.tfp10101.iamin.member.Member;
+import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.network.RemoteAccess;
 
 public class MemeberCenterFollowFragment extends Fragment {
     private final static String TAG = "TAG_MC_Follow";
     private ExecutorService executor;
     private Activity activity;
-    private Member member_ID;
+    private Member member2;
     private RecyclerView rvMember;
     private List<Member> members;
     private Gson gson2 = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
@@ -52,7 +53,7 @@ public class MemeberCenterFollowFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
-        member_ID = Member.getInstance();
+        member2 = MemberControl.getInstance();
         int numProcs = Runtime.getRuntime().availableProcessors();
         executor = Executors.newFixedThreadPool(numProcs);
     }
@@ -115,10 +116,10 @@ public class MemeberCenterFollowFragment extends Fragment {
         List<Member> members = new ArrayList<>();
 
         if (RemoteAccess.networkConnected(activity)) {
-            String url = RemoteAccess.URL_SERVER + "memberServelt";
+            String url = RemoteAccess.URL_SERVER + "memberController";
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("action", "getFollowMember");
-            jsonObject.addProperty("member", new Gson().toJson(member_ID));
+            jsonObject.addProperty("member", new Gson().toJson(member2));
             String jsonIn = RemoteAccess.getRemoteData(url, jsonObject.toString());
 
 //            Log.d(TAG,"jsonIn: " + jsonIn);
@@ -185,13 +186,13 @@ public class MemeberCenterFollowFragment extends Fragment {
             myViewHolder.tvStatus.setText("");
             myViewHolder.tvFollowBt.setOnClickListener(v -> {
 
-                String url = RemoteAccess.URL_SERVER + "memberServelt";
+                String url = RemoteAccess.URL_SERVER + "memberController";
                 JsonObject jsonObject = new JsonObject();
                 jsonObject.addProperty("action", "follow");
                 //追蹤的member_id
                 jsonObject.addProperty("follwer_id",member.getId());
                 //登入的id
-                jsonObject.addProperty("member", new Gson().toJson(member_ID));
+                jsonObject.addProperty("member", new Gson().toJson(member2));
                 RemoteAccess.getRemoteData(url, jsonObject.toString());
                 members = getMembers();
                 showFollowMember(members);
@@ -201,7 +202,7 @@ public class MemeberCenterFollowFragment extends Fragment {
                 //連到賣家頁面
             });
 
-            String url = RemoteAccess.URL_SERVER + "memberServelt";
+            String url = RemoteAccess.URL_SERVER + "memberController";
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("action", "getImage");
             jsonObject.addProperty("member", new Gson().toJson(member));

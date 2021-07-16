@@ -103,11 +103,14 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
+            android:background="@drawable/bg_black_border_button"
+            app:backgroundTint="@null"
+            android:textColor="@color/black"
             android:id="@+id/btProfileUpdate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="Update" />
+            android:text="@string/update" />
 
     </LinearLayout>
 

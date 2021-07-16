@@ -24,13 +24,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import java.util.concurrent.TimeUnit;
 
 import idv.tfp10101.iamin.member.Member;
+import idv.tfp10101.iamin.member.MemberControl;
 
 import static idv.tfp10101.iamin.member.MemberControl.memberRemoteAccess;
-import static idv.tfp10101.iamin.member.MemberControl.storeMemberIdSharedPreference;
 
 public class PhoneAuthFragment extends Fragment {
     private final String TAG = "TAG_PhoneAuthFragment";
@@ -42,6 +44,7 @@ public class PhoneAuthFragment extends Fragment {
     private String mVerificationId;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
     private Member member;
+    private Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
 
 
     @Override
@@ -49,8 +52,7 @@ public class PhoneAuthFragment extends Fragment {
         super.onCreate(savedInstanceState);
         activity = getActivity();
         auth = FirebaseAuth.getInstance();
-        member = Member.getInstance();
-//        auth.getFirebaseAuthSettings().forceRecaptchaFlowForTesting(true);
+        member = MemberControl.getInstance();
         handlePhoneAuthProvider();
 
 
@@ -83,8 +85,6 @@ public class PhoneAuthFragment extends Fragment {
                 return;
             }
             requestVerificationCode(phone);
-//                Log.d(TAG,phone);
-
         });
 
         view.findViewById(R.id.btReSendCode).setOnClickListener(v -> {
@@ -162,16 +162,28 @@ public class PhoneAuthFragment extends Fragment {
                 FirebaseUser user = task.getResult().getUser();
 //                Toast.makeText(activity, "signInWithCredential:success", Toast.LENGTH_SHORT).show();
 
-
+                String jsonMember;
                 member.setuUId(auth.getCurrentUser().getUid());
-                member.setPhoneNumber(auth.getCurrentUser().getPhoneNumber());
-                member.setPassword(auth.getCurrentUser().getPhoneNumber());
-                member.setNickname("User"+auth.getCurrentUser().getPhoneNumber().substring(9,13));
-                String mySqlMemberId = memberRemoteAccess(activity,member,"signup");
-                storeMemberIdSharedPreference(activity,mySqlMemberId);
-                member.setId(Integer.parseInt(mySqlMemberId));
+                jsonMember = memberRemoteAccess(activity,member,"findbyUuid");
+                member = gson.fromJson(jsonMember,Member.class);
+                if(member != null){
+                    Toast.makeText(activity, getString(R.string.welcomeback), Toast.LENGTH_SHORT).show();
+                    Log.d(TAG,"Welcome back");
+                    MemberControl.setMember(member);
+                    Navigation.findNavController(requireView()).navigate(R.id.action_phoneAuthFragment_to_memberCenterFragment);
+                    return;
+                }else{
+                    member = MemberControl.getInstance();
+                }
+
+                String phoneNumber = auth.getCurrentUser().getPhoneNumber();
+                Log.d(TAG,"phoneNumber: " + phoneNumber);
+                if(phoneNumber!= null) {
+                    member.setPhoneNumber(phoneNumber);
+                }
+                MemberControl.setMember(member);
                 Navigation.findNavController(requireView())
-                        .navigate(R.id.action_phoneAuthFragment_to_memberCenterFragment);
+                        .navigate(R.id.action_phoneAuthFragment_to_socialLoginFragment);
 
             }else{
                 if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {

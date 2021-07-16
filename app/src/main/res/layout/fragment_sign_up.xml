@@ -135,6 +135,9 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
+                android:background="@drawable/bg_black_border_button"
+                android:textColor="@color/black"
+                app:backgroundTint="@null"
                 android:id="@+id/btSignUp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -2,7 +2,6 @@ package idv.tfp10101.iamin;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -38,16 +37,17 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import java.util.Arrays;
 import java.util.Objects;
 
 import idv.tfp10101.iamin.member.Member;
+import idv.tfp10101.iamin.member.MemberControl;
+import idv.tfp10101.iamin.network.RemoteAccess;
 
-import static android.content.Context.MODE_PRIVATE;
 import static idv.tfp10101.iamin.member.MemberControl.memberRemoteAccess;
-import static idv.tfp10101.iamin.member.MemberControl.storeMemberIdSharedPreference;
 
 public class LogInFragment extends Fragment {
     private final static String TAG = "TAG_LoginFragment";
@@ -57,6 +57,26 @@ public class LogInFragment extends Fragment {
     private CallbackManager callbackManager;
     private Member member;
     private EditText etEmail, etPassword;
+    private Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
+
+    ActivityResultLauncher<Intent> signInGoogleLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
+                try {
+
+                    GoogleSignInAccount account = task.getResult(ApiException.class);
+                    if (account != null) {
+                        //註冊帳號到fireBase
+                        firebaseAuthWithGoogle(account);
+                    } else {
+                        Log.e(TAG, "Google Sign in Account is null");
+                    }
+                } catch (ApiException e) {
+                    Log.e(TAG, "Google sign in failed");
+                }
+            }
+    );
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,7 +84,7 @@ public class LogInFragment extends Fragment {
         super.onCreate(savedInstanceState);
         activity = getActivity();
         auth = FirebaseAuth.getInstance();
-        member = Member.getInstance();
+        member = MemberControl.getInstance();
         callbackManager = CallbackManager.Factory.create();
 
         //用google登入firebase
@@ -103,12 +123,6 @@ public class LogInFragment extends Fragment {
 
             //firebase登入驗證
             firebaseLogIn(email, password);
-            member.setEmail(email);
-            member.setPassword(password);
-            String mySqlMemberId = memberRemoteAccess(activity, member, "login");
-            storeMemberIdSharedPreference(activity,mySqlMemberId);
-            member.setId(Integer.parseInt(mySqlMemberId));
-            //這裡沒有navigation 因為在firebase那邊
 
         });
 
@@ -117,6 +131,7 @@ public class LogInFragment extends Fragment {
             Intent signInIntent = client.getSignInIntent();
             // 跳出Google登入畫面
             signInGoogleLauncher.launch(signInIntent);
+
         });
 
         //fb登入
@@ -140,19 +155,9 @@ public class LogInFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
         FirebaseUser currentUser = auth.getCurrentUser();
         if(currentUser != null){
-            SharedPreferences pref = activity.getSharedPreferences("member_ID",
-                    MODE_PRIVATE);
-            int mySqlMemberId = pref.getInt("member_ID", -1);
-            //小於0代表出問題 所以return
-            if(mySqlMemberId < 0){
-                return;
-            }
-            member.setId(mySqlMemberId);
-            memberRemoteAccess(activity,member,"login");
-            Log.d(TAG,mySqlMemberId +"member_ID");
+            Log.d(TAG, "uid: " + currentUser.getUid());
             Navigation.findNavController(requireView())
                     .navigate(R.id.action_logInFragment_to_memberCenterFragment);
         }
@@ -165,26 +170,32 @@ public class LogInFragment extends Fragment {
         auth.signInWithCredential(credential)
                 .addOnCompleteListener(activity, task -> {
                     if (task.isSuccessful()) {
-
                         Toast.makeText(activity, "Google 登入成功", Toast.LENGTH_SHORT).show();
 
-                        //取得google登入的EMAIL firebase的auth.getCurrentUser().getEmail會return null
-                        GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(activity);
-                        String personEmail = "";
-                        if(signInAccount != null){
-                            personEmail = signInAccount.getEmail();
-                        }
-
-                        member.setEmail(personEmail);
                         member.setuUId(auth.getCurrentUser().getUid());
-                        member.setNickname("User" + signInAccount.getEmail().substring(0,4));
-                        //用signup 因為要在mysql新增帳號資訊
-                        String mySqlMemberId = memberRemoteAccess(activity,member,"signup");
-                        //存到SharedPreference
-                        storeMemberIdSharedPreference(activity,mySqlMemberId);
-                        member.setId(Integer.parseInt(mySqlMemberId));
-                        Navigation.findNavController(requireView())
-                                .navigate(R.id.action_logInFragment_to_memberCenterFragment);
+
+                        String url = RemoteAccess.URL_SERVER + "memberController";
+                        JsonObject jsonObject = new JsonObject();
+                        jsonObject.addProperty("action", "findbyUuid");
+                        jsonObject.addProperty("member", new Gson().toJson(member));
+                        String jsonMember = RemoteAccess.getRemoteData(url, jsonObject.toString());
+                        member = new Gson().fromJson(jsonMember,Member.class);
+
+                        if( member != null){
+                            Toast.makeText(activity, "welcome come back", Toast.LENGTH_SHORT).show();
+                            MemberControl.setMember(member);
+                            Navigation.findNavController(etEmail)
+                                    .navigate(R.id.action_logInFragment_to_memberCenterFragment);
+                            return;
+                        }
+                        //以下為第一次登入
+                        GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(activity);
+
+                        member.setEmail(signInAccount.getEmail());
+                        MemberControl.setMember(member);
+
+                        Navigation.findNavController(etEmail)
+                                .navigate(R.id.action_logInFragment_to_socialLoginFragment);
                     } else {
                         Exception exception = task.getException();
                         String message = exception == null ? "Sign in fail." : exception.getMessage();
@@ -193,24 +204,7 @@ public class LogInFragment extends Fragment {
                 });
     }
 
-    ActivityResultLauncher<Intent> signInGoogleLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
-                try {
 
-                    GoogleSignInAccount account = task.getResult(ApiException.class);
-                    if (account != null) {
-                        //註冊帳號到fireBase
-                        firebaseAuthWithGoogle(account);
-                    } else {
-                        Log.e(TAG, "Google Sign in Account is null");
-                    }
-                } catch (ApiException e) {
-                    Log.e(TAG, "Google sign in failed");
-                }
-            }
-    );
 
     private void signInFB() {
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
@@ -219,6 +213,7 @@ public class LogInFragment extends Fragment {
             public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, getString(R.string.facebookloginsuccess) + loginResult);
                 handleFaceBookCredential(loginResult.getAccessToken());
+                Log.d(TAG,loginResult.getAccessToken()+"");
             }
 
             @Override
@@ -236,9 +231,9 @@ public class LogInFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Pass the activity result back to the Facebook SDK
-        Log.d(TAG,"requestCode: " + requestCode);
-        Log.d(TAG,"resultCode: " + resultCode);
-        Log.d(TAG,"data: " + data);
+//        Log.d(TAG,"requestCode: " + requestCode);
+//        Log.d(TAG,"resultCode: " + resultCode);
+//        Log.d(TAG,"data: " + data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -247,21 +242,27 @@ public class LogInFragment extends Fragment {
 //        Log.d(TAG, "signInFirebase: " + token);
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+
         auth.signInWithCredential(credential)
                 .addOnCompleteListener(activity, task -> {
                     // 登入成功轉至下頁；失敗則顯示錯誤訊息
                     if (task.isSuccessful()) {
 
+                        String jsonMember;
                         member.setuUId(auth.getCurrentUser().getUid());
-                        Log.d(TAG,"Email: " + auth.getCurrentUser().getEmail());
-
-                        String mySqlMemberId = memberRemoteAccess(activity,member,"signup");
-                        member.setEmail("User" + mySqlMemberId + "@Facebook.com");
-                        storeMemberIdSharedPreference(activity,mySqlMemberId);
-
+                        jsonMember = memberRemoteAccess(activity,member,"findbyUuid");
+                        member = gson.fromJson(jsonMember,Member.class);
+                        if(member != null ){
+                            Toast.makeText(activity, "Welcome back", Toast.LENGTH_SHORT).show();
+                            MemberControl.setMember(member);
+                            Navigation.findNavController(etEmail)
+                                    .navigate(R.id.action_logInFragment_to_memberCenterFragment);
+                            return;
+                        }
+                        member = MemberControl.getInstance();
                         Navigation.findNavController(etEmail)
-                                .navigate(R.id.action_logInFragment_to_memberCenterFragment);
-                    } else {
+                                .navigate(R.id.action_logInFragment_to_socialLoginFragment);
+                    }else {
                         Exception exception = task.getException();
                         String message = exception == null ? getString(R.string.sigininfail) : exception.getMessage();
                         Log.e(TAG, message);
@@ -270,7 +271,7 @@ public class LogInFragment extends Fragment {
     }
 
 
-    //Firebase登入
+    //Firebase 帳號密碼登入
     private void firebaseLogIn(String email, String password) {
         Log.d(TAG, "Login:" + email);
         if (email.trim().isEmpty() || password.trim().isEmpty()) {
@@ -281,8 +282,19 @@ public class LogInFragment extends Fragment {
                 .addOnCompleteListener(requireActivity(), task -> {
                     if (task.isSuccessful()) {
                         Log.d(TAG, getString(R.string.signinwithemailsuccess));
-                        Navigation.findNavController(etEmail)
-                                .navigate(R.id.action_logInFragment_to_memberCenterFragment);
+
+                        member.setEmail(email);
+                        member.setPassword(password);
+                        String json = memberRemoteAccess(activity, member, "login");
+                        member = new Gson().fromJson(json,Member.class);
+                        MemberControl.setMember(member);
+                        if(member == null || member.getId()<0){
+                            Toast.makeText(activity, getString(R.string.textnouser), Toast.LENGTH_SHORT).show();
+                            return;
+                        }else {
+                            Navigation.findNavController(etEmail)
+                                    .navigate(R.id.action_logInFragment_to_memberCenterFragment);
+                        }
                     } else {
                         Log.w(TAG, getString(R.string.authfailed), task.getException());
                         Toast.makeText(getContext(), getString(R.string.authfailed),

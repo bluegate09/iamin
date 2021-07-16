@@ -2,10 +2,12 @@ package idv.tfp10101.iamin.member;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
+import idv.tfp10101.iamin.group.Group;
 
 public class Member implements Serializable {
-
-    private static Member memberInstance = null;
 
     private int id;
     private int follow_count;
@@ -23,19 +25,7 @@ public class Member implements Serializable {
     private Timestamp deleteTime;
     private String FCM_token;
 
-    //檢查是否有修改資料
-
-    private boolean update;
-
-    public static Member getInstance(){
-
-        if(memberInstance == null){
-            memberInstance = new Member();
-        }
-        return memberInstance;
-    }
-
-    private Member() {
+    public Member() {
     }
 
     public Member(int id, String uUid){
@@ -195,14 +185,6 @@ public class Member implements Serializable {
 
     public void setFCM_token(String fCM_token) {
         FCM_token = fCM_token;
-    }
-
-    public boolean isUpdate() {
-        return update;
-    }
-
-    public void setUpdate(boolean update) {
-        this.update = update;
     }
 
 }

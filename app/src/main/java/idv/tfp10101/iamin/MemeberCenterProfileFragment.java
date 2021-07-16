@@ -29,11 +29,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.yalantis.ucrop.UCrop;
 
@@ -43,6 +45,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import idv.tfp10101.iamin.member.Member;
+import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.network.RemoteAccess;
 import idv.tfp10101.iamin.user.User;
 
@@ -59,12 +62,13 @@ public class MemeberCenterProfileFragment extends Fragment {
     private FirebaseStorage storage;
     private User user;
     private Uri contentUri; // 拍照需要的Uri
+    private Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
-        member = Member.getInstance();
+        member = MemberControl.getInstance();
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
         user = User.getInstance();
@@ -105,10 +109,12 @@ public class MemeberCenterProfileFragment extends Fragment {
             String nickname = etNickname.getText().toString().trim();
             String phoneNumber = etPhoneNumber.getText().toString().trim();
 
-            //確定email 跟 password格式
-            if (email.trim().isEmpty() || password.trim().isEmpty()) {
-                Toast.makeText(activity, "Email/Password can't not be empty", Toast.LENGTH_SHORT).show();
-                return;
+            if (!email.isEmpty()) {
+                member.setEmail(email);
+            }
+
+            if (!password.isEmpty()){
+                member.setPassword(password);
             }
 
             if (!TextUtils.isEmpty(nickname)) {
@@ -124,9 +130,8 @@ public class MemeberCenterProfileFragment extends Fragment {
 
             //mysql更新修改後的資訊
             sendInfotoMysql(member);
-            //mysql設定 有按修改按鍵回上一頁才會回資料庫
-            Member.getInstance().setUpdate(false);
-            Log.d(TAG,member.isUpdate()+"");
+            //member bean 更新
+            MemberControl.setMember(member);
         });
 
         //照片修改
@@ -143,11 +148,6 @@ public class MemeberCenterProfileFragment extends Fragment {
 
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
     private void setTextView() {
         etEmail.setText(member.getEmail());
         etPassword.setText(member.getPassword());
@@ -156,7 +156,7 @@ public class MemeberCenterProfileFragment extends Fragment {
     }
 
     private void setImageView(){
-        String url = RemoteAccess.URL_SERVER + "memberServelt";
+        String url = RemoteAccess.URL_SERVER + "memberController";
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("action", "getImage");
         jsonObject.addProperty("member", new Gson().toJson(member));
@@ -195,7 +195,6 @@ public class MemeberCenterProfileFragment extends Fragment {
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             pickPictureLauncher.launch(intent);
         }
-
     }
 
     ActivityResultLauncher<Intent> takePictureLauncher = registerForActivityResult(
@@ -273,6 +272,9 @@ public class MemeberCenterProfileFragment extends Fragment {
                     hashMap.put("name", member.getNickname());
                     hashMap.put("phonenumber", member.getPhoneNumber());
                     hashMap.put("token", token);
+                    if(member.getuUId() == null){
+                        member.setuUId(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    }
                     db.collection("Users").document(member.getuUId()).set(hashMap)
                             .addOnCompleteListener(task1 -> {
                                 if (task1.isSuccessful()) {
@@ -286,7 +288,7 @@ public class MemeberCenterProfileFragment extends Fragment {
         });
 
         if (RemoteAccess.networkConnected(activity)) {
-            String url = RemoteAccess.URL_SERVER + "memberServelt";
+            String url = RemoteAccess.URL_SERVER + "memberController";
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("action", "update");
             jsonObject.addProperty("member", new Gson().toJson(member));
