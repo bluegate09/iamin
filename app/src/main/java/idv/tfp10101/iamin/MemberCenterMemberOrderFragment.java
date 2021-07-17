@@ -29,6 +29,7 @@ import java.util.List;
 
 import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.member.Member;
+import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.merch.Merch;
 import idv.tfp10101.iamin.network.RemoteAccess;
 
@@ -42,7 +43,7 @@ public class MemberCenterMemberOrderFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
-        member = Member.getInstance();
+        member = MemberControl.getInstance();
     }
 
     @Override
@@ -64,7 +65,7 @@ public class MemberCenterMemberOrderFragment extends Fragment {
     private List<Group> getGroups(){
         List<Group> groups = new ArrayList<>();
         if (RemoteAccess.networkConnected(activity)) {
-            String url = RemoteAccess.URL_SERVER + "memberServelt";
+            String url = RemoteAccess.URL_SERVER + "memberController";
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("action", "getFollowMember");
             jsonObject.addProperty("member", new Gson().toJson(member));

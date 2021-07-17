@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout2"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#DFBDEC"
+    tools:context=".SocialLoginFragment">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="250dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="12pt"
+        android:padding="12dp"
+        android:layout_margin="16dp"
+        android:text="@string/textsocialloginhelpertext"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilSocialSignUp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:layout_margin="16dp"
+        app:errorEnabled="true"
+        app:startIconDrawable="@drawable/icon_user">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etSocialSignUpNickName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/nickname"
+            android:background="@color/white" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+    <Button
+        android:background="@drawable/bg_black_border_button"
+        android:textColor="@color/black"
+        app:backgroundTint="@null"
+        android:id="@+id/btSocialLogin"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/confirm" />
+</LinearLayout>

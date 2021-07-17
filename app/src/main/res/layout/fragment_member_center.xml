@@ -28,11 +28,11 @@
             android:id="@+id/mcUsername"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="45dp"
             android:layout_toEndOf="@id/ivProfilePic"
             android:text="@string/username"
-            android:textSize="34sp"
-            android:layout_marginTop="65dp"
-            android:layout_marginStart="8dp"/>
+            android:textSize="18sp" />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -51,10 +51,11 @@
                     android:id="@+id/mcEmail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="15dp"
                     android:layout_marginTop="2dp"
                     android:text="@string/account"
-                    android:textSize="24sp" />
+                    android:textSize="16sp" />
+
             </LinearLayout>
         </ScrollView>
 
@@ -145,6 +146,10 @@
             android:orientation="vertical" >
 
             <Button
+                android:drawableEnd="@drawable/member_profile_arrow"
+                android:background="@drawable/bg_black_border_button"
+                app:backgroundTint="@null"
+                android:textColor="@color/black"
                 android:id="@+id/btMCProfile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -156,6 +161,10 @@
                 android:textAlignment="textStart" />
 
             <Button
+                android:drawableEnd="@drawable/member_profile_arrow"
+                android:background="@drawable/bg_black_border_button"
+                app:backgroundTint="@null"
+                android:textColor="@color/black"
                 android:id="@+id/btMCFollow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -167,6 +176,10 @@
                 android:textAlignment="textStart" />
 
             <Button
+                android:drawableEnd="@drawable/member_profile_arrow"
+                android:background="@drawable/bg_black_border_button"
+                app:backgroundTint="@null"
+                android:textColor="@color/black"
                 android:id="@+id/btMCSellerCenter"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -178,6 +191,10 @@
                 android:textAlignment="textStart" />
 
             <Button
+                android:drawableEnd="@drawable/member_profile_arrow"
+                android:background="@drawable/bg_black_border_button"
+                app:backgroundTint="@null"
+                android:textColor="@color/black"
                 android:id="@+id/btMCOrderList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -189,6 +206,10 @@
                 android:textAlignment="textStart" />
 
             <Button
+                android:drawableEnd="@drawable/member_profile_arrow"
+                android:background="@drawable/bg_black_border_button"
+                app:backgroundTint="@null"
+                android:textColor="@color/black"
                 android:id="@+id/btMCMyWallet"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -199,6 +220,10 @@
                 android:text="@string/mywallet"
                 android:textAlignment="textStart" />
             <Button
+                android:drawableEnd="@drawable/member_profile_arrow"
+                android:background="@drawable/bg_black_border_button"
+                app:backgroundTint="@null"
+                android:textColor="@color/black"
                 android:id="@+id/btBacktoHomepage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -210,6 +235,9 @@
                 android:textAlignment="textStart" />
 
             <Button
+                android:background="@drawable/bg_black_border_button"
+                app:backgroundTint="@null"
+                android:textColor="@color/black"
                 android:id="@+id/btMCLogout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

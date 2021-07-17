@@ -107,7 +107,7 @@ public class GroupFragment extends Fragment {
         findViews(view);
 
         /** 抓取會員ID */
-        member = Member.getInstance();
+        // member = Member.getInstance();
         // 跟server抓取所有Group
         GroupControl.getAllGroupByMemberId(activity, member.getId());
         localGroups = GroupControl.getLocalGroup();

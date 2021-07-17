@@ -26,6 +26,8 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -37,6 +39,7 @@ import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.merch.Merch;
 import idv.tfp10101.iamin.merch.MerchControl;
+import idv.tfp10101.iamin.network.RemoteAccess;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -51,10 +54,11 @@ public class MerchbrowseFragment extends Fragment {
     private List<Merch> localMerchs;
     private RecyclerView recyclerViewMerch;
     private Button btn_buy,btn_back,btn_next;
-    private int mySqlMemberId;//取得當前使用者會員ID
+    private Member member;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        member = MemberControl.getInstance();
 
 
     }
@@ -71,18 +75,20 @@ public class MerchbrowseFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        String url;
+        JsonObject jsonObject;
+        String jsonMember;
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if(currentUser != null){
-            SharedPreferences pref = activity.getSharedPreferences("member_ID",
-                    MODE_PRIVATE);
-            mySqlMemberId = pref.getInt("member_ID", -1);
-            //小於0代表出問題 所以return
-            if(mySqlMemberId < 0){
-                return;
-            }
-            Member member = Member.getInstance();
-            member.setId(mySqlMemberId);
-            MemberControl.getMemberData(activity,member);
+            member.setuUId(currentUser.getUid());
+            Log.d("TAG_HOME","uUId: " + currentUser.getUid());
+            url = RemoteAccess.URL_SERVER + "memberController";
+            jsonObject = new JsonObject();
+            jsonObject.addProperty("action", "findbyUuid");
+            jsonObject.addProperty("member", new Gson().toJson(member));
+            jsonMember = RemoteAccess.getRemoteData(url, jsonObject.toString());
+            member = new Gson().fromJson(jsonMember,Member.class);
+            MemberControl.setMember(member);
         }
     }
 

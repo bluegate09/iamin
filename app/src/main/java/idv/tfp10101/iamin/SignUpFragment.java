@@ -1,6 +1,7 @@
 package idv.tfp10101.iamin;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,13 +19,15 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-import idv.tfp10101.iamin.R;
+import java.util.HashMap;
+
 import idv.tfp10101.iamin.member.Member;
+import idv.tfp10101.iamin.member.MemberControl;
 
-import static idv.tfp10101.iamin.member.MemberControl.firebasedbAddOrReplace;
 import static idv.tfp10101.iamin.member.MemberControl.memberRemoteAccess;
-import static idv.tfp10101.iamin.member.MemberControl.storeMemberIdSharedPreference;
 
 public class SignUpFragment extends Fragment {
     private final static String TAG = "TAG_signup";
@@ -33,13 +36,14 @@ public class SignUpFragment extends Fragment {
     private FirebaseAuth auth;
     private EditText etEmail,etPassword,etPassword2,etNickname,etPhoneNumber;
     private Member member;
+    private Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
         auth = FirebaseAuth.getInstance();
-        member = Member.getInstance();
+        member = MemberControl.getInstance();
         db = FirebaseFirestore.getInstance();
     }
 
@@ -85,10 +89,11 @@ public class SignUpFragment extends Fragment {
             if(password.equals(password2)){
                 member.setEmail(email);
                 member.setPassword(password);
+
                 //firebase創帳號
                 createAccount(member);
             }else{
-                Toast.makeText(activity, "Password need to be the sameconnected", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, "Password need to be the same", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -97,17 +102,15 @@ public class SignUpFragment extends Fragment {
         auth.createUserWithEmailAndPassword(member.getEmail(), member.getPassword())
                 .addOnCompleteListener(requireActivity(), task -> {
                     if (task.isSuccessful()) {
-                        Log.d(TAG, "createAccount:" + member.getEmail());
                         //mysql創帳號
                         member.setuUId(auth.getCurrentUser().getUid());
 //                        Log.d(TAG,"Uid: " + auth.getCurrentUser().getUid());
-                        String mySqlMemberId = memberRemoteAccess(activity , member, "signup");
-                        storeMemberIdSharedPreference(activity,mySqlMemberId);
-                        member.setId(Integer.parseInt(mySqlMemberId));
-
-                        //存到MemberId與Uid到firebase
+                        String memberJson = memberRemoteAccess(activity , member, "signup");
+                        Member member2 = gson.fromJson(memberJson,Member.class);
+                        MemberControl.setMember(member2);
+                        //存memberId與Uid到firebase
                         firebasedbAddOrReplace(activity,db,new Member(
-                                 Integer.parseInt(mySqlMemberId)
+                                member2.getId()
                                 ,auth.getCurrentUser().getUid()));
 
                         //移動到會員中心
@@ -117,4 +120,30 @@ public class SignUpFragment extends Fragment {
                     }
                 });
     }
+
+    public static void firebasedbAddOrReplace(Context context,FirebaseFirestore db,final Member member) {
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("id", member.getuUId());
+        db.collection("Users").document(member.getuUId()).set(hashMap)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "user into firebase success: " + member.getId());
+                    } else {
+                        Log.e(TAG, "message: " + task.getException().getMessage());
+                    }
+                });
+        // 如果Firestore沒有該ID的Document就建立新的，已經有就更新內容
+        db.collection("members").document(member.getId()+"").set(member)
+                .addOnCompleteListener(task1 -> {
+                    if (task1.isSuccessful()) {
+                        Log.d(TAG, "Inserted with ID: " + member.getId());
+                        Toast.makeText(context, "Inserted with ID: " + member.getId(), Toast.LENGTH_SHORT).show();
+                        // 新增完畢回上頁
+                    } else {
+                        Log.e(TAG, "message: " + task1.getException().getMessage());
+                        Toast.makeText(context, "message: " + task1.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
 }
