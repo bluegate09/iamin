@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import android.text.TextUtils;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
@@ -34,6 +37,7 @@ public class SignUpFragment extends Fragment {
     private Activity activity;
     private FirebaseFirestore db;
     private FirebaseAuth auth;
+    private TextInputLayout emailTil,passwordTil,passwordTil2,phoneTil;
     private EditText etEmail,etPassword,etPassword2,etNickname,etPhoneNumber;
     private Member member;
     private Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
@@ -63,6 +67,11 @@ public class SignUpFragment extends Fragment {
         etNickname = view.findViewById(R.id.etRegisterNickname);
         etPhoneNumber = view.findViewById(R.id.etRegisterPhoneNumber);
 
+        emailTil = view.findViewById(R.id.signupEmailTil);
+        passwordTil = view.findViewById(R.id.signupPasswordTil);
+        passwordTil2 = view.findViewById(R.id.signupPasswordTil2);
+        phoneTil = view.findViewById(R.id.signupPhoneTil);
+
         //前往註冊頁面
         view.findViewById(R.id.btSignUp).setOnClickListener(v ->{
 
@@ -72,30 +81,76 @@ public class SignUpFragment extends Fragment {
             String nickname = etNickname.getText().toString().trim();
             String phoneNumber = etPhoneNumber.getText().toString().trim();
 
+            boolean isFormatCorrect = true;
+
             //確定email 跟 password格式
-            if (email.trim().isEmpty() || password.trim().isEmpty()) {
-                Toast.makeText(activity, "Email/Password can't not be empty", Toast.LENGTH_SHORT).show();
-                return;
+            if (email.isEmpty()) {
+                emailTil.setErrorEnabled(true);
+                emailTil.setError(getString(R.string.textcantbeblank));
+                isFormatCorrect = false;
+            } else if (!isEmailValid(email)) {
+                emailTil.setErrorEnabled(true);
+                emailTil.setError(getString(R.string.textemailinvalid));
+                isFormatCorrect = false;
+            } else {
+                emailTil.setError(null);
+                emailTil.setErrorEnabled(false);
             }
 
-            if(!TextUtils.isEmpty(nickname)){
+
+            if(password.isEmpty()){
+                passwordTil.setErrorEnabled(true);
+                passwordTil.setError(getString(R.string.textcantbeblank));
+                isFormatCorrect = false;
+            }else{
+                passwordTil.setError(null);
+                passwordTil.setErrorEnabled(false);
+            }
+
+            if(password2.isEmpty()){
+                passwordTil2.setErrorEnabled(true);
+                passwordTil2.setError(getString(R.string.textcantbeblank));
+                isFormatCorrect = false;
+            }else{
+                passwordTil2.setError(null);
+                passwordTil2.setErrorEnabled(false);
+            }
+
+
+            if(!(nickname.isEmpty())){
                 member.setNickname(nickname);
             }
 
-            if(!TextUtils.isEmpty(phoneNumber)){
-                member.setPhoneNumber(phoneNumber);
+            if(!(phoneNumber.isEmpty())){
+                if(phoneNumber.length() < 10){
+                    phoneTil.setErrorEnabled(true);
+                    phoneTil.setError(getString(R.string.textphoneformaterror));
+                    isFormatCorrect = false;
+                }else{
+                    phoneTil.setError(null);
+                    phoneTil.setErrorEnabled(false);
+                    member.setPhoneNumber(phoneNumber);
+                }
             }
 
-            if(password.equals(password2)){
+            if(password.equals(password2)&&isFormatCorrect){
                 member.setEmail(email);
                 member.setPassword(password);
-
                 //firebase創帳號
                 createAccount(member);
+            }else if(password.equals(password2)&&phoneNumber.length() < 10){
+                passwordTil2.setError(null);
+                passwordTil2.setErrorEnabled(false);
             }else{
-                Toast.makeText(activity, "Password need to be the same", Toast.LENGTH_SHORT).show();
+                passwordTil2.setErrorEnabled(true);
+                passwordTil2.setError(getString(R.string.text_confirm_error));
             }
         });
+    }
+
+    //email format驗證
+    boolean isEmailValid(CharSequence email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     private void createAccount(Member member) {
@@ -109,6 +164,10 @@ public class SignUpFragment extends Fragment {
                         Member member2 = gson.fromJson(memberJson,Member.class);
                         MemberControl.setMember(member2);
                         //存memberId與Uid到firebase
+                        if(member2 == null){
+                            Toast.makeText(activity, "Email already in use", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
                         firebasedbAddOrReplace(activity,db,new Member(
                                 member2.getId()
                                 ,auth.getCurrentUser().getUid()));
@@ -116,7 +175,7 @@ public class SignUpFragment extends Fragment {
                         //移動到會員中心
                         Navigation.findNavController(requireView()).navigate(R.id.action_signUpFragment_to_memberCenterFragment);
                     } else {
-                        Toast.makeText(getContext(), "Authentication failed.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Authentication failed", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

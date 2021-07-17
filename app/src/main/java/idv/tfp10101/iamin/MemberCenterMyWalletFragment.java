@@ -63,8 +63,9 @@ public class MemberCenterMyWalletFragment extends Fragment {
     private TextView yearTitle;
     private ImageButton leftArrow,rightArrow;
     private int currentIndex;
-    List<String> date_year;
-    List<String> date_month;
+    private List<String> date_year;
+    private List<String> date_month;
+    private ArrayAdapter<String> adapterMonth;
     private final Gson gson2 = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
 
     private final int[] My_COLORS = {
@@ -90,6 +91,7 @@ public class MemberCenterMyWalletFragment extends Fragment {
         String jsonIn = memberRemoteAccess(activity,member,"getMyWallet");
         Type listType = new TypeToken<List<MyWallet>>() {}.getType();
         myWallets = gson2.fromJson(jsonIn,listType);
+
 //        Log.d(TAG,"MyWallets: " + myWallets.toString());
 
 
@@ -123,7 +125,7 @@ public class MemberCenterMyWalletFragment extends Fragment {
 
 
 
-
+        Log.d(TAG,"myWallets: " + myWallets);
         //整裡資料的年份 這是列出所有年份
         sortYearForDropDown(myWallets);
         //最後的index 看拿到的有多長
@@ -146,30 +148,35 @@ public class MemberCenterMyWalletFragment extends Fragment {
         handlePieChartConfig(view);
         updateUI(myWalletsYear);
 
-        for(String tmp: date_month){
-            Log.d(TAG,"tmp: " + tmp);
-        }
+        Log.d(TAG,"selectMonth: " + selectMonth);
 
         //月dropdown選單
-        ArrayAdapter<String> adapterMonth = new ArrayAdapter<>(activity,
-                R.layout.mywallet_dropdown, date_month);
-        //bug
+        adapterMonth = new ArrayAdapter<>(activity, R.layout.mywallet_dropdown, date_month);
+
+        monthDropDown.setThreshold(1);
         monthDropDown.setAdapter(adapterMonth);
         monthDropDown.setOnItemClickListener((parent, view1, position, id) -> {
+
+            monthDropDown.getAdapter().getItem(0);
+            Log.d(TAG,"monthDropDown: " + monthDropDown.getAdapter().getItem(0));
+
             if(position == 0){
                 updateUI(myWalletsYear);
             }else{
                 List<MyWallet> tmpList = new ArrayList<>();
                 //選擇的月
                 selectMonth = monthDropDown.getAdapter().getItem(position) + "";
-                Log.d(TAG,"selectMonth: " + selectMonth);
+
                 //根據月去抓取資料
                 for(MyWallet tmp : myWalletsYear) {
                     if(selectMonth.equals(tmp.getUpdateTime().toString().substring(6,7))) {
                         tmpList.add(tmp);
                     }
                 }
+
                 updateUI(tmpList);
+                    Log.d(TAG, "MyWallet_adapterMonth: " + date_month);
+
             }
         });
 
@@ -183,6 +190,9 @@ public class MemberCenterMyWalletFragment extends Fragment {
         }
 
         rightArrow.setOnClickListener(v -> {
+
+                Log.d(TAG, "MyWallet_rightArrow: " + date_month);
+
             String currentYear = date_year.get(currentIndex + 1);
             yearTitle.setText(currentYear);
             //取出相對應年份的資料
@@ -213,6 +223,7 @@ public class MemberCenterMyWalletFragment extends Fragment {
             leftArrow.setVisibility(View.INVISIBLE);
         }
         leftArrow.setOnClickListener(v -> {
+                Log.d(TAG, "MyWallet_leftArrow: " + date_month);
             String currentYear = date_year.get(currentIndex - 1);
             yearTitle.setText(currentYear);
             //取出相對應年份的資料
@@ -224,6 +235,7 @@ public class MemberCenterMyWalletFragment extends Fragment {
             }
             sortMonthForDropDown(myWalletsYear);
             updateUI(myWalletsYear);
+
 
             currentIndex = date_year.lastIndexOf(yearTitle.getText().toString());
 //            Log.d(TAG,"currentIndex: " + currentIndex + " date_year.size: " + date_year.size());
@@ -238,6 +250,14 @@ public class MemberCenterMyWalletFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG,"date_year: " + date_year);
+        Log.d(TAG,"date_month: " + date_month);
+    }
+
+
     private void updateUI(List<MyWallet> myWallets) {
         pieData = setPieData(getMyWalletEntries(myWallets));
         pieChart.setData(pieData);
@@ -245,6 +265,7 @@ public class MemberCenterMyWalletFragment extends Fragment {
         pieData.setValueFormatter(new PercentFormatter(pieChart));
         //更新recycle view
         showWalletList(myWallets);
+
     }
 
 
@@ -288,11 +309,16 @@ public class MemberCenterMyWalletFragment extends Fragment {
         }
         //增加All time
         date_month.clear();
+        Log.d(TAG,"sortMonthForDropDown: " + date_month);
         date_month.add(getString(R.string.alltime));
+        Log.d(TAG,"sortMonthForDropDown: " + date_month);
         date_month.addAll(hash_set_month);
+        Log.d(TAG,"sortMonthForDropDown: " + date_month);
 
         //排序讓alltime在最上面 java8 addAll()
         sort(date_month);
+
+
     }
 
     //排序
@@ -411,4 +437,5 @@ public class MemberCenterMyWalletFragment extends Fragment {
         }
         return myWalletsEntries;
     }
+
 }

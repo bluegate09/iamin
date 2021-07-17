@@ -46,6 +46,9 @@
         <action
             android:id="@+id/action_logInFragment_to_socialLoginFragment"
             app:destination="@id/socialLoginFragment" />
+        <action
+            android:id="@+id/action_logInFragment_to_memberForgetPassword"
+            app:destination="@id/memberForgetPassword" />
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
@@ -241,4 +244,9 @@
             android:id="@+id/action_socialLoginFragment_to_memberCenterFragment"
             app:destination="@id/memberCenterFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/memberForgetPassword"
+        android:name="idv.tfp10101.iamin.MemberForgetPassword"
+        android:label="fragment_member_forget_password"
+        tools:layout="@layout/fragment_member_forget_password" />
 </navigation>

@@ -111,4 +111,14 @@
     <string name="textinputtexthelper">Please enter nickname</string>
     <string name="textnouser">No user found</string>
     <string name="welcomeback">Welcome Back</string>
+    <string name="textcantbeblank">can\'t be blank</string>
+    <string name="textemailinvalid">Your email id is invalid</string>
+    <string name="textcodesent">Code sent. Code number is 988334</string>
+    <string name="textphoneformaterror">Phone number format error</string>
+    <string name="textsmserror">The sms verification code used to create the phone auth credential is invalid. Please resend the verification code sms and be sure use the verification code provided by the user.</string>
+    <string name="text_enter_your_email_to_received_reset_link">Enter Your Email To Received Reset Link</string>
+    <string name="text_reset_password">Reset Link Sent To Your Email</string>
+    <string name="text_reset_password_error">Error! Reset Link Is Not Sent</string>
+    <string name="text_confirm_password">Confirm Password</string>
+    <string name="text_confirm_error">The Confirm Password confirmation does not match</string>
 </resources>

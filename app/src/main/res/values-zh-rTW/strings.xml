@@ -104,6 +104,16 @@
     <string name="update">更新</string>
     <string name="textsocialloginhelpertext">請輸入會在這應用程式顯示的名稱</string>
     <string name="textinputtexthelper">請輸入名稱</string>
-    <string name="textnouser">No user found</string>
-    <string name="welcomeback">Welcome Back</string>
+    <string name="textnouser">找不到使用者</string>
+    <string name="welcomeback">歡迎回來</string>
+    <string name="textcantbeblank">不得為空白</string>
+    <string name="textemailinvalid">電子郵件格式不正確</string>
+    <string name="textcodesent">驗證數字為 988334</string>
+    <string name="textphoneformaterror">電話格式錯誤</string>
+    <string name="textsmserror">數字驗證碼錯誤或是手機號碼，不符請重新傳送驗證碼。</string>
+    <string name="text_enter_your_email_to_received_reset_link">請輸入電子郵件以接收重設密碼的連結</string>
+    <string name="text_reset_password">重置連結已傳送至信箱</string>
+    <string name="text_reset_password_error">發生錯誤！重置連結未傳送</string>
+    <string name="text_confirm_password">確認密碼</string>
+    <string name="text_confirm_error">密碼不相符</string>
 </resources>

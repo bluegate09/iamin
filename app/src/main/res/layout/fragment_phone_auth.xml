@@ -29,6 +29,10 @@
                 android:textSize="20sp" />
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/phoneAuthTil"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -39,9 +43,12 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etAuthPhoneNumber"
+                    android:background="@drawable/member_round_edit_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/white" />
+                    android:inputType="phone"
+                    android:digits="0987654321"
+                    android:maxLength="10" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -89,6 +96,9 @@
                 android:textSize="20sp" />
 
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+                app:boxStrokeWidth="0dp"
+                app:boxStrokeWidthFocused="0dp"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -98,22 +108,23 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etOTP"
+                    android:background="@drawable/member_round_edit_text"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/white" />
+                    android:layout_height="wrap_content" />
 
-                <Button
-                    android:background="@drawable/bg_black_border_button"
-                    android:textColor="@color/black"
-                    app:backgroundTint="@null"
-                    android:id="@+id/btOTPConfirm"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="20dp"
-                    android:layout_weight="1"
-                    android:text="@string/confirm" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:background="@drawable/bg_black_border_button"
+                android:textColor="@color/black"
+                app:backgroundTint="@null"
+                android:id="@+id/btOTPConfirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="20dp"
+                android:layout_weight="1"
+                android:text="@string/confirm" />
         </LinearLayout>
     </ScrollView>
 

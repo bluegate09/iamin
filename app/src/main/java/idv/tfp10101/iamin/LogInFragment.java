@@ -31,6 +31,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
@@ -57,7 +58,8 @@ public class LogInFragment extends Fragment {
     private CallbackManager callbackManager;
     private Member member;
     private EditText etEmail, etPassword;
-    private Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
+    private TextInputLayout emailTil,passwordTil;
+    private final Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
 
     ActivityResultLauncher<Intent> signInGoogleLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -108,6 +110,8 @@ public class LogInFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         etEmail = view.findViewById(R.id.etLoginEmail);
         etPassword = view.findViewById(R.id.etLoginPassword);
+        emailTil = view.findViewById(R.id.logInEmailTil);
+        passwordTil = view.findViewById(R.id.logInPasswordTil);
 
         //快速填寫
         view.findViewById(R.id.idforalign).setOnClickListener(v -> {
@@ -121,8 +125,34 @@ public class LogInFragment extends Fragment {
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
 
+            boolean isFormatCorrect = true;
+
+            if (email.isEmpty()) {
+                emailTil.setErrorEnabled(true);
+                emailTil.setError(getString(R.string.textcantbeblank));
+                isFormatCorrect = false;
+            } else if (!isEmailValid(email)) {
+                emailTil.setErrorEnabled(true);
+                emailTil.setError(getString(R.string.textemailinvalid));
+                isFormatCorrect = false;
+            } else {
+                emailTil.setError(null);
+                emailTil.setErrorEnabled(false);
+            }
+
+            if(password.isEmpty()){
+                passwordTil.setErrorEnabled(true);
+                passwordTil.setError(getString(R.string.textcantbeblank));
+                isFormatCorrect = false;
+            }else{
+                passwordTil.setError(null);
+                passwordTil.setErrorEnabled(false);
+            }
+
             //firebase登入驗證
-            firebaseLogIn(email, password);
+            if(isFormatCorrect) {
+                firebaseLogIn(email, password);
+            }
 
         });
 
@@ -148,7 +178,7 @@ public class LogInFragment extends Fragment {
 
         //忘記密碼 進入email fragment
         view.findViewById(R.id.btForgetPassword).setOnClickListener(v -> {
-//            Navigation.findNavController(v).navigate(R.id.action_logInFragment_to_forgetPasswordFragment);
+            Navigation.findNavController(v).navigate(R.id.action_logInFragment_to_memberForgetPassword);
         });
     }
 
@@ -274,23 +304,21 @@ public class LogInFragment extends Fragment {
     //Firebase 帳號密碼登入
     private void firebaseLogIn(String email, String password) {
         Log.d(TAG, "Login:" + email);
-        if (email.trim().isEmpty() || password.trim().isEmpty()) {
-            Toast.makeText(activity, getString(R.string.passwordandemailcannotbeempty), Toast.LENGTH_SHORT).show();
-            return;
-        }
+
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(requireActivity(), task -> {
                     if (task.isSuccessful()) {
                         Log.d(TAG, getString(R.string.signinwithemailsuccess));
 
                         member.setEmail(email);
-                        member.setPassword(password);
+                        member.setuUId(auth.getCurrentUser().getUid());
+                        //不存密碼 因為驗證只需要Uid
+//                        member.setPassword(password);
                         String json = memberRemoteAccess(activity, member, "login");
                         member = new Gson().fromJson(json,Member.class);
                         MemberControl.setMember(member);
                         if(member == null || member.getId()<0){
                             Toast.makeText(activity, getString(R.string.textnouser), Toast.LENGTH_SHORT).show();
-                            return;
                         }else {
                             Navigation.findNavController(etEmail)
                                     .navigate(R.id.action_logInFragment_to_memberCenterFragment);
@@ -301,6 +329,10 @@ public class LogInFragment extends Fragment {
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+    //email format驗證
+    boolean isEmailValid(CharSequence email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
 }
