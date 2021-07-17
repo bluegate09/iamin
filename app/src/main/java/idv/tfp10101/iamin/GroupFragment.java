@@ -107,9 +107,9 @@ public class GroupFragment extends Fragment {
         findViews(view);
 
         /** 抓取會員ID */
-        
+        member = Member.getInstance();
         // 跟server抓取所有Group
-        GroupControl.getAllGroupByMemberId(activity, 1);
+        GroupControl.getAllGroupByMemberId(activity, member.getId());
         localGroups = GroupControl.getLocalGroup();
         if (localGroups == null || localGroups.isEmpty()) {
             Toast.makeText(activity, R.string.textNoGroupsFound, Toast.LENGTH_SHORT).show();
