@@ -27,6 +27,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import idv.tfp10101.iamin.member.Member;
+import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.merch.Merch;
 import idv.tfp10101.iamin.merch.MerchControl;
 
@@ -43,6 +45,7 @@ public class MerchFragment extends Fragment {
     private ImageView imageViewSuccessPag;
     private ImageView imageViewPaymentPag;
     // 物件
+    private Member member;
     private List<Merch> localMerchs;
     private List<Merch> searchMerchs;
 
@@ -53,7 +56,7 @@ public class MerchFragment extends Fragment {
     private void findViews(View view) {
         searchViewMerch = view.findViewById(R.id.searchViewSeller);
         swipeRefreshLayoutMerch = view.findViewById(R.id.swipeRefreshLayoutGroup);
-        buttonMerchInsert = view.findViewById(R.id.buttonGroup);
+        buttonMerchInsert = view.findViewById(R.id.buttonSubmit);
         imageViewMerchPag = view.findViewById(R.id.imageViewMerchPag);
         imageViewGroupPag = view.findViewById(R.id.imageViewGroupPag);
         imageViewSuccessPag = view.findViewById(R.id.imageViewSuccessPag);
@@ -100,9 +103,10 @@ public class MerchFragment extends Fragment {
 
         findViews(view);
 
-        /** 測試資料 */
+        /** 抓取會員ID */
+        member = MemberControl.getInstance();
         // 跟server抓取所有Merch
-        MerchControl.getAllMerchByMemberId(activity, 1);
+        MerchControl.getAllMerchByMemberId(activity, member.getId());
         localMerchs = MerchControl.getLocalMerchs();
         if (localMerchs == null || localMerchs.isEmpty()) {
             Toast.makeText(activity, R.string.textNoMerchsFound, Toast.LENGTH_SHORT).show();
@@ -269,7 +273,7 @@ public class MerchFragment extends Fragment {
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             final Merch rvMerch = rvMerchs.get(position); // 第幾個merch
             // 如果字數太長就縮小字體
-            if (rvMerch.getName().length() > 15) {
+            if (rvMerch.getName().length() > 10) {
                 holder.textViewName.setTextSize(18);
             }
             holder.textViewName.setText(rvMerch.getName());

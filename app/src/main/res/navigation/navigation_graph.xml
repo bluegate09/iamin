@@ -186,6 +186,9 @@
         <action
             android:id="@+id/action_reachFragment_to_paymentInformationFragment"
             app:destination="@id/paymentInformationFragment" />
+        <action
+            android:id="@+id/action_reachFragment_to_reachNotificationFragment"
+            app:destination="@id/reachNotificationFragment" />
     </fragment>
     <fragment
         android:id="@+id/merchInsertFragment"
@@ -241,4 +244,9 @@
             android:id="@+id/action_socialLoginFragment_to_memberCenterFragment"
             app:destination="@id/memberCenterFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/reachNotificationFragment"
+        android:name="idv.tfp10101.iamin.ReachNotificationFragment"
+        android:label="fragment_reach_notification"
+        tools:layout="@layout/fragment_reach_notification" />
 </navigation>

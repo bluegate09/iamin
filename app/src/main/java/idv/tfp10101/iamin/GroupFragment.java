@@ -35,6 +35,7 @@ import java.util.List;
 import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.group.GroupControl;
 import idv.tfp10101.iamin.member.Member;
+import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.merch.Merch;
 import idv.tfp10101.iamin.merch.MerchControl;
 
@@ -61,7 +62,7 @@ public class GroupFragment extends Fragment {
     private void findViews(View view) {
         searchViewGroup = view.findViewById(R.id.searchViewSeller);
         swipeRefreshLayoutGroup = view.findViewById(R.id.swipeRefreshLayoutGroup);
-        buttonGroupInsert = view.findViewById(R.id.buttonGroup);
+        buttonGroupInsert = view.findViewById(R.id.buttonSubmit);
         imageViewMerchPag = view.findViewById(R.id.imageViewMerchPag);
         imageViewGroupPag = view.findViewById(R.id.imageViewGroupPag);
         imageViewSuccessPag = view.findViewById(R.id.imageViewSuccessPag);
@@ -107,7 +108,7 @@ public class GroupFragment extends Fragment {
         findViews(view);
 
         /** 抓取會員ID */
-        // member = Member.getInstance();
+        member = MemberControl.getInstance();
         // 跟server抓取所有Group
         GroupControl.getAllGroupByMemberId(activity, member.getId());
         localGroups = GroupControl.getLocalGroup();

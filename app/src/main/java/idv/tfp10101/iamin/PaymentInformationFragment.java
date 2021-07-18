@@ -27,6 +27,8 @@ import java.util.Map;
 
 import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.group.GroupControl;
+import idv.tfp10101.iamin.member.Member;
+import idv.tfp10101.iamin.member.MemberControl;
 
 public class PaymentInformationFragment extends Fragment {
     private Activity activity;
@@ -38,9 +40,13 @@ public class PaymentInformationFragment extends Fragment {
     private ImageView imageViewPaymentPag;
     private RecyclerView recyclerViewMember;
     private Button buttonUpdate;
+    private Spinner spinnerReachGroup;
     private Spinner spinnerPaymentMethod;
     private Spinner spinnerPaymentStatus;
     // 物件
+    private Member member;
+    private Group reachGroup;
+    private List<Member> buyers = new ArrayList<>(); // 目前選擇團購的買家
     private List<Group> reachGroups = new ArrayList<>(); // 取得目前已達標的團購
     private List<Group> filterGroups = new ArrayList<>(); // 取得已篩選達標的團購
     private Map<Integer, String> mapPaymentMethod = new HashMap<>();
@@ -55,7 +61,8 @@ public class PaymentInformationFragment extends Fragment {
         imageViewGroupPag = view.findViewById(R.id.imageViewGroupPag);
         imageViewSuccessPag = view.findViewById(R.id.imageViewSuccessPag);
         imageViewPaymentPag = view.findViewById(R.id.imageViewPaymentPag);
-        buttonUpdate = view.findViewById(R.id.buttonGroup);
+        buttonUpdate = view.findViewById(R.id.buttonSubmit);
+        spinnerReachGroup = view.findViewById(R.id.spinnerReachGroup);
         spinnerPaymentMethod = view.findViewById(R.id.spinnerPaymentMethod);
         spinnerPaymentStatus = view.findViewById(R.id.spinnerPaymentStatus);
         // 先載入RecyclerView元件，但是還沒有掛上Adapter
@@ -100,25 +107,27 @@ public class PaymentInformationFragment extends Fragment {
         // 分頁跳轉
         handlePageJump();
 
+        /** 抓取會員ID */
+        member = MemberControl.getInstance();
+        // 抓取有達標的團購
+        reachGroups = GroupControl.getReachGroup(activity, member.getId());
+        if (reachGroups == null || reachGroups.isEmpty()) {
+            Toast.makeText(activity, "目前沒有達標的團購", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 已達標團購選擇
+        handleReachGroup();
+
         // 付款方式選擇
         handlePaymentMethod();
 
         // 已付款狀態選擇
         handlePaymentStatus();
 
-        /** 設定預設memberId */
-        // 抓取有達標的團購
-        reachGroups = GroupControl.getReachGroup(activity, 1);
-        if (reachGroups == null) {
-            Toast.makeText(activity, "目前沒有達標的團購", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         // 篩選已達標的團購
         handleFilterGroups();
     }
-
-
 
     /**
      * 賣家專區各分頁跳轉
@@ -139,6 +148,23 @@ public class PaymentInformationFragment extends Fragment {
         imageViewPaymentPag.setOnClickListener(view -> {
 
         });
+    }
+
+    /**
+     * 已達標團購選擇
+     */
+    private void handleReachGroup() {
+        // 準備放入Spinner內的String
+        List<String> strings = new ArrayList<>();
+        for (Group group : reachGroups) {
+            strings.add(group.getName());
+        }
+        // 實例化Adapter物件 (Context, 外觀, 顯示的List<String>)
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<>(activity, R.layout.spinner_group_insert_category, strings);
+        // 設定要下拉的樣式
+        adapter.setDropDownViewResource(R.layout.spinner_group_insert_category);
+        spinnerReachGroup.setAdapter(adapter); // Adapter 設定進 spType
     }
 
     /**
@@ -187,6 +213,20 @@ public class PaymentInformationFragment extends Fragment {
      * spinner監聽
      */
     public void handleSpinnerListener() {
+        // 已達標團購選擇
+        spinnerReachGroup.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // 抓取已選擇的團購
+                reachGroup = reachGroups.get(position);
+                // 使用選擇的團購抓取目前的會員購買清單
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
         // 付款方式選擇
         spinnerPaymentMethod.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,6 +44,8 @@ import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.group.GroupControl;
 import idv.tfp10101.iamin.location.Location;
 import idv.tfp10101.iamin.location.LocationControl;
+import idv.tfp10101.iamin.member.Member;
+import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.merch.Merch;
 import idv.tfp10101.iamin.network.RemoteAccess;
 
@@ -56,12 +59,15 @@ public class ReachFragment extends Fragment {
     private ImageView imageViewSuccessPag;
     private ImageView imageViewPaymentPag;
     // 物件
+    private Member member;
     List<Group> reachGroups = new ArrayList<>(); // 取得目前已達標的團購
     List<Location> locations = new ArrayList<>();
     Map<Integer, List<Location>> locationMap = new HashMap<>(); // 所選擇團購的地址存放
     private String displayTime = null; // (顯示用)
     private String formatTime = null; // 截止時間 (儲存-轉格式用)
     private Timestamp timestamp = null; // 截止時間 (儲存用)
+    // 導航控制(頁面切換用)
+    private NavController navController;
 
     /**
      * 取得xml元件
@@ -75,6 +81,8 @@ public class ReachFragment extends Fragment {
         // 先載入RecyclerView元件，但是還沒有掛上Adapter
         recyclerViewReach = view.findViewById(R.id.recyclerViewReach);
         recyclerViewReach.setLayoutManager(new LinearLayoutManager(activity));
+
+        navController = Navigation.findNavController(view);
     }
 
     /**linearLayoutLocation
@@ -115,9 +123,10 @@ public class ReachFragment extends Fragment {
         // 分頁跳轉
         handlePageJump();
 
-        /** 設定預設memberId */
+        /** 抓取會員ID */
+        member = MemberControl.getInstance();
         // 抓取有達標的團購
-        reachGroups = GroupControl.getReachGroup(activity, 1);
+        reachGroups = GroupControl.getReachGroup(activity, member.getId());
         if (reachGroups == null || reachGroups.isEmpty()) {
             Toast.makeText(activity, "目前沒有達標的團購", Toast.LENGTH_SHORT).show();
             return;
@@ -321,7 +330,7 @@ public class ReachFragment extends Fragment {
             // 成團推播按鈕
             holder.imageViewNotification.setOnClickListener(view -> {
                 // 依照 GroupId 團體推播
-                sendFcmByGroupId(rsGroup.getGroupId());
+                sendFcmByGroupId(rsGroup.getGroupId(), rsGroup.getName());
             });
         }
 
@@ -334,23 +343,13 @@ public class ReachFragment extends Fragment {
     /**
      * 成團推播 (目前測試資料)
      */
-    private void sendFcmByGroupId(int groupId) {
-        // 如果有網路，就進行 request
-        if (RemoteAccess.networkConnected(activity)) {
-            // 網址 ＆ Action
-            String url = RemoteAccess.URL_SERVER + "Fcm";
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("action", "sendFcmByGroupId");
-            jsonObject.addProperty("title", "title------");
-            jsonObject.addProperty("body", "body------");
-            jsonObject.addProperty("data", "data------");
-
-            // requst
-            String jsonString = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
-
-        }else {
-            Toast.makeText(activity, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
-        }
+    private void sendFcmByGroupId(int groupId, String groupName) {
+        // Bundle -> 打包資料傳遞 putXYZ(key, value)
+        Bundle bundle = new Bundle();
+        bundle.putString("groupName", groupName);
+        bundle.putInt("groupId", groupId);
+        // 切換頁面
+        navController.navigate(R.id.action_reachFragment_to_reachNotificationFragment, bundle);
     }
 
     /**

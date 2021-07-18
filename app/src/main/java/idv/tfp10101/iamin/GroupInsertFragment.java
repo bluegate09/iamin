@@ -42,6 +42,8 @@ import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.group.GroupCategory;
 import idv.tfp10101.iamin.group.GroupControl;
 import idv.tfp10101.iamin.group.GroupInsertAddViewData;
+import idv.tfp10101.iamin.member.Member;
+import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.merch.Merch;
 import idv.tfp10101.iamin.merch.MerchControl;
 
@@ -68,12 +70,8 @@ public class GroupInsertFragment extends Fragment {
     private EditText editTextCaution; // 注意事項
     private RadioGroup RadioGroupPrivacy;
     private Button buttonGroupInsert;
-
-    private ImageView imageViewMerchPag;
-    private ImageView imageViewGroupPag;
-    private ImageView imageViewSuccessPag;
-    private ImageView imageViewPaymentPag;
     // 物件
+    private Member member;
     List<GroupCategory> groupCategories; // 種類清單
     private int totalAmount = 0; // 總金額
     private Boolean isConditionCount = false; // 停單條件
@@ -110,14 +108,9 @@ public class GroupInsertFragment extends Fragment {
         linearLayoutLocation = view.findViewById(R.id.linearLayoutLocation);
         editTextCaution = view.findViewById(R.id.editTextCaution);
         RadioGroupPrivacy = view.findViewById(R.id.RadioGroupPrivacy);
-        buttonGroupInsert = view.findViewById(R.id.buttonGroup);
+        buttonGroupInsert = view.findViewById(R.id.buttonSubmit);
 
         navController = Navigation.findNavController(view);
-
-        imageViewMerchPag = view.findViewById(R.id.imageViewMerchPag);
-        imageViewGroupPag = view.findViewById(R.id.imageViewGroupPag);
-        imageViewSuccessPag = view.findViewById(R.id.imageViewSuccessPag);
-        imageViewPaymentPag = view.findViewById(R.id.imageViewPaymentPag);
     }
 
     /**
@@ -159,6 +152,9 @@ public class GroupInsertFragment extends Fragment {
         if (ConditionTime != null) {
             textViewConditionTime.setText(ConditionTime);
         }
+
+        /** 抓取會員ID */
+        member = MemberControl.getInstance();
 
         // 加入商品
         handleAddMerch();
@@ -434,7 +430,7 @@ public class GroupInsertFragment extends Fragment {
             for (int merchId : giavd.MerchsId()) {
                 Merch merch = new Merch(
                         merchId,
-                        0,
+                        member.getId(),
                         "",
                         0,
                         "",
@@ -517,7 +513,7 @@ public class GroupInsertFragment extends Fragment {
             /** 團購 Table */
             Group group = new Group(
                     -1,
-                    1, // 會員ID(目前是假資料)
+                    member.getId(), // 會員ID
                     editTextName.getText().toString().trim(), // 標題 (清除左右空白)
                     0, // 目標進度
                     Integer.parseInt(editTextGoal.getText().toString().trim()), // 目標份數

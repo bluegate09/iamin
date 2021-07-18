@@ -33,6 +33,8 @@ import java.util.Map;
 
 import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.group.GroupControl;
+import idv.tfp10101.iamin.member.Member;
+import idv.tfp10101.iamin.member.MemberControl;
 
 public class SellerFragment extends Fragment {
     private Activity activity;
@@ -43,6 +45,7 @@ public class SellerFragment extends Fragment {
     private RecyclerView recyclerViewSeller;
     private Button buttonGroup;
     // 物件
+    private Member member;
     private List<Group> localGroups = new ArrayList<>(); // 取得目前已達標的團購
     private List<Group> filterGroups = new ArrayList<>(); // 取得已篩選達標的團購
 
@@ -56,7 +59,7 @@ public class SellerFragment extends Fragment {
     private void findViews(View view) {
         searchViewSeller = view.findViewById(R.id.searchViewSeller);
         spinnerSeller = view.findViewById(R.id.spinnerSeller);
-        buttonGroup = view.findViewById(R.id.buttonGroup);
+        buttonGroup = view.findViewById(R.id.buttonSubmit);
         // 先載入RecyclerView元件，但是還沒有掛上Adapter
         recyclerViewSeller = view.findViewById(R.id.recyclerViewSeller);
         recyclerViewSeller.setLayoutManager(new LinearLayoutManager(activity));
@@ -99,9 +102,10 @@ public class SellerFragment extends Fragment {
 
         // 一開始先判斷
 
-        /** 設定預設memberId */
+        /** 抓取會員ID */
+        member = MemberControl.getInstance();
         // 跟server抓取所有Group
-        GroupControl.getAllGroupByMemberId(activity, 1);
+        GroupControl.getAllGroupByMemberId(activity, member.getId());
         localGroups = GroupControl.getLocalGroup();
         if (localGroups == null || localGroups.isEmpty()) {
             Toast.makeText(activity, R.string.textNoGroupsFound, Toast.LENGTH_SHORT).show();
