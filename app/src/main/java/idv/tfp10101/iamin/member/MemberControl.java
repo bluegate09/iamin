@@ -28,6 +28,13 @@ public class MemberControl {
 
     private final static String TAG = "TAG_MemberControl";
 
+    /**
+     *
+     * @param context context
+     * @param member member bean
+     * @param value 欲執行的action
+     * @return json String
+     */
     public static String memberRemoteAccess(Context context , Member member, String value) {
         if (RemoteAccess.networkConnected(context)) {
 

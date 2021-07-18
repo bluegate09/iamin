@@ -102,7 +102,7 @@
     <string name="textUploadSuccess">上傳成功</string>
     <string name="textUploadFail">上傳失敗</string>
     <string name="update">更新</string>
-    <string name="textsocialloginhelpertext">請輸入會在這應用程式顯示的名稱</string>
+    <string name="textsocialloginhelpertext">請輸入名稱</string>
     <string name="textinputtexthelper">請輸入名稱</string>
     <string name="textnouser">找不到使用者</string>
     <string name="welcomeback">歡迎回來</string>
@@ -116,4 +116,10 @@
     <string name="text_reset_password_error">發生錯誤！重置連結未傳送</string>
     <string name="text_confirm_password">確認密碼</string>
     <string name="text_confirm_error">密碼不相符</string>
+    <string name="text_creating_new_account">建立帳號中</string>
+    <string name="text_creating_account_message">請稍等，正在為您建立帳號</string>
+    <string name="text_google_signin_success">Google 登入成功</string>
+    <string name="text_verification_account">帳號驗證中</string>
+    <string name="text_account_verification_message">請稍等…</string>
+    <string name="text_welcome_back">歡迎回來</string>
 </resources>

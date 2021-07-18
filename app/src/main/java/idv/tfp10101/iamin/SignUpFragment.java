@@ -2,6 +2,7 @@ package idv.tfp10101.iamin;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -30,6 +31,7 @@ import java.util.HashMap;
 import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
 
+import static android.content.Context.MODE_PRIVATE;
 import static idv.tfp10101.iamin.member.MemberControl.memberRemoteAccess;
 
 public class SignUpFragment extends Fragment {
@@ -158,8 +160,10 @@ public class SignUpFragment extends Fragment {
                 .addOnCompleteListener(requireActivity(), task -> {
                     if (task.isSuccessful()) {
                         //mysql創帳號
+                        SharedPreferences sharedPreferences = activity.getSharedPreferences("FCM_TOKEN", MODE_PRIVATE);
+                        String myToken = sharedPreferences.getString("FCM_TOKEN", "");
+                        member.setFCM_token(myToken);
                         member.setuUId(auth.getCurrentUser().getUid());
-//                        Log.d(TAG,"Uid: " + auth.getCurrentUser().getUid());
                         String memberJson = memberRemoteAccess(activity , member, "signup");
                         Member member2 = gson.fromJson(memberJson,Member.class);
                         MemberControl.setMember(member2);

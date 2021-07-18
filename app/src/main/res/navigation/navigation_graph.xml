@@ -94,8 +94,8 @@
             android:id="@+id/action_memberCenterFragment_to_memeberCenterProfileFragment"
             app:destination="@id/memeberCenterProfileFragment" />
         <action
-            android:id="@+id/action_memberCenterFragment_to_merchbrowseFragment"
-            app:destination="@id/merchbrowseFragment" />
+            android:id="@+id/action_memberCenterFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
     </fragment>
     <fragment
         android:id="@+id/memeberCenterFollowFragment"

@@ -24,6 +24,9 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilSocialSignUp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+        app:boxStrokeWidth="0dp"
+        app:boxStrokeWidthFocused="0dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="200dp"
@@ -36,7 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/nickname"
-            android:background="@color/white" />
+            android:background="@drawable/member_round_edit_text"/>
 
     </com.google.android.material.textfield.TextInputLayout>
     <Button

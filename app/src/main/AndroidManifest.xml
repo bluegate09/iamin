@@ -69,7 +69,10 @@
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="seller_notification_channel_id" />
 
-        <activity android:name=".MainActivity">
+
+        <!--android:windowSoftInputMode="adjustPan"  防止bottom navigation跟鍵盤一起移往上動-->
+        <activity android:name=".MainActivity"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

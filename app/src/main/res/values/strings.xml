@@ -121,4 +121,10 @@
     <string name="text_reset_password_error">Error! Reset Link Is Not Sent</string>
     <string name="text_confirm_password">Confirm Password</string>
     <string name="text_confirm_error">The Confirm Password confirmation does not match</string>
+    <string name="text_creating_new_account">Creating New Account</string>
+    <string name="text_creating_account_message">Please wait,while we are creating your new Account…</string>
+    <string name="text_google_signin_success">Google Sign-In Success</string>
+    <string name="text_verification_account">Account verification</string>
+    <string name="text_account_verification_message">Please wait for a while…</string>
+    <string name="text_welcome_back">Welcome Come Back</string>
 </resources>

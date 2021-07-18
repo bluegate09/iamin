@@ -92,7 +92,9 @@ public class MemberCenterMyWalletFragment extends Fragment {
         Type listType = new TypeToken<List<MyWallet>>() {}.getType();
         myWallets = gson2.fromJson(jsonIn,listType);
 
-//        Log.d(TAG,"MyWallets: " + myWallets.toString());
+        for(MyWallet tmp: myWallets) {
+            Log.d(TAG, "MyWallets: " + tmp);
+        }
 
 
     }
@@ -145,18 +147,24 @@ public class MemberCenterMyWalletFragment extends Fragment {
         }
         //把抓到的資料裡的月份取出並排序
         sortMonthForDropDown(myWalletsYear);
+        //pieChart設定
         handlePieChartConfig(view);
+        //更新pieChart 及 recycleView
         updateUI(myWalletsYear);
 
-        Log.d(TAG,"selectMonth: " + selectMonth);
 
+        /**
+         * 出問題的地方
+         */
         //月dropdown選單
         adapterMonth = new ArrayAdapter<>(activity, R.layout.mywallet_dropdown, date_month);
-
-        monthDropDown.setThreshold(1);
+        adapterMonth.notifyDataSetChanged();
         monthDropDown.setAdapter(adapterMonth);
+        Log.d(TAG,"monthDropDown: " + monthDropDown.getAdapter().isEmpty());
+        monthDropDown.getAdapter().isEmpty();
         monthDropDown.setOnItemClickListener((parent, view1, position, id) -> {
 
+            //AutoCompleteTextView DropdownMenu
             monthDropDown.getAdapter().getItem(0);
             Log.d(TAG,"monthDropDown: " + monthDropDown.getAdapter().getItem(0));
 
@@ -175,7 +183,7 @@ public class MemberCenterMyWalletFragment extends Fragment {
                 }
 
                 updateUI(tmpList);
-                    Log.d(TAG, "MyWallet_adapterMonth: " + date_month);
+//                    Log.d(TAG, "MyWallet_adapterMonth: " + date_month);
 
             }
         });
@@ -189,9 +197,10 @@ public class MemberCenterMyWalletFragment extends Fragment {
             rightArrow.setEnabled(false);
         }
 
+        //右邊箭頭按鈕
         rightArrow.setOnClickListener(v -> {
 
-                Log.d(TAG, "MyWallet_rightArrow: " + date_month);
+//                Log.d(TAG, "MyWallet_rightArrow: " + date_month);
 
             String currentYear = date_year.get(currentIndex + 1);
             yearTitle.setText(currentYear);
@@ -217,13 +226,17 @@ public class MemberCenterMyWalletFragment extends Fragment {
                 leftArrow.setEnabled(true);
             }
         });
-        Log.d(TAG,"currentIndex: " + currentIndex);
+
+//        Log.d(TAG,"currentIndex: " + currentIndex);
+
         if(currentIndex == 0){
             leftArrow.setEnabled(false);
             leftArrow.setVisibility(View.INVISIBLE);
         }
+
+        //左邊箭頭按鈕
         leftArrow.setOnClickListener(v -> {
-                Log.d(TAG, "MyWallet_leftArrow: " + date_month);
+//                Log.d(TAG, "MyWallet_leftArrow: " + date_month);
             String currentYear = date_year.get(currentIndex - 1);
             yearTitle.setText(currentYear);
             //取出相對應年份的資料
@@ -253,8 +266,8 @@ public class MemberCenterMyWalletFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        Log.d(TAG,"date_year: " + date_year);
-        Log.d(TAG,"date_month: " + date_month);
+//        Log.d(TAG,"date_year: " + date_year);
+//        Log.d(TAG,"date_month: " + date_month);
     }
 
 
@@ -309,11 +322,8 @@ public class MemberCenterMyWalletFragment extends Fragment {
         }
         //增加All time
         date_month.clear();
-        Log.d(TAG,"sortMonthForDropDown: " + date_month);
         date_month.add(getString(R.string.alltime));
-        Log.d(TAG,"sortMonthForDropDown: " + date_month);
         date_month.addAll(hash_set_month);
-        Log.d(TAG,"sortMonthForDropDown: " + date_month);
 
         //排序讓alltime在最上面 java8 addAll()
         sort(date_month);
@@ -404,7 +414,6 @@ public class MemberCenterMyWalletFragment extends Fragment {
 //                    tmpStr = yearTitle.getText().toString();
 //                    tmpIndex = currentIndex;
 //                    Log.d(TAG,"tmpIndex: " + tmpIndex);
-
                     Navigation.findNavController(v).navigate(R.id.action_memberCenterMyWalletFragment_to_memberCenterMyWalletDetailsFragment,bundle);
 
 
