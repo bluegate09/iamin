@@ -200,12 +200,18 @@ public class MerchbrowseFragment extends Fragment {
 
     //取得買家下單
     private void getOrder(){
+        int total_quantity = 0;
+        int total_price = 0;
         Map<Merch,Integer> maps = ((MerchAdapter) recyclerViewMerch.getAdapter()).getMerchsMap();
         Log.d("TAGGGGGGGGGG", String.valueOf(maps.size()));
             for (Map.Entry<Merch, Integer> entry : maps.entrySet()) {
                 Merch merch = entry.getKey();
-                int merchID = merch.getMerchId();
-                int amount = entry.getValue();
+                int merchID = merch.getMerchId(); //取得商品ID
+                int amount = entry.getValue();  //取得買家所選商品數量
+                int price = merch.getPrice();   //取得當見商品價錢
+                int format_total = price * amount; //單件商品的價錢乘上數量
+                total_price += format_total; //將每個商品的總價加起來
+                total_quantity += amount; //將每個商品的數量加起來
                 Toast.makeText(activity, merch.getName()+"數量:"+String.valueOf(amount), Toast.LENGTH_SHORT).show();
             }
     }
