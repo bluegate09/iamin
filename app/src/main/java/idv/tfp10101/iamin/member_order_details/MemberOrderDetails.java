@@ -5,10 +5,10 @@ public class MemberOrderDetails {
     private int memberOrderId; // 會員訂單ID
     private int merchId; // 商品ID
     private int quantity; // 數量
-    private String format_total; // 樣式總價
+    private int format_total; // 樣式總價
 
     public MemberOrderDetails(int memberOrderDetailsId, int memberOrderId, int merchId, int quantity,
-                              String format_total) {
+                              int format_total) {
         super();
         this.memberOrderDetailsId = memberOrderDetailsId;
         this.memberOrderId = memberOrderId;
@@ -49,11 +49,11 @@ public class MemberOrderDetails {
         this.quantity = quantity;
     }
 
-    public String getFormat_total() {
+    public int getFormat_total() {
         return format_total;
     }
 
-    public void setFormat_total(String format_total) {
+    public void setFormat_total(int format_total) {
         this.format_total = format_total;
     }
 }

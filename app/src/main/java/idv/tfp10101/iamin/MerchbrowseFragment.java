@@ -36,6 +36,7 @@ import com.google.gson.JsonObject;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +49,8 @@ import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.member_order.MemberOrder;
 import idv.tfp10101.iamin.member_order.MemberOrderControl;
+import idv.tfp10101.iamin.member_order_details.MemberOrderDetails;
+import idv.tfp10101.iamin.member_order_details.MemberOrderDetailsControl;
 import idv.tfp10101.iamin.merch.Merch;
 import idv.tfp10101.iamin.merch.MerchControl;
 import idv.tfp10101.iamin.network.RemoteAccess;
@@ -234,7 +237,7 @@ public class MerchbrowseFragment extends Fragment {
         int total_quantity = 0; //買家選擇的總數量
         int total_price = 0;    //買家商品總價(訂單)
         Map<Merch,Integer> maps = ((MerchAdapter) recyclerViewMerch.getAdapter()).getMerchsMap();
-        Log.d("TAGGGGGGGGGG", String.valueOf(maps.size()));
+
             for (Map.Entry<Merch, Integer> entry : maps.entrySet()) {
                 Merch merch = entry.getKey();
                 int merchID = merch.getMerchId(); //取得商品ID
@@ -266,8 +269,8 @@ public class MerchbrowseFragment extends Fragment {
                                     false,
                                     false
                             );
-                            MemberOrderControl.insertMemberOrder(activity,memberOrder);
-                            Toast.makeText(activity, "沒有超過上限!!", Toast.LENGTH_SHORT).show();
+                            setMemberorder(memberOrder);
+                            //Toast.makeText(activity, "沒有超過上限!!", Toast.LENGTH_SHORT).show();
                         }else{
                             Toast.makeText(activity, "已超過能夠買得最大上限請重新選擇!!", Toast.LENGTH_SHORT).show();
                         }
@@ -282,11 +285,7 @@ public class MerchbrowseFragment extends Fragment {
                                 false,
                                 false
                         );
-                        //member_order_ID是回傳的自動編號值
-                        int member_order_ID = MemberOrderControl.insertMemberOrder(activity,memberOrder);
-                        if (member_order_ID != 0){
-                            Toast.makeText(activity, "訂單建立失敗!!", Toast.LENGTH_SHORT).show();
-                        }
+                       setMemberorder(memberOrder);
                     }
                 }else{
                     Toast.makeText(activity, "不好意思已經超過了結單時間!!", Toast.LENGTH_SHORT).show();
@@ -295,6 +294,34 @@ public class MerchbrowseFragment extends Fragment {
                 Toast.makeText(activity, "請選擇商品及數量!!", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+    //建立買家訂單主表
+    private void setMemberorder(MemberOrder memberOrder){
+
+        //member_order_ID是回傳的自動編號值
+        int member_order_ID = MemberOrderControl.insertMemberOrder(activity,memberOrder);
+        //裝買家明細
+        List<MemberOrderDetails> orderDetails = new ArrayList<>();
+        Map<Merch,Integer> maps = ((MerchAdapter) recyclerViewMerch.getAdapter()).getMerchsMap();
+
+        for (Map.Entry<Merch, Integer> entry : maps.entrySet()) {
+            Merch merch = entry.getKey();
+            int merchID = merch.getMerchId(); //取得商品ID
+            int amount = entry.getValue();  //取得買家所選商品數量
+            int price = merch.getPrice();   //取得當見商品價錢
+            int format_total = price * amount; //單件商品的價錢乘上數量
+            MemberOrderDetails memberOrderDetails = new MemberOrderDetails(
+                    0,
+                    member_order_ID,
+                    merchID,
+                    amount,
+                    format_total
+            );
+            if (amount > 0 ) {
+                orderDetails.add(memberOrderDetails);
+            }
+        }
+        MemberOrderDetailsControl.insertMemberOrderDetails(activity,orderDetails);
     }
     private void findView(View view) {
         recyclerViewMerch = view.findViewById(R.id.recyclerViewMerch);
