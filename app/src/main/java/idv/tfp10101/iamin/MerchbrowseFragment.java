@@ -169,7 +169,6 @@ public class MerchbrowseFragment extends Fragment {
                     break;
                 case 3:
                     final String[] payment_method = {"面交","信用卡交易"};
-                    final boolean[] select = new boolean[payment_method.length];
                     buyerChoose = -1;
                     payment_methodDialog
 
@@ -185,9 +184,11 @@ public class MerchbrowseFragment extends Fragment {
                                 if (buyerChoose == -1){
                                     Toast.makeText(activity, "選取失敗", Toast.LENGTH_SHORT).show();
                                 }else{
+                                    getOrder();
                                     Toast.makeText(activity, restult+payment_method[buyerChoose++], Toast.LENGTH_SHORT).show();
                                 }
                                 Toast.makeText(activity, String.valueOf(buyerChoose), Toast.LENGTH_SHORT).show();
+
                             })
                             .setNegativeButton("我在想一下",(dialog, which) -> {return;})
                             .setCancelable(false)
