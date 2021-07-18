@@ -1,9 +1,11 @@
 package idv.tfp10101.iamin.group;
 
 import android.content.Context;
+import android.util.Base64;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
@@ -180,6 +182,30 @@ public class GroupControl {
         }else {
             Toast.makeText(context, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
             return null;
+        }
+    }
+
+    /**
+     * 更新商品 (包含圖片)
+     * @param context
+     * @param group
+     * @return
+     */
+    public static int updateGroup(Context context, Group group) {
+        // 如果有網路，就進行 request
+        if (RemoteAccess.networkConnected(context)) {
+            // 網址 ＆ Action
+            String url = RemoteAccess.URL_SERVER + "Merchbrowse";
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("action", "update");
+            jsonObject.addProperty("updategroup", new Gson().toJson(group));
+            // requst
+            String result = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
+
+            return Integer.parseInt(result);
+        }else {
+            Toast.makeText(context, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
+            return -1;
         }
     }
 }

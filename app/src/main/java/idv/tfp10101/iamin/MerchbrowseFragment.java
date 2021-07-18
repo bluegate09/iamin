@@ -203,7 +203,6 @@ public class MerchbrowseFragment extends Fragment {
                                 }
                             })
                             .setPositiveButton("去買單!!",(dialog, which) -> {
-                                String restult = "你選擇了:";
                                 if (buyerChoose == -1){
                                     Toast.makeText(activity, "請選擇付款方式!!", Toast.LENGTH_SHORT).show();
                                     return;
@@ -240,19 +239,18 @@ public class MerchbrowseFragment extends Fragment {
 
             for (Map.Entry<Merch, Integer> entry : maps.entrySet()) {
                 Merch merch = entry.getKey();
-                int merchID = merch.getMerchId(); //取得商品ID
                 int amount = entry.getValue();  //取得買家所選商品數量
                 int price = merch.getPrice();   //取得當見商品價錢
                 int format_total = price * amount; //單件商品的價錢乘上數量
                 total_price += format_total; //將每個商品的總價加起來
                 total_quantity += amount; //將每個商品的數量加起來
-                Toast.makeText(activity, merch.getName()+"數量:"+String.valueOf(amount), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(activity, merch.getName()+"數量:"+String.valueOf(amount), Toast.LENGTH_SHORT).show();
             }
         //取得最新的團購資訊
         Group group = GroupControl.getGroupbyId(activity,groupID);
         if(group != null) {
             int progress = group.getProgress();
-            int goal = group.getGoal();
+            int status = group.getGroupStatus();
             if ((total_quantity != 0)||(total_price != 0)){
                 //判斷是否在結單時間內
                 if (new Date().before(condition_Time)){
@@ -270,6 +268,28 @@ public class MerchbrowseFragment extends Fragment {
                                     false
                             );
                             setMemberorder(memberOrder);
+                            if ((total_quantity + progress) > goal){
+                                status = 2;
+                            }
+                            Group updaategroup = new Group(
+                                    group.getGroupId(),
+                                    group.getMemberId(),
+                                    group.getName(),
+                                    total_quantity + progress,
+                                    group.getGoal(),
+                                    group.getCategoryId(),
+                                    group.getGroupItem(),
+                                    group.getContactNumber(),
+                                    group.getPaymentMethod(),
+                                    status,
+                                    group.getCaution(),
+                                    group.getPrivacyFlag(),
+                                    group.getTotalAmount(),
+                                    group.getAmount(),
+                                    group.getConditionCount(),
+                                    group.getConditionTime()
+                            );
+                            updateGroup(updaategroup);
                             //Toast.makeText(activity, "沒有超過上限!!", Toast.LENGTH_SHORT).show();
                         }else{
                             Toast.makeText(activity, "已超過能夠買得最大上限請重新選擇!!", Toast.LENGTH_SHORT).show();
@@ -286,6 +306,28 @@ public class MerchbrowseFragment extends Fragment {
                                 false
                         );
                        setMemberorder(memberOrder);
+                        if ((total_quantity + progress) > goal){
+                            status = 2;
+                        }
+                        Group updaategroup = new Group(
+                                group.getGroupId(),
+                                group.getMemberId(),
+                                group.getName(),
+                                total_quantity + progress,
+                                group.getGoal(),
+                                group.getCategoryId(),
+                                group.getGroupItem(),
+                                group.getContactNumber(),
+                                group.getPaymentMethod(),
+                                status,
+                                group.getCaution(),
+                                group.getPrivacyFlag(),
+                                group.getTotalAmount(),
+                                group.getAmount(),
+                                group.getConditionCount(),
+                                group.getConditionTime()
+                        );
+                        updateGroup(updaategroup);
                     }
                 }else{
                     Toast.makeText(activity, "不好意思已經超過了結單時間!!", Toast.LENGTH_SHORT).show();
@@ -322,6 +364,10 @@ public class MerchbrowseFragment extends Fragment {
             }
         }
         MemberOrderDetailsControl.insertMemberOrderDetails(activity,orderDetails);
+    }
+
+    private void updateGroup (Group group){
+        int code = GroupControl.updateGroup(activity,group);
     }
     private void findView(View view) {
         recyclerViewMerch = view.findViewById(R.id.recyclerViewMerch);
