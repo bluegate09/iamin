@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -37,7 +38,7 @@ public class MemberCenterFragment extends Fragment {
     private TextView nickname, email, rating, followCount;
     private ImageView ivPic;
     private Member member;
-    private Gson gson2 = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
+    private Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
 //    private Gson gson=  new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
 
     @Override
@@ -45,15 +46,8 @@ public class MemberCenterFragment extends Fragment {
         super.onCreate(savedInstanceState);
         activity = getActivity();
         auth = FirebaseAuth.getInstance();
-        member = Member.getInstance();
-
-
-        //從mysql取member data
-        String jsonIn = memberRemoteAccess(activity, member, "findById");
-        Member memberObject = gson2.fromJson(jsonIn,Member.class);
-        MemberControl.setMemberData(memberObject);
-
-//        Log.d(TAG,"jsonIn: " + jsonIn);
+        member = MemberControl.getInstance();
+        Log.d(TAG, "mebmerCenter_onCreate: " + member.getId());
 
     }
 
@@ -102,15 +96,18 @@ public class MemberCenterFragment extends Fragment {
             MemberControl.memberRemoteAccess(activity,member,"logout");
             //登出
             auth.signOut();
-            //刪除 SharedPreferences 裡的member_ID
-            activity.getSharedPreferences("member_ID",MODE_PRIVATE).edit().remove("member_ID").apply();
+            //fb登出
+            LoginManager.getInstance().logOut();
+            //member bean 清空
+            MemberControl.setMember(null);
             //防止回到上一頁
             NavController navController = Navigation.findNavController(v);
             navController.popBackStack(R.id.logInFragment, true);
             navController.popBackStack(R.id.homeFragment, true);
             navController.popBackStack(R.id.memberCenterFragment, true);
+            navController.popBackStack(R.id.signUpFragment,true);
+            navController.popBackStack(R.id.socialLoginFragment,true);
             navController.navigate(R.id.homeFragment);
-
 
         });
     }
@@ -118,15 +115,9 @@ public class MemberCenterFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
-            Gson gson = new Gson();
-            String jsonIn = memberRemoteAccess(activity, member, "findById");
-            member = gson.fromJson(jsonIn,Member.class);
-            MemberControl.setMemberData(member);
+            member = MemberControl.getInstance();
+            setTextView();
 //            Log.d(TAG, "OnCreate: " + member.isUpdate());
-            member.setUpdate(true);
-
-
     }
 
     private void setTextView() {
@@ -137,7 +128,7 @@ public class MemberCenterFragment extends Fragment {
     }
 
     private void setImageView() {
-        String url = RemoteAccess.URL_SERVER + "memberServelt";
+        String url = RemoteAccess.URL_SERVER + "memberController";
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("action", "getImage");
         jsonObject.addProperty("member", new Gson().toJson(member));

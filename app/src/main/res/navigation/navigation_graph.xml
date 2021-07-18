@@ -43,6 +43,9 @@
         <action
             android:id="@+id/action_logInFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_logInFragment_to_socialLoginFragment"
+            app:destination="@id/socialLoginFragment" />
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
@@ -67,8 +70,8 @@
         android:label="fragment_phone_auth"
         tools:layout="@layout/fragment_phone_auth" >
         <action
-            android:id="@+id/action_phoneAuthFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            android:id="@+id/action_phoneAuthFragment_to_socialLoginFragment"
+            app:destination="@id/socialLoginFragment" />
         <action
             android:id="@+id/action_phoneAuthFragment_to_memberCenterFragment"
             app:destination="@id/memberCenterFragment" />
@@ -229,4 +232,13 @@
         android:name="idv.tfp10101.iamin.MessageFragment"
         android:label="fragment_message"
         tools:layout="@layout/fragment_message" />
+    <fragment
+        android:id="@+id/socialLoginFragment"
+        android:name="idv.tfp10101.iamin.SocialLoginFragment"
+        android:label="fragment_social_login"
+        tools:layout="@layout/fragment_social_login" >
+        <action
+            android:id="@+id/action_socialLoginFragment_to_memberCenterFragment"
+            app:destination="@id/memberCenterFragment" />
+    </fragment>
 </navigation>

@@ -76,7 +76,7 @@
     <string name="ongoing">進行中</string>
     <string name="reach">達標</string>
     <string name="failed">流標</string>
-    <string name="nickname">匿名</string>
+    <string name="nickname">名稱</string>
     <string name="rating">評分</string>
     <string name="follow_count">追隨數</string>
     <string name="title">標題</string>
@@ -92,13 +92,18 @@
     <string name="text_phone_number">手機號碼</string>
     <string name="membercenter">會員中心</string>
     <string name="spending">開銷</string>
-    <string name="month">Month</string>
-    <string name="year">Year</string>
-    <string name="income">Income</string>
-    <string name="textNoSellerFound">No Seller Found</string>
-    <string name="textImageDownloadFail">Image Download Fail</string>
-    <string name="textSellerName">Seller Name</string>
+    <string name="month">月</string>
+    <string name="year">年</string>
+    <string name="income">收入</string>
+    <string name="textNoSellerFound">沒有找到賣家</string>
+    <string name="textImageDownloadFail">圖片下載失敗</string>
+    <string name="textSellerName">賣家名字</string>
     <string name="textAa">Aa</string>
-    <string name="textUploadSuccess">Upload Success</string>
-    <string name="textUploadFail">Upload Fail</string>
+    <string name="textUploadSuccess">上傳成功</string>
+    <string name="textUploadFail">上傳失敗</string>
+    <string name="update">更新</string>
+    <string name="textsocialloginhelpertext">請輸入會在這應用程式顯示的名稱</string>
+    <string name="textinputtexthelper">請輸入名稱</string>
+    <string name="textnouser">No user found</string>
+    <string name="welcomeback">Welcome Back</string>
 </resources>

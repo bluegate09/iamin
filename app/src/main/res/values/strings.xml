@@ -106,4 +106,9 @@
     <string name="textAa">Aa</string>
     <string name="textUploadSuccess">Upload Success</string>
     <string name="textUploadFail">Upload Fail</string>
+    <string name="update">Update</string>
+    <string name="textsocialloginhelpertext">Please enter nickname will be shown in the app</string>
+    <string name="textinputtexthelper">Please enter nickname</string>
+    <string name="textnouser">No user found</string>
+    <string name="welcomeback">Welcome Back</string>
 </resources>

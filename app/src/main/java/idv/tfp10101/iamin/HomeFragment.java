@@ -28,6 +28,8 @@ import android.widget.Toast;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.protobuf.Empty;
 
 import java.sql.Timestamp;
@@ -47,6 +49,7 @@ import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.merch.Merch;
 import idv.tfp10101.iamin.merch.MerchControl;
+import idv.tfp10101.iamin.network.RemoteAccess;
 
 import static android.content.Context.MODE_PRIVATE;
 import static android.media.CamcorderProfile.get;
@@ -61,7 +64,7 @@ public class HomeFragment extends Fragment {
     private List<Group> localGroups;
     private SwipeRefreshLayout swipeRefreshLayout;
     private SearchView searchView;
-    private int mySqlMemberId;//取得當前使用者會員ID
+    private Member member;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,19 +91,24 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        String url;
+        JsonObject jsonObject;
+        String jsonMember;
         //先前有登入就取會員資料
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        member = MemberControl.getInstance();
         if(currentUser != null){
-            SharedPreferences pref = activity.getSharedPreferences("member_ID",
-                    MODE_PRIVATE);
-            mySqlMemberId = pref.getInt("member_ID", -1);
-            //小於0代表出問題 所以return
-            if(mySqlMemberId < 0){
-                return;
-            }
-            Member member = Member.getInstance();
-            member.setId(mySqlMemberId);
-            MemberControl.getMemberData(activity,member);
+            member.setuUId(currentUser.getUid());
+            Log.d("TAG_HOME","uUId: " + currentUser.getUid());
+            url = RemoteAccess.URL_SERVER + "memberController";
+            jsonObject = new JsonObject();
+            jsonObject.addProperty("action", "findbyUuid");
+            jsonObject.addProperty("member", new Gson().toJson(member));
+            jsonMember = RemoteAccess.getRemoteData(url, jsonObject.toString());
+            member = new Gson().fromJson(jsonMember,Member.class);
+            MemberControl.setMember(member);
+            if(member != null) {
+                Log.d("TAG_HOME", "member id: " + member.getId());}
         }
     }
 
