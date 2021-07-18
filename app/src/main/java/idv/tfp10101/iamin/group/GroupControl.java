@@ -158,4 +158,28 @@ public class GroupControl {
             return reachGroups;
         }
     }
+
+    /**
+     * 用groupId查找group 用於下訂單的判斷
+     */
+    public static Group getGroupbyId(Context context, int groupid) {
+        // 如果有網路，就進行 request
+        if (RemoteAccess.networkConnected(context)) {
+            // 網址 ＆ Action
+            String url = RemoteAccess.URL_SERVER + "Merchbrowse";
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("action", "getGroupbyGroupId");
+            jsonObject.addProperty("groupId", groupid);
+
+            // requst
+            String jsonString = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
+            /** 匿名內部類別實作TypeToken，抓取 泛型 在呼叫方法 */
+            Type listType = new TypeToken<Group>(){}.getType();
+            Group group = new Gson().fromJson(jsonString, listType);
+            return group;
+        }else {
+            Toast.makeText(context, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
+            return null;
+        }
+    }
 }
