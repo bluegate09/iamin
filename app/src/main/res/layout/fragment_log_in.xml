@@ -54,6 +54,10 @@
                 android:paddingHorizontal="20dp">
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/logInEmailTil"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="0dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="8dp"
@@ -62,12 +66,16 @@
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etLoginEmail"
+                        android:background="@drawable/member_round_edit_text"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/white" />
+                        android:layout_height="wrap_content" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/logInPasswordTil"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="0dp"
                     app:passwordToggleEnabled="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -79,7 +87,7 @@
                         android:id="@+id/etLoginPassword"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/white"
+                        android:background="@drawable/member_round_edit_text"
                         android:inputType="textPassword" />
                 </com.google.android.material.textfield.TextInputLayout>
 

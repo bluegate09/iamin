@@ -1,5 +1,6 @@
 package idv.tfp10101.iamin;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -7,12 +8,17 @@ import androidx.navigation.ui.NavigationUI;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -61,7 +67,21 @@ public class MainActivity extends AppCompatActivity {
                 if (task.getResult() != null) {
                     String token = task.getResult();
                     Log.d(Constants.TAG, "MainActivityToken: " + token);
+
+                    SharedPreferences pref = this.getSharedPreferences("FCM_TOKEN", MODE_PRIVATE);
+                    pref.edit()
+                            .putString("FCM_TOKEN",token)
+                            .apply();
+
                 }
+            }
+        });
+
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+
+                Log.d("TAG_MAIN","Token: " + task.getResult());
             }
         });
     }

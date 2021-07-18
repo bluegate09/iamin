@@ -1,5 +1,7 @@
 package idv.tfp10101.iamin.service;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -12,6 +14,7 @@ import java.util.Map;
 import idv.tfp10101.iamin.Constants;
 
 public class FCMServiceSeller extends FirebaseMessagingService {
+
     // 當Android裝置在前景收到FCM時呼叫
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -33,6 +36,9 @@ public class FCMServiceSeller extends FirebaseMessagingService {
     @Override
     public void onNewToken(@NonNull String token) {
         Log.d(Constants.TAG, "onNewToken: " + token);
-        //RemoteAccess.sendTokenToServer(token, this);
+//        RemoteAccess.sendTokenToServer(token, this);
+
+        
     }
+
 }

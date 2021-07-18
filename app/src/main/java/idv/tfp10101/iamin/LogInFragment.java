@@ -1,7 +1,9 @@
 package idv.tfp10101.iamin;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -31,6 +33,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,15 +41,14 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 
 import java.util.Arrays;
 import java.util.Objects;
 
 import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
-import idv.tfp10101.iamin.network.RemoteAccess;
 
+import static android.content.Context.MODE_PRIVATE;
 import static idv.tfp10101.iamin.member.MemberControl.memberRemoteAccess;
 
 public class LogInFragment extends Fragment {
@@ -57,7 +59,9 @@ public class LogInFragment extends Fragment {
     private CallbackManager callbackManager;
     private Member member;
     private EditText etEmail, etPassword;
-    private Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
+    private TextInputLayout emailTil,passwordTil;
+    private ProgressDialog loadingBar;
+    private final Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
 
     ActivityResultLauncher<Intent> signInGoogleLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -86,6 +90,7 @@ public class LogInFragment extends Fragment {
         auth = FirebaseAuth.getInstance();
         member = MemberControl.getInstance();
         callbackManager = CallbackManager.Factory.create();
+        loadingBar = new ProgressDialog(activity);
 
         //用google登入firebase
         GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -108,6 +113,8 @@ public class LogInFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         etEmail = view.findViewById(R.id.etLoginEmail);
         etPassword = view.findViewById(R.id.etLoginPassword);
+        emailTil = view.findViewById(R.id.logInEmailTil);
+        passwordTil = view.findViewById(R.id.logInPasswordTil);
 
         //快速填寫
         view.findViewById(R.id.idforalign).setOnClickListener(v -> {
@@ -121,8 +128,34 @@ public class LogInFragment extends Fragment {
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
 
+            boolean isFormatCorrect = true;
+
+            if (email.isEmpty()) {
+                emailTil.setErrorEnabled(true);
+                emailTil.setError(getString(R.string.textcantbeblank));
+                isFormatCorrect = false;
+            } else if (!isEmailValid(email)) {
+                emailTil.setErrorEnabled(true);
+                emailTil.setError(getString(R.string.textemailinvalid));
+                isFormatCorrect = false;
+            } else {
+                emailTil.setError(null);
+                emailTil.setErrorEnabled(false);
+            }
+
+            if(password.isEmpty()){
+                passwordTil.setErrorEnabled(true);
+                passwordTil.setError(getString(R.string.textcantbeblank));
+                isFormatCorrect = false;
+            }else{
+                passwordTil.setError(null);
+                passwordTil.setErrorEnabled(false);
+            }
+
             //firebase登入驗證
-            firebaseLogIn(email, password);
+            if(isFormatCorrect) {
+                firebaseLogIn(email, password);
+            }
 
         });
 
@@ -142,13 +175,13 @@ public class LogInFragment extends Fragment {
         //註冊
         view.findViewById(R.id.btToSignUp).setOnClickListener(v ->
                 Navigation.findNavController(view).navigate(R.id.action_logInFragment_to_signUpFragment));
-
+        //電話驗證
         view.findViewById(R.id.btPhoneSingIn).setOnClickListener(v ->
                 Navigation.findNavController(view).navigate(R.id.action_logInFragment_to_phoneAuthFragment));
 
         //忘記密碼 進入email fragment
         view.findViewById(R.id.btForgetPassword).setOnClickListener(v -> {
-//            Navigation.findNavController(v).navigate(R.id.action_logInFragment_to_forgetPasswordFragment);
+            Navigation.findNavController(v).navigate(R.id.action_logInFragment_to_memberForgetPassword);
         });
     }
 
@@ -157,32 +190,57 @@ public class LogInFragment extends Fragment {
         super.onStart();
         FirebaseUser currentUser = auth.getCurrentUser();
         if(currentUser != null){
-            Log.d(TAG, "uid: " + currentUser.getUid());
             Navigation.findNavController(requireView())
                     .navigate(R.id.action_logInFragment_to_memberCenterFragment);
         }
     }
 
+    /**
+     * @param email
+     * return boolean
+     */
+    boolean isEmailValid(CharSequence email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    /**
+     * 進度條
+     * @param titleText 標題
+     * @param messageText 訊息
+     */
+    private void setLoadingBar(String titleText, String messageText) {
+        loadingBar.setTitle(titleText);
+        loadingBar.setMessage(messageText);
+        loadingBar.show();
+        loadingBar.setCanceledOnTouchOutside(true);
+    }
+
+
+
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
-        // get the unique ID for the Google account
-//        Log.d(TAG, "firebaseAuthWithGoogle: " + account.getId());
+
+        setLoadingBar(getString(R.string.text_verification_account),
+                getString(R.string.text_account_verification_message));
+
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         auth.signInWithCredential(credential)
                 .addOnCompleteListener(activity, task -> {
                     if (task.isSuccessful()) {
-                        Toast.makeText(activity, "Google 登入成功", Toast.LENGTH_SHORT).show();
 
+                        loadingBar.dismiss();
+
+                        Toast.makeText(activity, R.string.text_google_signin_success, Toast.LENGTH_SHORT).show();
+
+                        SharedPreferences sharedPreferences = activity.getSharedPreferences("FCM_TOKEN", MODE_PRIVATE);
+                        String myToken = sharedPreferences.getString("FCM_TOKEN", "");
+                        member.setFCM_token(myToken);
                         member.setuUId(auth.getCurrentUser().getUid());
 
-                        String url = RemoteAccess.URL_SERVER + "memberController";
-                        JsonObject jsonObject = new JsonObject();
-                        jsonObject.addProperty("action", "findbyUuid");
-                        jsonObject.addProperty("member", new Gson().toJson(member));
-                        String jsonMember = RemoteAccess.getRemoteData(url, jsonObject.toString());
+                        String jsonMember = MemberControl.memberRemoteAccess(activity,member,"findbyUuid");
                         member = new Gson().fromJson(jsonMember,Member.class);
 
                         if( member != null){
-                            Toast.makeText(activity, "welcome come back", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, R.string.text_welcome_back, Toast.LENGTH_SHORT).show();
                             MemberControl.setMember(member);
                             Navigation.findNavController(etEmail)
                                     .navigate(R.id.action_logInFragment_to_memberCenterFragment);
@@ -191,11 +249,14 @@ public class LogInFragment extends Fragment {
                         //以下為第一次登入
                         GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(activity);
 
-                        member.setEmail(signInAccount.getEmail());
-                        MemberControl.setMember(member);
-
-                        Navigation.findNavController(etEmail)
-                                .navigate(R.id.action_logInFragment_to_socialLoginFragment);
+                        if(signInAccount != null) {
+                            member.setEmail(signInAccount.getEmail());
+                            MemberControl.setMember(member);
+                            Navigation.findNavController(etEmail)
+                                    .navigate(R.id.action_logInFragment_to_socialLoginFragment);
+                        }else{
+                            Toast.makeText(activity, getString(R.string.authfailed), Toast.LENGTH_SHORT).show();
+                        }
                     } else {
                         Exception exception = task.getException();
                         String message = exception == null ? "Sign in fail." : exception.getMessage();
@@ -204,9 +265,9 @@ public class LogInFragment extends Fragment {
                 });
     }
 
-
-
     private void signInFB() {
+        setLoadingBar(getString(R.string.text_creating_new_account),
+                getString(R.string.text_creating_account_message));
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -248,9 +309,14 @@ public class LogInFragment extends Fragment {
                     // 登入成功轉至下頁；失敗則顯示錯誤訊息
                     if (task.isSuccessful()) {
 
-                        String jsonMember;
+                        loadingBar.dismiss();
+
+
+                        SharedPreferences sharedPreferences = activity.getSharedPreferences("FCM_TOKEN", MODE_PRIVATE);
+                        String myToken = sharedPreferences.getString("FCM_TOKEN", "");
+                        member.setFCM_token(myToken);
                         member.setuUId(auth.getCurrentUser().getUid());
-                        jsonMember = memberRemoteAccess(activity,member,"findbyUuid");
+                        String jsonMember = memberRemoteAccess(activity,member,"findbyUuid");
                         member = gson.fromJson(jsonMember,Member.class);
                         if(member != null ){
                             Toast.makeText(activity, "Welcome back", Toast.LENGTH_SHORT).show();
@@ -274,24 +340,26 @@ public class LogInFragment extends Fragment {
     //Firebase 帳號密碼登入
     private void firebaseLogIn(String email, String password) {
         Log.d(TAG, "Login:" + email);
-        if (email.trim().isEmpty() || password.trim().isEmpty()) {
-            Toast.makeText(activity, getString(R.string.passwordandemailcannotbeempty), Toast.LENGTH_SHORT).show();
-            return;
-        }
+
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(requireActivity(), task -> {
                     if (task.isSuccessful()) {
                         Log.d(TAG, getString(R.string.signinwithemailsuccess));
 
+                        SharedPreferences sharedPreferences = activity.getSharedPreferences("FCM_TOKEN", MODE_PRIVATE);
+                        String myToken = sharedPreferences.getString("FCM_TOKEN", "");
+                        member.setFCM_token(myToken);
                         member.setEmail(email);
-                        member.setPassword(password);
-                        String json = memberRemoteAccess(activity, member, "login");
-                        member = new Gson().fromJson(json,Member.class);
-                        MemberControl.setMember(member);
+                        member.setuUId(auth.getCurrentUser().getUid());
+                        //不存密碼 因為我們驗證只需要Uid 之後密碼可能會調整為其他用法
+//                        member.setPassword(password);
+                        String jsonMember = memberRemoteAccess(activity, member, "login");
+                        member = new Gson().fromJson(jsonMember,Member.class);
                         if(member == null || member.getId()<0){
                             Toast.makeText(activity, getString(R.string.textnouser), Toast.LENGTH_SHORT).show();
-                            return;
                         }else {
+
+                            MemberControl.setMember(member);
                             Navigation.findNavController(etEmail)
                                     .navigate(R.id.action_logInFragment_to_memberCenterFragment);
                         }

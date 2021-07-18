@@ -77,12 +77,6 @@ public class MemeberCenterProfileFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-//        Log.d(TAG,"MC_Profile_OnDestroy");
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_memeber_center_profile, container, false);
@@ -97,7 +91,6 @@ public class MemeberCenterProfileFragment extends Fragment {
         etPhoneNumber = view.findViewById(R.id.etProfilePhoneNumber);
         ivPic = view.findViewById(R.id.ivProfilePic);
 
-        //從mysql拿資料放進textVIew||imageView
         setTextView();
         setImageView();
 
