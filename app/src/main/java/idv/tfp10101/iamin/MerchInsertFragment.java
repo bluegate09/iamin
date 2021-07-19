@@ -45,6 +45,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import idv.tfp10101.iamin.member.Member;
+import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.merch.Merch;
 import idv.tfp10101.iamin.merch.MerchControl;
 
@@ -65,6 +67,7 @@ public class MerchInsertFragment extends Fragment {
     private EditText editTextMerchInsertDesc;
     private Button buttonMerchSubmit;
     // 物件
+    private Member member;
     private List<byte[]> images = new ArrayList<>();
     private int imgCount = 0;
     private final int IMAGE_MAX = 5;
@@ -148,6 +151,10 @@ public class MerchInsertFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         findViews(view);
+
+        /** 抓取會員ID */
+        member = MemberControl.getInstance();
+
         // 導航控制
         final NavController navController = Navigation.findNavController(view);
 
@@ -292,7 +299,7 @@ public class MerchInsertFragment extends Fragment {
                 String desc = editTextMerchInsertDesc.getText().toString();
                 Merch merch = new Merch(
                         0,
-                        1,
+                        member.getId(),
                         name,
                         price,
                         desc,

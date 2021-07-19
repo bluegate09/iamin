@@ -14,6 +14,7 @@
     <color name="colorRed">#E53935</color>
     <color name="colorBottomNavigationView">#E3C0FF</color>
     <color name="colorBottomNavigationViewIcon">#7D61CD</color>
+    <color name="colorGreen">#00DB00</color>
     <color name="colorCounterText">#387C2C</color>
     <color name="Transparent">#00000000</color>
     <color name="helperTextTextColor">#80FF0000</color>
