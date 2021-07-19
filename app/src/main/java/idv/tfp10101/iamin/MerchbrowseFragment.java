@@ -5,11 +5,15 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,6 +36,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.youth.banner.Banner;
+import com.youth.banner.adapter.BannerImageAdapter;
+import com.youth.banner.holder.BannerImageHolder;
+import com.youth.banner.indicator.CircleIndicator;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -69,6 +77,8 @@ public class MerchbrowseFragment extends Fragment {
     private RecyclerView recyclerViewMerch;
     private Button btn_buy,btn_back,btn_next;
     private Member member;
+    //商品圖片
+    private List<byte[]> images = new ArrayList<>();
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,6 +141,7 @@ public class MerchbrowseFragment extends Fragment {
         if (localMerchs == null || localMerchs.isEmpty()) {
             Toast.makeText(activity, R.string.textNoGroupsFound, Toast.LENGTH_SHORT).show();
         }
+
         //StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(1,RecyclerView.HORIZONTAL);
         recyclerViewMerch.setLayoutManager(new StaggeredGridLayoutManager(1,RecyclerView.HORIZONTAL));
 
@@ -398,7 +409,6 @@ public class MerchbrowseFragment extends Fragment {
     private class MerchAdapter extends RecyclerView.Adapter<MerchAdapter.MyMerchViewHolder>{
         private Map<Merch, Integer> rsMerchs;
         private LayoutInflater layoutInflater;
-        int[] expanded; // 詳細內容展開
 
         public MerchAdapter(Context context, List<Merch> merchs){
             layoutInflater = LayoutInflater.from(context);
@@ -412,7 +422,7 @@ public class MerchbrowseFragment extends Fragment {
         public class MyMerchViewHolder extends RecyclerView.ViewHolder{
             TextView txv_merch_name,txv_merch_price,txv_commodity_description;
             EditText edt_amount;
-            RecyclerView rvMerchimage;
+            Banner banner;
             ImageView btn_sub,btn_add;
             public MyMerchViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -422,6 +432,7 @@ public class MerchbrowseFragment extends Fragment {
                 edt_amount = itemView.findViewById(R.id.edt_amount);
                 btn_add = itemView.findViewById(R.id.btn_add);
                 btn_sub = itemView.findViewById(R.id.btn_sub);
+                banner = itemView.findViewById(R.id.banner);
             }
         }
 
@@ -467,6 +478,24 @@ public class MerchbrowseFragment extends Fragment {
             rsMerchs.put(rsMerch, amount.incrementAndGet());
             holder.edt_amount.setText(String.valueOf(amount.get()));
         });
+
+        // 發送商品圖片請求
+        images = MerchControl.getMerchImgsById(activity, merch_id);
+            List<Bitmap> bitmaps = new ArrayList<>();
+            for (byte[] image: images) {
+                if (image.length != 0){
+                    bitmaps.add(BitmapFactory.decodeByteArray(image,0,image.length));
+                }
+            }
+        holder.banner.addBannerLifecycleObserver((LifecycleOwner) activity)
+                .setIndicator(new CircleIndicator(activity))
+                .setAdapter(new BannerImageAdapter<Bitmap>(bitmaps) {
+                    @Override
+                    public void onBindView(BannerImageHolder holder, Bitmap data, int position, int size) {
+                        holder.imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                        holder.imageView.setImageBitmap(data);
+                    }
+                });
 
         }
         //設定回傳數量
