@@ -4,24 +4,18 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,8 +36,6 @@ import com.youth.banner.holder.BannerImageHolder;
 import com.youth.banner.indicator.CircleIndicator;
 
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -62,8 +54,6 @@ import idv.tfp10101.iamin.member_order_details.MemberOrderDetailsControl;
 import idv.tfp10101.iamin.merch.Merch;
 import idv.tfp10101.iamin.merch.MerchControl;
 import idv.tfp10101.iamin.network.RemoteAccess;
-
-import static android.content.Context.MODE_PRIVATE;
 
 
 public class MerchbrowseFragment extends Fragment {
@@ -421,7 +411,7 @@ public class MerchbrowseFragment extends Fragment {
 
         public class MyMerchViewHolder extends RecyclerView.ViewHolder{
             TextView txv_merch_name,txv_merch_price,txv_commodity_description;
-            EditText edt_amount;
+            TextView txv_amount;
             Banner banner;
             ImageView btn_sub,btn_add;
             public MyMerchViewHolder(@NonNull View itemView) {
@@ -429,7 +419,7 @@ public class MerchbrowseFragment extends Fragment {
                 txv_merch_name = itemView.findViewById(R.id.txv_merch_name);
                 txv_merch_price = itemView.findViewById(R.id.txv_merch_price);
                 txv_commodity_description = itemView.findViewById(R.id.txv_commodity_description);
-                edt_amount = itemView.findViewById(R.id.edt_amount);
+                txv_amount = itemView.findViewById(R.id.txv_amount);
                 btn_add = itemView.findViewById(R.id.btn_add);
                 btn_sub = itemView.findViewById(R.id.btn_sub);
                 banner = itemView.findViewById(R.id.banner);
@@ -461,7 +451,7 @@ public class MerchbrowseFragment extends Fragment {
         String merch_name = rsMerch.getName();
         int merch_price = rsMerch.getPrice();
         String merch_desc = rsMerch.getMerchDesc();
-        holder.edt_amount.setText(String.valueOf(num == null ? 0 : num));
+        holder.txv_amount.setText(String.valueOf(num == null ? 0 : num));
         holder.txv_merch_name.setText(merch_name);
         holder.txv_merch_price.setText("價格:"+String.valueOf(merch_price));
         holder.txv_commodity_description.setText("商品說明:\n"+merch_desc);
@@ -469,14 +459,14 @@ public class MerchbrowseFragment extends Fragment {
         holder.btn_sub.setOnClickListener(v ->{
             if (amount.get() > 0) {
                 rsMerchs.put(rsMerch, amount.decrementAndGet());
-                holder.edt_amount.setText(String.valueOf(amount.get()));
+                holder.txv_amount.setText(String.valueOf(amount.get()));
             }else{
-                holder.edt_amount.setText(String.valueOf(0));
+                holder.txv_amount.setText(String.valueOf(0));
             }
         });
         holder.btn_add.setOnClickListener(v ->{
             rsMerchs.put(rsMerch, amount.incrementAndGet());
-            holder.edt_amount.setText(String.valueOf(amount.get()));
+            holder.txv_amount.setText(String.valueOf(amount.get()));
         });
 
         // 發送商品圖片請求
