@@ -61,7 +61,6 @@ public class SocialLoginFragment extends Fragment {
             }else{
                 til.setError(null);
                 til.setErrorEnabled(false);
-                //取得前一頁的bundle
                 sendDateToMysql(nickname);
             }
         });

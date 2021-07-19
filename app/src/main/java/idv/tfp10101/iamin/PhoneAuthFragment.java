@@ -13,10 +13,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
@@ -38,8 +40,10 @@ public class PhoneAuthFragment extends Fragment {
     private final String TAG = "TAG_PhoneAuthFragment";
     private Activity activity;
     private FirebaseAuth auth;
-    private TextView processText;
+    private TextView processText,processText2;
     private EditText phoneNumber,otpEditText;
+    private Button btDown;
+    private TextInputLayout phoneTil;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
     private String mVerificationId;
     private PhoneAuthProvider.ForceResendingToken mResendToken;
@@ -70,31 +74,54 @@ public class PhoneAuthFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         phoneNumber = view.findViewById(R.id.etAuthPhoneNumber);
         processText = view.findViewById(R.id.tvPhoneProcess);
+        processText2 = view.findViewById(R.id.tvPhoneCode);
         otpEditText = view.findViewById(R.id.etOTP);
+        btDown = view.findViewById(R.id.btOTPConfirm);
+        phoneTil = view.findViewById(R.id.phoneAuthTil);
+
+
+        handleVisibility(View.GONE);
+
 
         processText.setOnClickListener(v -> {
             //這邊自己設定
-            phoneNumber.setText("+886900900900");
+            phoneNumber.setText("0900900900");
+        });
+
+        processText2.setOnClickListener(v -> {
             otpEditText.setText("988334");
         });
+
+
 
         view.findViewById(R.id.btSendCode).setOnClickListener(v -> {
             String phone = phoneNumber.getText().toString().trim();
             if (phone.isEmpty()) {
-                phoneNumber.setError(getString(R.string.cannotbeempty));
-                return;
+                phoneTil.setErrorEnabled(true);
+                phoneTil.setError(getString(R.string.cannotbeempty));
+            }else if(phone.length() < 10){
+                phoneTil.setErrorEnabled(true);
+                phoneTil.setError(getString(R.string.textphoneformaterror));
+            }else{
+                phoneTil.setError(null);
+                phoneTil.setErrorEnabled(false);
+                requestVerificationCode(phone);
             }
-            requestVerificationCode(phone);
         });
 
         view.findViewById(R.id.btReSendCode).setOnClickListener(v -> {
             String phone = phoneNumber.getText().toString().trim();
             if (phone.isEmpty()) {
-                phoneNumber.setError(getString(R.string.cannotbeempty));
-                return;
+                phoneTil.setErrorEnabled(true);
+                phoneTil.setError(getString(R.string.cannotbeempty));
+            }else if(phone.length() < 10){
+                phoneTil.setErrorEnabled(true);
+                phoneTil.setError(getString(R.string.textphoneformaterror));
+            }else{
+                phoneTil.setError(null);
+                phoneTil.setErrorEnabled(false);
+                resendVerificationCode(phone,mResendToken);
             }
-            resendVerificationCode(phone,mResendToken);
-//                Log.d(TAG,phone);
 
         });
 
@@ -109,6 +136,12 @@ public class PhoneAuthFragment extends Fragment {
         });
 
 
+    }
+
+    private void handleVisibility(int visible) {
+        processText2.setVisibility(visible);
+        otpEditText.setVisibility(visible);
+        btDown.setVisibility(visible);
     }
 
     private void verifyIDAndCode(String verificationId, String verificationCode) {
@@ -144,11 +177,13 @@ public class PhoneAuthFragment extends Fragment {
                 // now need to ask the user to enter the code and then construct a credential
                 // by combining the code with a verification ID.
                 Log.d(TAG, "onCodeSent:" + verificationId);
-                Toast.makeText(activity, "Code sent. Code number is 988334", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, getString(R.string.textcodesent), Toast.LENGTH_SHORT).show();
                 // Save verification ID and resending token so we can use them later
-                String myTestCode = "s";
+
                 mVerificationId = verificationId;
                 mResendToken = token;
+                handleVisibility(View.VISIBLE);
+
             }
         };
     }
@@ -191,7 +226,8 @@ public class PhoneAuthFragment extends Fragment {
                 }
                 Log.w(TAG, "signInWithCredential:failure", task.getException());
                 Toast.makeText(activity, "signInWithCredential:failure", Toast.LENGTH_SHORT).show();
-                processText.setText(task.getException().getMessage());
+                String str = getString(R.string.textsmserror);
+                processText.setText(str);
                 processText.setTextColor(Color.RED);
             }
         });
@@ -202,7 +238,7 @@ public class PhoneAuthFragment extends Fragment {
         auth.setLanguageCode("zh-Hant");
         PhoneAuthOptions options =
                 PhoneAuthOptions.newBuilder(auth)
-                        .setPhoneNumber(phone)       // Phone number to verify
+                        .setPhoneNumber("+886"+phone)       // Phone number to verify
                         .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
                         .setActivity(activity)                 // Activity (for callback binding)
                         .setCallbacks(mCallbacks)          // OnVerificationStateChangedCallbacks
@@ -215,7 +251,7 @@ public class PhoneAuthFragment extends Fragment {
                                         PhoneAuthProvider.ForceResendingToken token) {
         PhoneAuthOptions phoneAuthOptions =
                 PhoneAuthOptions.newBuilder(auth)
-                        .setPhoneNumber(phone)
+                        .setPhoneNumber("+886"+phone)
                         .setTimeout(60L, TimeUnit.SECONDS)
                         .setActivity(activity)
                         .setCallbacks(mCallbacks)

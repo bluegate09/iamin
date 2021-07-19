@@ -23,9 +23,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
+import idv.tfp10101.iamin.member.MyWallet;
 import idv.tfp10101.iamin.network.RemoteAccess;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -39,7 +44,6 @@ public class MemberCenterFragment extends Fragment {
     private ImageView ivPic;
     private Member member;
     private Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
-//    private Gson gson=  new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,14 +84,28 @@ public class MemberCenterFragment extends Fragment {
         view.findViewById(R.id.btMCFollow).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memeberCenterFollowFragment));
         //前往錢包
-        view.findViewById(R.id.btMCMyWallet).setOnClickListener(v ->
-                Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memberCenterMyWalletFragment));
+        view.findViewById(R.id.btMCMyWallet).setOnClickListener(v ->{
+
+                String jsonIn = memberRemoteAccess(activity,member,"getMyWallet");
+//                Type listType = new TypeToken<List<MyWallet>>() {}.getType();
+//                MyWallet myWallets = gson.fromJson(jsonIn,listType);
+                  Log.d(TAG,"json: " + jsonIn);
+                if(jsonIn.equals("[]")){
+                    Toast.makeText(activity, "No Data Yet", Toast.LENGTH_SHORT).show();
+
+                }else {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("JsonWallet",jsonIn);
+                    Navigation.findNavController(v).
+                            navigate(R.id.action_memberCenterFragment_to_memberCenterMyWalletFragment,bundle);
+                }
+        });
         //前往賣家中心
 //        view.findViewById(R.id.btMCSellerCenter).setOnClickListener(v ->
 //                Navigation.findNavController(v).navigate(R.id.action_memberCenter_to_MC_SellerCenter));
         //回到賣家
         view.findViewById(R.id.btBacktoHomepage).setOnClickListener(v ->
-                Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_merchbrowseFragment));
+                Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_homeFragment));
 
         //登出
         view.findViewById(R.id.btMCLogout).setOnClickListener(v -> {
@@ -103,7 +121,7 @@ public class MemberCenterFragment extends Fragment {
             //防止回到上一頁
             NavController navController = Navigation.findNavController(v);
             navController.popBackStack(R.id.logInFragment, true);
-            navController.popBackStack(R.id.homeFragment, true);
+            navController.popBackStack(R.id.phoneAuthFragment, true);
             navController.popBackStack(R.id.memberCenterFragment, true);
             navController.popBackStack(R.id.signUpFragment,true);
             navController.popBackStack(R.id.socialLoginFragment,true);

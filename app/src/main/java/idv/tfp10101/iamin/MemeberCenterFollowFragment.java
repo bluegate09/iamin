@@ -47,7 +47,6 @@ public class MemeberCenterFollowFragment extends Fragment {
     private RecyclerView rvMember;
     private List<Member> members;
     private Gson gson2 = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
-//    private Gson gson=  new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").create();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

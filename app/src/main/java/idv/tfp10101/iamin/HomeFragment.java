@@ -91,24 +91,24 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        String url;
-        JsonObject jsonObject;
-        String jsonMember;
-        //先前有登入就取會員資料
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
         member = MemberControl.getInstance();
-        if(currentUser != null){
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        //先前有登入就取會員資料
+        if(currentUser != null && member.getuUId() == null){
+
+            SharedPreferences sharedPreferences = activity.getSharedPreferences("FCM_TOKEN", MODE_PRIVATE);
+            String token = sharedPreferences.getString("FCM_TOKEN", "");
+            member.setFCM_token(token);
+
             member.setuUId(currentUser.getUid());
-            Log.d("TAG_HOME","uUId: " + currentUser.getUid());
-            url = RemoteAccess.URL_SERVER + "memberController";
-            jsonObject = new JsonObject();
-            jsonObject.addProperty("action", "findbyUuid");
-            jsonObject.addProperty("member", new Gson().toJson(member));
-            jsonMember = RemoteAccess.getRemoteData(url, jsonObject.toString());
+            //tmp
+            MemberControl.memberRemoteAccess(activity,member,"updateTokenbyUid");
+            String jsonMember = MemberControl.memberRemoteAccess(activity,member,"findbyUuid");
             member = new Gson().fromJson(jsonMember,Member.class);
             MemberControl.setMember(member);
-            if(member != null) {
-                Log.d("TAG_HOME", "member id: " + member.getId());}
+            Log.d("TAG_HOME","Fetch Member Date Complete");
         }
     }
 
