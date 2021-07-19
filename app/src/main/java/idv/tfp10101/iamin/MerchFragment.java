@@ -172,7 +172,7 @@ public class MerchFragment extends Fragment {
     private void handleSwipeRefresh() {
         swipeRefreshLayoutMerch.setOnRefreshListener(() -> {
             // 重新跟server抓資料
-            MerchControl.getAllMerchByMemberId(activity, 1);
+            MerchControl.getAllMerchByMemberId(activity, member.getId());
             // 播放動畫
             swipeRefreshLayoutMerch.setRefreshing(true);
             if (!searchMerchs.isEmpty()) {

@@ -1,5 +1,6 @@
 package idv.tfp10101.iamin.member_order;
 
+// 會員訂單
 public class MemberOrder {
     private int memberOrderId;
     private int memberId; // 會員ID
@@ -8,10 +9,12 @@ public class MemberOrder {
     private int total; // 訂單金額
     private boolean receivePaymentStatus; // 收款狀態
     private boolean deliverStatus; // 發貨狀態
+    // 關聯資料
+    private String nickname; // 會員暱稱
+    private String phone; // 會員電話
 
     public MemberOrder(int memberOrderId, int memberId, int groupId, int payentMethod, int total,
                        boolean receivePaymentStatus, boolean deliverStatus) {
-        super();
         this.memberOrderId = memberOrderId;
         this.memberId = memberId;
         this.groupId = groupId;
@@ -19,6 +22,19 @@ public class MemberOrder {
         this.total = total;
         this.receivePaymentStatus = receivePaymentStatus;
         this.deliverStatus = deliverStatus;
+    }
+
+    public MemberOrder(int memberOrderId, int memberId, int groupId, int payentMethod, int total,
+                       boolean receivePaymentStatus, boolean deliverStatus, String nickname, String phone) {
+        this.memberOrderId = memberOrderId;
+        this.memberId = memberId;
+        this.groupId = groupId;
+        this.payentMethod = payentMethod;
+        this.total = total;
+        this.receivePaymentStatus = receivePaymentStatus;
+        this.deliverStatus = deliverStatus;
+        this.nickname = nickname;
+        this.phone = phone;
     }
 
     public int getMemberOrderId() {
@@ -75,5 +91,21 @@ public class MemberOrder {
 
     public void setDeliverStatus(boolean deliverStatus) {
         this.deliverStatus = deliverStatus;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

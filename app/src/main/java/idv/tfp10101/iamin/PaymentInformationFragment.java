@@ -1,6 +1,7 @@
 package idv.tfp10101.iamin;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,11 +11,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,6 +33,10 @@ import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.group.GroupControl;
 import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
+import idv.tfp10101.iamin.member_order.MemberOrder;
+import idv.tfp10101.iamin.member_order.MemberOrderControl;
+import idv.tfp10101.iamin.member_order_details.MemberOrderDetails;
+import idv.tfp10101.iamin.member_order_details.MemberOrderDetailsControl;
 
 public class PaymentInformationFragment extends Fragment {
     private Activity activity;
@@ -46,11 +54,15 @@ public class PaymentInformationFragment extends Fragment {
     // 物件
     private Member member;
     private Group reachGroup;
+    private List<MemberOrder> memberOrders = new ArrayList<>();
+    private List<MemberOrderDetails> memberOrderDetails = new ArrayList<>();
     private List<Member> buyers = new ArrayList<>(); // 目前選擇團購的買家
     private List<Group> reachGroups = new ArrayList<>(); // 取得目前已達標的團購
     private List<Group> filterGroups = new ArrayList<>(); // 取得已篩選達標的團購
     private Map<Integer, String> mapPaymentMethod = new HashMap<>();
     private Map<Integer, String> mapPaymentStatus = new HashMap<>();
+    private int payentMethod = 0; // 顯示目前的收款方式
+    private int payentStatus = -1; // 顯示目前的收款狀態
 
     /**
      * 取得xml元件
@@ -125,8 +137,47 @@ public class PaymentInformationFragment extends Fragment {
         // 已付款狀態選擇
         handlePaymentStatus();
 
-        // 篩選已達標的團購
-        handleFilterGroups();
+        // spinner監聽
+        handleSpinnerListener();
+
+        // 預設顯示第一筆成團的資訊
+        Group groupOne = reachGroups.get(0);
+        handleDefaultData(groupOne);
+
+        // 送交
+        handleSumbit();
+    }
+
+    /**
+     * 預設顯示第一筆成團的資訊
+     */
+    private void handleDefaultData(Group group) {
+        // 抓取會員訂單
+        memberOrders = MemberOrderControl.getMemberOrderByGroupId
+                (activity, group.getGroupId(), "PaymentInformation");
+        // 抓取會員訂單明細
+        memberOrderDetails = MemberOrderDetailsControl.getMemberOrderDetailsByMemberOrders
+                (activity, memberOrders, "PaymentInformation");
+
+        showMemberOrderDetails(memberOrders);
+    }
+
+    /**
+     * 顯示會員訂單明細
+     */
+    private void showMemberOrderDetails(List<MemberOrder> memberOrders) {
+        /** RecyclerView */
+        // 檢查
+        MODAdapter modAdapter = (MODAdapter) recyclerViewMember.getAdapter();
+        if (modAdapter == null) {
+            recyclerViewMember.setAdapter(new MODAdapter(activity, memberOrders));
+            int px = (int) Constants.convertDpToPixel(8, activity); // 間距 8 dp
+            recyclerViewMember.addItemDecoration(new Constants.SpacesItemDecoration("bottom", px));
+        }else{
+            // 資訊重新載入刷新
+            modAdapter.setMemberOrders(memberOrders);
+            modAdapter.notifyDataSetChanged();
+        }
     }
 
     /**
@@ -193,9 +244,9 @@ public class PaymentInformationFragment extends Fragment {
      */
     public void handlePaymentStatus() {
         // 準備map資料
-        mapPaymentStatus.put(0, "付款狀態");
+        mapPaymentStatus.put(-1, "付款狀態");
+        mapPaymentStatus.put(0, "未付款");
         mapPaymentStatus.put(1, "已付款");
-        mapPaymentStatus.put(2, "未付款");
         // 準備放入Spinner內的String
         List<String> strings = new ArrayList<>();
         for (Map.Entry<Integer, String> entry : mapPaymentStatus.entrySet()) {
@@ -219,8 +270,15 @@ public class PaymentInformationFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 // 抓取已選擇的團購
                 reachGroup = reachGroups.get(position);
-                // 使用選擇的團購抓取目前的會員購買清單
+                /** 使用選擇的團購抓取目前的會員購買清單 */
+                // 抓取會員訂單
+                memberOrders = MemberOrderControl.getMemberOrderByGroupId
+                        (activity, reachGroup.getGroupId(), "PaymentInformation");
+                // 抓取會員訂單明細
+                memberOrderDetails = MemberOrderDetailsControl.getMemberOrderDetailsByMemberOrders
+                        (activity, memberOrders, "PaymentInformation");
 
+                showMemberOrderDetails(memberOrders);
             }
 
             @Override
@@ -231,7 +289,61 @@ public class PaymentInformationFragment extends Fragment {
         spinnerPaymentMethod.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String string = parent.getItemAtPosition(position).toString();
+                String string = "";
+                // 重新抓取會員訂單
+                memberOrders = MemberOrderControl.getMemberOrderByGroupId
+                        (activity, reachGroup.getGroupId(), "PaymentInformation");
+                // 抓取現在的收款方式
+                string = parent.getItemAtPosition(position).toString();
+                for (Map.Entry<Integer, String> entry : mapPaymentMethod.entrySet()) {
+                    if (entry.getValue().equals(string)) {
+                        payentMethod = entry.getKey();
+                        break;
+                    }
+                }
+                // 過濾 memberOrders
+                List<MemberOrder> filterMemberOrders = new ArrayList<>();
+                for (MemberOrder memberOrder : memberOrders) {
+                    if (payentMethod == 0) {
+                        switch (payentStatus) {
+                            case 0:
+                                if (!memberOrder.isReceivePaymentStatus()) {
+                                    filterMemberOrders.add(memberOrder);
+                                }
+                                break;
+                            case 1:
+                                if (memberOrder.isReceivePaymentStatus()) {
+                                    filterMemberOrders.add(memberOrder);
+                                }
+                                break;
+                        }
+                    } else {
+                        switch (payentStatus) {
+                            case 0:
+                                if (memberOrder.getPayentMethod() == payentMethod &&
+                                        !memberOrder.isReceivePaymentStatus()) {
+                                    filterMemberOrders.add(memberOrder);
+                                }
+                                break;
+                            case 1:
+                                if (memberOrder.getPayentMethod() == payentMethod &&
+                                        memberOrder.isReceivePaymentStatus()) {
+                                    filterMemberOrders.add(memberOrder);
+                                }
+                                break;
+                            default:
+                                if (memberOrder.getPayentMethod() == payentMethod) {
+                                    filterMemberOrders.add(memberOrder);
+                                }
+                                break;
+                        }
+                    }
+                }
+                // 覆蓋 memberOrders
+                if (!filterMemberOrders.isEmpty()) {
+                    memberOrders = filterMemberOrders;
+                }
+                showMemberOrderDetails(memberOrders);
             }
 
             @Override
@@ -242,7 +354,61 @@ public class PaymentInformationFragment extends Fragment {
         spinnerPaymentStatus.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String string = parent.getItemAtPosition(position).toString();
+                String string = "";
+                // 重新抓取會員訂單
+                memberOrders = MemberOrderControl.getMemberOrderByGroupId
+                        (activity, reachGroup.getGroupId(), "PaymentInformation");
+                // 抓取現在的收款狀態
+                string = parent.getItemAtPosition(position).toString();
+                for (Map.Entry<Integer, String> entry : mapPaymentStatus.entrySet()) {
+                    if (entry.getValue().equals(string)) {
+                        payentStatus = entry.getKey();
+                        break;
+                    }
+                }
+                // 過濾 memberOrders
+                List<MemberOrder> filterMemberOrders = new ArrayList<>();
+                for (MemberOrder memberOrder : memberOrders) {
+                    if (payentMethod == 0) {
+                        switch (payentStatus) {
+                            case 0 :
+                                if (!memberOrder.isReceivePaymentStatus()) {
+                                    filterMemberOrders.add(memberOrder);
+                                }
+                                break;
+                            case 1 :
+                                if (memberOrder.isReceivePaymentStatus()) {
+                                    filterMemberOrders.add(memberOrder);
+                                }
+                                break;
+                        }
+                    }else {
+                        switch (payentStatus) {
+                            case 0 :
+                                if (memberOrder.getPayentMethod() == payentMethod &&
+                                        !memberOrder.isReceivePaymentStatus()) {
+                                    filterMemberOrders.add(memberOrder);
+                                }
+                                break;
+                            case 1 :
+                                if (memberOrder.getPayentMethod() == payentMethod &&
+                                        memberOrder.isReceivePaymentStatus()) {
+                                    filterMemberOrders.add(memberOrder);
+                                }
+                                break;
+                            default:
+                                if (memberOrder.getPayentMethod() == payentMethod) {
+                                    filterMemberOrders.add(memberOrder);
+                                }
+                                break;
+                        }
+                    }
+                }
+                // 覆蓋 memberOrders
+                if (!filterMemberOrders.isEmpty()) {
+                    memberOrders = filterMemberOrders;
+                }
+                showMemberOrderDetails(memberOrders);
             }
 
             @Override
@@ -250,10 +416,136 @@ public class PaymentInformationFragment extends Fragment {
             }
         });
     }
+
     /**
-     * 篩選已達標的團購
+     * 送交
      */
-    public void handleFilterGroups() {
-        // 選出目前
+    private void handleSumbit() {
+        buttonUpdate.setOnClickListener(view -> {
+            MemberOrderControl.updateMemberOrders(activity, memberOrders, "PaymentInformation");
+            Toast.makeText(activity, "更新成功", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    /**
+     * 自定義Adapter 繼承 RecyclerView 的 Adapter
+     * 1. 建立Context & 一些需要的資訊，並constructor
+     * 2. 實作 RecyclerView.ViewHolder 給 Adapter使用
+     * 3. 設定父類別泛型型態
+     * 4. 自動建立 Override 方法 (onCreateViewHolder, onBindViewHolder, getItemCount)
+     */
+    private class MODAdapter extends RecyclerView.Adapter<MODAdapter.MyViewHolder> {
+        private List<MemberOrder> rsMemberOrders;
+        private LayoutInflater layoutInflater;
+        boolean[] PStatus; // 收款狀態
+        boolean[] DStatus; // 發貨狀態
+
+        public MODAdapter(Context context, List<MemberOrder> memberOrders) {
+            layoutInflater = LayoutInflater.from(context);
+            rsMemberOrders = memberOrders;
+            DStatus = new boolean[memberOrders.size()];
+            PStatus = new boolean[memberOrders.size()];
+        }
+
+        public void setMemberOrders(List<MemberOrder> memberOrders) {
+            rsMemberOrders = memberOrders;
+            DStatus = new boolean[memberOrders.size()];
+            PStatus = new boolean[memberOrders.size()];
+        }
+
+        /** ViewHolder */
+        public class MyViewHolder extends RecyclerView.ViewHolder {
+            private TextView textViewBuyerName;
+            private TextView textViewContactNumber;
+            private ImageView imageViewConfirm;
+            private TextView textViewPaymentStatus;
+            private LinearLayout lineraLayout;
+            // 內容顯示控制
+            private ConstraintLayout layoutMain;
+            private ConstraintLayout layoutAttach;
+
+            public MyViewHolder(@NonNull View itemView) {
+                super(itemView);
+
+                textViewBuyerName = itemView.findViewById(R.id.textViewBuyerName);
+                textViewContactNumber = itemView.findViewById(R.id.textViewContactNumber);
+                imageViewConfirm = itemView.findViewById(R.id.imageViewConfirm);
+                textViewPaymentStatus = itemView.findViewById(R.id.textViewPaymentStatus);
+                lineraLayout = itemView.findViewById(R.id.lineraLayout);
+                // 內容顯示控制
+                layoutMain = itemView.findViewById(R.id.layoutMain);
+                layoutAttach = itemView.findViewById(R.id.layoutAttach);
+            }
+        }
+
+        @NonNull
+        @Override
+        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View itemView = layoutInflater.inflate(R.layout.item_view_payment_information, parent, false);
+            return new MyViewHolder(itemView);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+            final MemberOrder rsMemberOrder = rsMemberOrders.get(position); // 第幾個group
+            // 姓名
+            holder.textViewBuyerName.setText(rsMemberOrder.getNickname());
+            // 電話
+            holder.textViewContactNumber.setText(rsMemberOrder.getPhone());
+            // 付款狀態
+            if (rsMemberOrder.isReceivePaymentStatus()) {
+                PStatus[position] = true;
+            }
+            // 看PStatus更改值
+            if (PStatus[position]) {
+                holder.textViewPaymentStatus.setText("已付款");
+                holder.textViewPaymentStatus.setTextColor(resources.getColor(R.color.colorGreen));
+            }else {
+                holder.textViewPaymentStatus.setText("尚未付款");
+                holder.textViewPaymentStatus.setTextColor(resources.getColor(R.color.colorRed));
+            }
+            // LineraLayout
+            holder.lineraLayout.removeAllViews(); // 先清空
+            for (MemberOrderDetails memberOrderDetail : memberOrderDetails) {
+                if (memberOrderDetail.getMemberOrderId() == rsMemberOrder.getMemberOrderId()) {
+                    String string =
+                            memberOrderDetail.getName() + "\t\t\t數量：" + memberOrderDetail.getQuantity();
+                    // TextView
+                    TextView textView = new TextView(activity);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    layoutParams.bottomMargin = 8;
+                    textView.setLayoutParams(layoutParams);
+                    textView.setTextSize(14);
+                    textView.setText(string);
+                    // linearLayout 加入一筆
+                    holder.lineraLayout.addView(textView);
+                }
+            }
+            // 發貨狀態
+            if (rsMemberOrder.isDeliverStatus()) {
+                holder.imageViewConfirm.setImageResource(R.drawable.payment_information_confirm);
+            }else {
+                holder.imageViewConfirm.setImageResource(R.drawable.payment_information_unconfirm);
+            }
+            // 設定監聽 點擊勾勾紀錄狀態
+            holder.imageViewConfirm.setOnClickListener(view -> {
+                // 更改圖示
+                int pos = holder.getBindingAdapterPosition();
+                DStatus[pos] = !DStatus[pos];
+                // 紀錄
+                rsMemberOrder.setDeliverStatus(DStatus[pos]);
+                memberOrders.get(position).setDeliverStatus(DStatus[pos]);
+                //  Adapter 呼叫 notifyDataSetChanged()，會全部重刷新 (重建一次RecyclerView)
+                notifyDataSetChanged();
+            });
+        }
+
+        @Override
+        public int getItemCount() {
+            return rsMemberOrders == null ? 0 : rsMemberOrders.size();
+        }
     }
 }

@@ -100,7 +100,7 @@ public class SellerFragment extends Fragment {
 
         findViews(view);
 
-        // 一開始先判斷
+        // 一開始先判斷有沒有登入有驗證的會員
 
         /** 抓取會員ID */
         member = MemberControl.getInstance();

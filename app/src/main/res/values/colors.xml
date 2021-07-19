@@ -14,6 +14,7 @@
     <color name="colorRed">#E53935</color>
     <color name="colorBottomNavigationView">#E3C0FF</color>
     <color name="colorBottomNavigationViewIcon">#7D61CD</color>
+    <color name="colorGreen">#00DB00</color>
 <!--facebook login要用到的顏色 正常來說gradle dependencies會導入 但是有時候就是不會有-->
     <color name="com_facebook_button_background_color_focused_disabled">#3C5A99</color>
     <color name="com_facebook_button_background_color_focused">#3C5A99</color>

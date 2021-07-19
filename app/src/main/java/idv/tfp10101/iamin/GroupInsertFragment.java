@@ -607,6 +607,7 @@ public class GroupInsertFragment extends Fragment {
                     // 清空
                     giavd.Lats().clear();
                     giavd.Lngs().clear();
+                    giavd.LatLngs().clear();
                     // 緯度[]
                     double[] latArr = bundle.getDoubleArray("lats");
                     // 經度[]

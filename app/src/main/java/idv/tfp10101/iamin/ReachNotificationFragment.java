@@ -131,47 +131,50 @@ public class ReachNotificationFragment extends Fragment {
      * 發送
      */
     private void handleSubmit() {
-        // 取得Bundle物件
-        Bundle bundle = getArguments();
-        int groupId = bundle.getInt("groupId");
+        buttonSubmit.setOnClickListener(view -> {
+            // 取得Bundle物件
+            Bundle bundle = getArguments();
+            int groupId = bundle.getInt("groupId");
 
-        String title = "";
-        String body = "";
-        title = editTextTitle.getText().toString().trim();
-        body = editTextBody.getText().toString().trim();
+            String title = "";
+            String body = "";
+            title = editTextTitle.getText().toString().trim();
+            body = editTextBody.getText().toString().trim();
 
-        // 如果有網路，就進行 request
-        if (RemoteAccess.networkConnected(activity)) {
-            // 網址 ＆ Action
-            String url = RemoteAccess.URL_SERVER + "Fcm";
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("action", "sendFcmByGroupId");
-            jsonObject.addProperty("groupId", groupId);
-            jsonObject.addProperty("title", title);
-            jsonObject.addProperty("body", body);
-            jsonObject.addProperty("data", "data------");
+            // 如果有網路，就進行 request
+            if (RemoteAccess.networkConnected(activity)) {
+                // 網址 ＆ Action
+                String url = RemoteAccess.URL_SERVER + "Fcm";
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("action", "sendFcmByGroupId");
+                jsonObject.addProperty("GroupPaymentSelect", GroupPaymentSelect);
+                jsonObject.addProperty("groupId", groupId);
+                jsonObject.addProperty("title", title);
+                jsonObject.addProperty("body", body);
+                jsonObject.addProperty("data", "data------");
 
-            // requst
-            String jsonString = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
-            if (jsonString != null) {
-                /** 建立AlertDialog */
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                builder.setTitle("發送成功");
-                builder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        /* 回前一個Fragment */
-                        navController.popBackStack();
-                    }
-                });
+                // requst
+                String jsonString = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
+                if (jsonString != null) {
+                    /** 建立AlertDialog */
+                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                    builder.setTitle("發送成功");
+                    builder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            /* 回前一個Fragment */
+                            navController.popBackStack();
+                        }
+                    });
 
-                // 顯示
-                builder.show();
+                    // 顯示
+                    builder.show();
+                }else {
+                    Toast.makeText(activity, "推播失敗", Toast.LENGTH_SHORT).show();
+                }
             }else {
-                Toast.makeText(activity, "推播失敗", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
             }
-        }else {
-            Toast.makeText(activity, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
-        }
+        });
     }
 }

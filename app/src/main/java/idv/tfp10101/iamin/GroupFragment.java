@@ -175,7 +175,7 @@ public class GroupFragment extends Fragment {
      */
     private void handleSwipeRefresh() {
         swipeRefreshLayoutGroup.setOnRefreshListener(() -> {
-            GroupControl.getAllGroupByMemberId(activity, 1);
+            GroupControl.getAllGroupByMemberId(activity, member.getId());
             localGroups = GroupControl.getLocalGroup();
             // 播放動畫
             swipeRefreshLayoutGroup.setRefreshing(true);
