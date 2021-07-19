@@ -51,8 +51,6 @@ public class MemberCenterFragment extends Fragment {
         activity = getActivity();
         auth = FirebaseAuth.getInstance();
         member = MemberControl.getInstance();
-        Log.d(TAG, "mebmerCenter_onCreate: " + member.getId());
-
     }
 
     @Override
@@ -78,8 +76,8 @@ public class MemberCenterFragment extends Fragment {
         view.findViewById(R.id.btMCProfile).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memeberCenterProfileFragment));
         //前往訂單
-//        view.findViewById(R.id.btMCOrderList).setOnClickListener(v ->
-//                Navigation.findNavController(v).navigate(R.id.action_memberCenter_to_MC_OrderList));
+        view.findViewById(R.id.btMCOrderList).setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memberCenterMemberOrderFragment));
         //前往追隨
         view.findViewById(R.id.btMCFollow).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memeberCenterFollowFragment));
@@ -128,6 +126,16 @@ public class MemberCenterFragment extends Fragment {
             navController.navigate(R.id.homeFragment);
 
         });
+
+        view.findViewById(R.id.btTestGround).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memberCenterFollowTestGround);
+            }
+        });
+
     }
 
     @Override

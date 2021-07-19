@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/colorBackground"
     tools:context=".MemberCenterMemberOrderFragment"
     android:padding="8dp">
 
@@ -53,11 +54,9 @@
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvMemberOrderList"
+        android:id="@+id/rvMemberCenterOrder"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginHorizontal="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@color/white"
-        android:padding="4dp" />
+        android:layout_height="match_parent" />
+
+
 </LinearLayout>

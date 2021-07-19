@@ -32,6 +32,7 @@ import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
 
 import static android.content.Context.MODE_PRIVATE;
+import static idv.tfp10101.iamin.Constants.FCM_Token;
 import static idv.tfp10101.iamin.member.MemberControl.memberRemoteAccess;
 
 public class SignUpFragment extends Fragment {
@@ -160,8 +161,8 @@ public class SignUpFragment extends Fragment {
                 .addOnCompleteListener(requireActivity(), task -> {
                     if (task.isSuccessful()) {
                         //mysql創帳號
-                        SharedPreferences sharedPreferences = activity.getSharedPreferences("FCM_TOKEN", MODE_PRIVATE);
-                        String myToken = sharedPreferences.getString("FCM_TOKEN", "");
+                        SharedPreferences sharedPreferences = activity.getSharedPreferences(FCM_Token, MODE_PRIVATE);
+                        String myToken = sharedPreferences.getString(FCM_Token, "");
                         member.setFCM_token(myToken);
                         member.setuUId(auth.getCurrentUser().getUid());
                         String memberJson = memberRemoteAccess(activity , member, "signup");
@@ -172,41 +173,42 @@ public class SignUpFragment extends Fragment {
                             Toast.makeText(activity, "Email already in use", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        firebasedbAddOrReplace(activity,db,new Member(
-                                member2.getId()
-                                ,auth.getCurrentUser().getUid()));
+//                        firebasedbAddOrReplace(activity,db,new Member(
+//                                member2.getId()
+//                                ,auth.getCurrentUser().getUid()));
 
                         //移動到會員中心
                         Navigation.findNavController(requireView()).navigate(R.id.action_signUpFragment_to_memberCenterFragment);
                     } else {
+                        Log.d(TAG,"task: " + task.getResult());
                         Toast.makeText(getContext(), "Authentication failed", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-    public static void firebasedbAddOrReplace(Context context,FirebaseFirestore db,final Member member) {
-        HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("id", member.getuUId());
-        db.collection("Users").document(member.getuUId()).set(hashMap)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Log.d(TAG, "user into firebase success: " + member.getId());
-                    } else {
-                        Log.e(TAG, "message: " + task.getException().getMessage());
-                    }
-                });
-        // 如果Firestore沒有該ID的Document就建立新的，已經有就更新內容
-        db.collection("members").document(member.getId()+"").set(member)
-                .addOnCompleteListener(task1 -> {
-                    if (task1.isSuccessful()) {
-                        Log.d(TAG, "Inserted with ID: " + member.getId());
-                        Toast.makeText(context, "Inserted with ID: " + member.getId(), Toast.LENGTH_SHORT).show();
-                        // 新增完畢回上頁
-                    } else {
-                        Log.e(TAG, "message: " + task1.getException().getMessage());
-                        Toast.makeText(context, "message: " + task1.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
+//    public static void firebasedbAddOrReplace(Context context,FirebaseFirestore db,final Member member) {
+//        HashMap<String, String> hashMap = new HashMap<>();
+//        hashMap.put("id", member.getuUId());
+//        db.collection("Users").document(member.getuUId()).set(hashMap)
+//                .addOnCompleteListener(task -> {
+//                    if (task.isSuccessful()) {
+//                        Log.d(TAG, "user into firebase success: " + member.getId());
+//                    } else {
+//                        Log.e(TAG, "message: " + task.getException().getMessage());
+//                    }
+//                });
+//        // 如果Firestore沒有該ID的Document就建立新的，已經有就更新內容
+//        db.collection("members").document(member.getId()+"").set(member)
+//                .addOnCompleteListener(task1 -> {
+//                    if (task1.isSuccessful()) {
+//                        Log.d(TAG, "Inserted with ID: " + member.getId());
+//                        Toast.makeText(context, "Inserted with ID: " + member.getId(), Toast.LENGTH_SHORT).show();
+//                        // 新增完畢回上頁
+//                    } else {
+//                        Log.e(TAG, "message: " + task1.getException().getMessage());
+//                        Toast.makeText(context, "message: " + task1.getException().getMessage(), Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//    }
 
 }

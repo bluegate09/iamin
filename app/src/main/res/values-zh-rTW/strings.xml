@@ -122,4 +122,10 @@
     <string name="text_verification_account">帳號驗證中</string>
     <string name="text_account_verification_message">請稍等…</string>
     <string name="text_welcome_back">歡迎回來</string>
+    <string name="text_update_failed">更新失敗</string>
+    <string name="text_update_success">更新成功</string>
+    <string name="test_no_network">沒有網路</string>
+    <string name="text_profile_updating">檔案更新中</string>
+    <string name="text_please_wait_for_a_while">請稍候…</string>
+    <string name="text_my_group_list">我的團購</string>
 </resources>

@@ -127,4 +127,10 @@
     <string name="text_verification_account">Account verification</string>
     <string name="text_account_verification_message">Please wait for a while…</string>
     <string name="text_welcome_back">Welcome Come Back</string>
+    <string name="text_update_failed">Update failed</string>
+    <string name="text_update_success">Update success</string>
+    <string name="test_no_network">No network</string>
+    <string name="text_profile_updating">Profile Updating</string>
+    <string name="text_please_wait_for_a_while">Please wait for a while…</string>
+    <string name="text_my_group_list">My Group List</string>
 </resources>

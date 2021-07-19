@@ -49,6 +49,7 @@ import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
 
 import static android.content.Context.MODE_PRIVATE;
+import static idv.tfp10101.iamin.Constants.FCM_Token;
 import static idv.tfp10101.iamin.member.MemberControl.memberRemoteAccess;
 
 public class LogInFragment extends Fragment {
@@ -196,6 +197,7 @@ public class LogInFragment extends Fragment {
     }
 
     /**
+     * email格式驗證
      * @param email
      * return boolean
      */
@@ -214,8 +216,6 @@ public class LogInFragment extends Fragment {
         loadingBar.show();
         loadingBar.setCanceledOnTouchOutside(true);
     }
-
-
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
 
@@ -311,10 +311,6 @@ public class LogInFragment extends Fragment {
 
                         loadingBar.dismiss();
 
-
-                        SharedPreferences sharedPreferences = activity.getSharedPreferences("FCM_TOKEN", MODE_PRIVATE);
-                        String myToken = sharedPreferences.getString("FCM_TOKEN", "");
-                        member.setFCM_token(myToken);
                         member.setuUId(auth.getCurrentUser().getUid());
                         String jsonMember = memberRemoteAccess(activity,member,"findbyUuid");
                         member = gson.fromJson(jsonMember,Member.class);
@@ -346,9 +342,10 @@ public class LogInFragment extends Fragment {
                     if (task.isSuccessful()) {
                         Log.d(TAG, getString(R.string.signinwithemailsuccess));
 
-                        SharedPreferences sharedPreferences = activity.getSharedPreferences("FCM_TOKEN", MODE_PRIVATE);
-                        String myToken = sharedPreferences.getString("FCM_TOKEN", "");
+                        SharedPreferences sharedPreferences = activity.getSharedPreferences(FCM_Token, MODE_PRIVATE);
+                        String myToken = sharedPreferences.getString(FCM_Token, "");
                         member.setFCM_token(myToken);
+
                         member.setEmail(email);
                         member.setuUId(auth.getCurrentUser().getUid());
                         //不存密碼 因為我們驗證只需要Uid 之後密碼可能會調整為其他用法

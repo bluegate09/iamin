@@ -1,5 +1,10 @@
 package idv.tfp10101.iamin.member_order;
 
+import java.util.List;
+import java.util.Objects;
+
+import idv.tfp10101.iamin.member_order_details.MemberOrderDetails;
+
 public class MemberOrder {
     private int memberOrderId;
     private int memberId; // 會員ID
@@ -8,6 +13,7 @@ public class MemberOrder {
     private int total; // 訂單金額
     private boolean receivePaymentStatus; // 收款狀態
     private boolean deliverStatus; // 發貨狀態
+    private List<MemberOrderDetails> memberOrderDetailsList;
 
     public MemberOrder(int memberOrderId, int memberId, int groupId, int payentMethod, int total,
                        boolean receivePaymentStatus, boolean deliverStatus) {
@@ -19,6 +25,17 @@ public class MemberOrder {
         this.total = total;
         this.receivePaymentStatus = receivePaymentStatus;
         this.deliverStatus = deliverStatus;
+    }
+
+    public MemberOrder(int memberOrderId, int memberId, int groupId, int payentMethod, int total, boolean receivePaymentStatus, boolean deliverStatus, List<MemberOrderDetails> memberOrderDetailsList) {
+        this.memberOrderId = memberOrderId;
+        this.memberId = memberId;
+        this.groupId = groupId;
+        this.payentMethod = payentMethod;
+        this.total = total;
+        this.receivePaymentStatus = receivePaymentStatus;
+        this.deliverStatus = deliverStatus;
+        this.memberOrderDetailsList = memberOrderDetailsList;
     }
 
     public int getMemberOrderId() {
@@ -75,5 +92,13 @@ public class MemberOrder {
 
     public void setDeliverStatus(boolean deliverStatus) {
         this.deliverStatus = deliverStatus;
+    }
+
+    public List<MemberOrderDetails> getMemberOrderDetailsList() {
+        return memberOrderDetailsList;
+    }
+
+    public void setMemberOrderDetailsList(List<MemberOrderDetails> memberOrderDetailsList) {
+        this.memberOrderDetailsList = memberOrderDetailsList;
     }
 }

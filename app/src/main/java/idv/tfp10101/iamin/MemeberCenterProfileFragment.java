@@ -2,6 +2,7 @@ package idv.tfp10101.iamin;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -61,6 +63,7 @@ public class MemeberCenterProfileFragment extends Fragment {
     private FirebaseFirestore db;
     private FirebaseStorage storage;
     private User user;
+    private ProgressDialog loadingBar;
     private Uri contentUri; // 拍照需要的Uri
     private Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
 
@@ -72,6 +75,7 @@ public class MemeberCenterProfileFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
         user = User.getInstance();
+        loadingBar = new ProgressDialog(activity);
 //        Log.d(TAG,"MC_Profile_OnCreate member: " + member.getNickname());
 
     }
@@ -121,10 +125,12 @@ public class MemeberCenterProfileFragment extends Fragment {
             member.setEmail(email);
             member.setPassword(password);
 
-            //mysql更新修改後的資訊
-            sendInfotoMysql(member);
             //member bean 更新
             MemberControl.setMember(member);
+            //mysql更新修改後的資訊
+            sendInfotoMysql(member);
+
+
         });
 
         //照片修改
@@ -301,13 +307,16 @@ public class MemeberCenterProfileFragment extends Fragment {
                 count = 0;
             }
             if (count == 0) {
-                Toast.makeText(activity, "Update failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, getString(R.string.text_update_failed), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(activity, "Update success", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, getString(R.string.text_update_success), Toast.LENGTH_SHORT).show();
+
+                Navigation.findNavController(etEmail).popBackStack();
             }
         } else {
-            Toast.makeText(activity, "No net work", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, R.string.test_no_network, Toast.LENGTH_SHORT).show();
         }
+
     }
 
     private void uploadImage(Uri imageUri) {
@@ -342,6 +351,13 @@ public class MemeberCenterProfileFragment extends Fragment {
 //                        Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void setLoadingBar(String titleText, String messageText) {
+        loadingBar.setTitle(titleText);
+        loadingBar.setMessage(messageText);
+        loadingBar.show();
+        loadingBar.setCanceledOnTouchOutside(true);
     }
 
 }

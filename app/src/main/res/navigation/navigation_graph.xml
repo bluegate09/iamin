@@ -96,6 +96,12 @@
         <action
             android:id="@+id/action_memberCenterFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_memberCenterFragment_to_memberCenterFollowTestGround"
+            app:destination="@id/memberCenterFollowTestGround" />
+        <action
+            android:id="@+id/action_memberCenterFragment_to_memberCenterMemberOrderFragment"
+            app:destination="@id/memberCenterMemberOrderFragment" />
     </fragment>
     <fragment
         android:id="@+id/memeberCenterFollowFragment"
@@ -249,4 +255,14 @@
         android:name="idv.tfp10101.iamin.MemberForgetPassword"
         android:label="fragment_member_forget_password"
         tools:layout="@layout/fragment_member_forget_password" />
+    <fragment
+        android:id="@+id/memberCenterFollowTestGround"
+        android:name="idv.tfp10101.iamin.MemberCenterFollowTestGround"
+        android:label="fragment_member_center_follow_test_ground"
+        tools:layout="@layout/fragment_member_center_follow_test_ground" />
+    <fragment
+        android:id="@+id/memberCenterMemberOrderFragment"
+        android:name="idv.tfp10101.iamin.MemberCenterMemberOrderFragment"
+        android:label="fragment_member_center_member_order"
+        tools:layout="@layout/fragment_member_center_member_order" />
 </navigation>
