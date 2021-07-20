@@ -40,7 +40,7 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.CancellationTokenSource;
-import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -86,7 +86,13 @@ public class HomeFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
     private SearchView searchView;
     private Member member;
-    private double latitude,longitude; //使用者的緯經度
+    private double latitude, longitude; //使用者的緯經度
+    private static final int RQ_2 = 2;
+    private static final String TAG = "TAG_Location";
+
+    private FusedLocationProviderClient fusedLocationClient;
+    private LocationRequest locationRequest;
+    private LocationCallback locationCallback;
 
 
     @Override
@@ -135,6 +141,8 @@ public class HomeFragment extends Fragment {
             MemberControl.setMember(member);
             Log.d("TAG_HOME", "Fetch Member Date Complete");
         }
+        // 3. 詢問使用權限
+        requestPermissions();
 
     }
 
@@ -142,12 +150,12 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         findView(view);
-
+        getUserloaction();
         //呼叫
         HomeDataControl.getAllGroup(activity);
         localGroups = HomeDataControl.getLocalGroups();
         if (localGroups == null || localGroups.isEmpty()) {
-            Toast.makeText(activity,"找不到團購", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "找不到團購", Toast.LENGTH_SHORT).show();
         }
 
         showGroup(localGroups);
@@ -161,9 +169,9 @@ public class HomeFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 List<Group> searchGroup = new ArrayList<>();
-                if (newText.equals("")){
+                if (newText.equals("")) {
                     showGroup(localGroups);
-                }else {
+                } else {
                     // 搜尋原始資料內有無包含關鍵字(不區別大小寫)
                     for (Group group : localGroups) {
                         if (group.getName().toUpperCase().contains(newText.toUpperCase())) {
@@ -179,7 +187,7 @@ public class HomeFragment extends Fragment {
             //開啟動畫
             swipeRefreshLayout.setRefreshing(true);
             showGroup(localGroups);
-            searchView.setQuery("",false);
+            searchView.setQuery("", false);
             swipeRefreshLayout.setRefreshing(false);
         });
 
@@ -189,9 +197,9 @@ public class HomeFragment extends Fragment {
             //bottombar監聽事件
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.no:
-                        searchView.setQuery("",false);
+                        searchView.setQuery("", false);
                         showGroup(localGroups);
                         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                             @Override
@@ -202,9 +210,9 @@ public class HomeFragment extends Fragment {
                             @Override
                             public boolean onQueryTextChange(String newText) {
                                 List<Group> searchGroup = new ArrayList<>();
-                                if (newText.equals("")){
+                                if (newText.equals("")) {
                                     showGroup(localGroups);
-                                }else {
+                                } else {
                                     // 搜尋原始資料內有無包含關鍵字(不區別大小寫)
                                     for (Group group : localGroups) {
                                         if (group.getName().toUpperCase().contains(newText.toUpperCase())) {
@@ -220,25 +228,25 @@ public class HomeFragment extends Fragment {
                             //開啟動畫
                             swipeRefreshLayout.setRefreshing(true);
                             showGroup(localGroups);
-                            searchView.setQuery("",false);
+                            searchView.setQuery("", false);
                             swipeRefreshLayout.setRefreshing(false);
                         });
                         Toast.makeText(activity, "未分類", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.food:
-                        choosesort(1,localGroups);
+                        choosesort(1, localGroups);
                         Toast.makeText(activity, "美食", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.life:
-                        choosesort(2,localGroups);
+                        choosesort(2, localGroups);
                         Toast.makeText(activity, "生活用品", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.theerc:
-                        choosesort(3,localGroups);
+                        choosesort(3, localGroups);
                         Toast.makeText(activity, "3C", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.other:
-                        choosesort(4,localGroups);
+                        choosesort(4, localGroups);
                         Toast.makeText(activity, "其他", Toast.LENGTH_SHORT).show();
                         return true;
                 }
@@ -247,12 +255,33 @@ public class HomeFragment extends Fragment {
         });
     }
 
+    private void getUserloaction() {
+        checkPositioning();
+
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        /**  取得位置 **/
+        // 4. 取得定位供應器物件
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
+        // 5. 取得Task<Location>物件
+//        //取得最後位置
+        fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
+            if (location != null) {
+                //取得緯度
+                latitude = location.getLatitude();
+                //取得經度
+                longitude = location.getLongitude();
+            }
+        });
+    }
+
     //根據所選的分類去搜尋並可以下拉更新
-    private void choosesort(int category_Id,List<Group> categoryGroup){
-        searchView.setQuery("",false);
+    private void choosesort(int category_Id, List<Group> categoryGroup) {
+        searchView.setQuery("", false);
         List<Group> selectGroup = new ArrayList<>();
-        for (Group category : categoryGroup){
-            if (category.getCategoryId() == category_Id){
+        for (Group category : categoryGroup) {
+            if (category.getCategoryId() == category_Id) {
                 selectGroup.add(category);
             }
         }
@@ -266,9 +295,9 @@ public class HomeFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (newText.equals("")){
+                if (newText.equals("")) {
                     showGroup(searchGroup);
-                }else {
+                } else {
                     // 搜尋原始資料內有無包含關鍵字(不區別大小寫)
                     for (Group group : searchGroup) {
                         if (group.getName().toUpperCase().contains(newText.toUpperCase())) {
@@ -282,9 +311,9 @@ public class HomeFragment extends Fragment {
         });
         showGroup(selectGroup);
 
-        swipeRefreshLayout.setOnRefreshListener(() ->{
+        swipeRefreshLayout.setOnRefreshListener(() -> {
             swipeRefreshLayout.setRefreshing(true);
-            searchView.setQuery("",false);
+            searchView.setQuery("", false);
             showGroup(selectGroup);
             swipeRefreshLayout.setRefreshing(false);
         });
@@ -298,7 +327,7 @@ public class HomeFragment extends Fragment {
             recyclerViewGroup.setAdapter(new HomeFragment.HomeAdapter(activity, localGroups));
             int px = (int) Constants.convertDpToPixel(8, activity); // 間距 8 dp
             recyclerViewGroup.addItemDecoration(new Constants.SpacesItemDecoration("bottom", px));
-        }else{
+        } else {
             // 資訊重新載入刷新
             groupAdapter.setGroups(localGroups);
             groupAdapter.notifyDataSetChanged();
@@ -313,22 +342,23 @@ public class HomeFragment extends Fragment {
         searchView = view.findViewById(R.id.searchview);
     }
 
-    private class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyHomeDataViewHolder>{
+    private class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyHomeDataViewHolder> {
         private List<Group> rsGroups;
         private LayoutInflater layoutInflater;
         private final int imageSize;
 
-        public HomeAdapter(Context context, List<Group> groups){
+        public HomeAdapter(Context context, List<Group> groups) {
             layoutInflater = LayoutInflater.from(context);
             rsGroups = groups;
             /* 螢幕寬度除以4當作將圖的尺寸 */
             imageSize = getResources().getDisplayMetrics().widthPixels / 4;
         }
 
-        public class MyHomeDataViewHolder extends RecyclerView.ViewHolder{
-            TextView txv_group_name,txv_group_conditionTime,txv_progress;
+        public class MyHomeDataViewHolder extends RecyclerView.ViewHolder {
+            TextView txv_group_name, txv_group_conditionTime, txv_progress;
             ImageView imv_group;
             ProgressBar pr_bar;
+
             public MyHomeDataViewHolder(@NonNull View itemView) {
                 super(itemView);
                 txv_group_name = itemView.findViewById(R.id.txv_group_name);
@@ -338,6 +368,7 @@ public class HomeFragment extends Fragment {
                 pr_bar = itemView.findViewById(R.id.pr_bar);
             }
         }
+
         public void setGroups(List<Group> Groups) {
             rsGroups = Groups;
         }
@@ -351,45 +382,45 @@ public class HomeFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull HomeFragment.HomeAdapter.MyHomeDataViewHolder holder, int position) {
-        final Group rsGroup = rsGroups.get(position);
-        int GroupID = rsGroup.getGroupId();
-        List<Location> grouplocations = new ArrayList<>();
-        Bitmap Groupbitmap = HomeDataControl.getGroupimage(activity,GroupID,imageSize,executor);
+            final Group rsGroup = rsGroups.get(position);
+            int GroupID = rsGroup.getGroupId();
+            List<Location> grouplocations = new ArrayList<>();
+            Bitmap Groupbitmap = HomeDataControl.getGroupimage(activity, GroupID, imageSize, executor);
             if (Groupbitmap != null) {
                 holder.imv_group.setImageBitmap(Groupbitmap);
             } else {
                 holder.imv_group.setImageResource(R.drawable.no_image);
             }
-        holder.txv_group_name.setText(rsGroup.getName());
-        Timestamp ts = rsGroup.getConditionTime();
-        DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-        holder.txv_group_conditionTime.setText("結單日期:"+"\n"+sdf.format(ts));
-        holder.pr_bar.setMax(rsGroup.getGoal());
-        holder.pr_bar.setProgress(rsGroup.getProgress());
-        holder.txv_progress.setText("("+String.valueOf(rsGroup.getProgress())+"/"+String.valueOf(rsGroup.getGoal())+")");
+            holder.txv_group_name.setText(rsGroup.getName());
+            Timestamp ts = rsGroup.getConditionTime();
+            DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+            holder.txv_group_conditionTime.setText("結單日期:" + "\n" + sdf.format(ts));
+            holder.pr_bar.setMax(rsGroup.getGoal());
+            holder.pr_bar.setProgress(rsGroup.getProgress());
+            holder.txv_progress.setText("(" + String.valueOf(rsGroup.getProgress()) + "/" + String.valueOf(rsGroup.getGoal()) + ")");
             //取的團購的
-           grouplocations =  LocationControl.getLocationByGroupId(activity,GroupID);
-           int locations = grouplocations.size();
+            grouplocations = LocationControl.getLocationByGroupId(activity, GroupID);
+            int locations = grouplocations.size();
 
             //設定點擊商品觸發
-            holder.itemView.setOnClickListener(v ->{
+            holder.itemView.setOnClickListener(v -> {
                 // Toast.makeText(activity, String.valueOf(id), Toast.LENGTH_SHORT).show();
 
-                HashMap<String,Object> GrouphashMap = new HashMap<>();
-                GrouphashMap.put("GroupID",rsGroup.getGroupId());//打包團購ID
-                GrouphashMap.put("SellerID",rsGroup.getMemberId());//打包團購發起人ID
-                GrouphashMap.put("Progress",rsGroup.getProgress());//打包團購進度
-                GrouphashMap.put("Goal",rsGroup.getGoal());//打包團購目標
-                GrouphashMap.put("Contact_Number",rsGroup.getContactNumber());//打包團購聯絡電話
-                GrouphashMap.put("Payment_Method",rsGroup.getPaymentMethod());//打包付款方式
-                GrouphashMap.put("Group_status",rsGroup.getGroupStatus());//打包團購狀態
-                GrouphashMap.put("Caution",rsGroup.getCaution());//打包注意事項
-                GrouphashMap.put("Condition_count",rsGroup.getConditionCount());//打包停單份數
-                GrouphashMap.put("Condition_Time",rsGroup.getConditionTime());//打包停單時間
+                HashMap<String, Object> GrouphashMap = new HashMap<>();
+                GrouphashMap.put("GroupID", rsGroup.getGroupId());//打包團購ID
+                GrouphashMap.put("SellerID", rsGroup.getMemberId());//打包團購發起人ID
+                GrouphashMap.put("Progress", rsGroup.getProgress());//打包團購進度
+                GrouphashMap.put("Goal", rsGroup.getGoal());//打包團購目標
+                GrouphashMap.put("Contact_Number", rsGroup.getContactNumber());//打包團購聯絡電話
+                GrouphashMap.put("Payment_Method", rsGroup.getPaymentMethod());//打包付款方式
+                GrouphashMap.put("Group_status", rsGroup.getGroupStatus());//打包團購狀態
+                GrouphashMap.put("Caution", rsGroup.getCaution());//打包注意事項
+                GrouphashMap.put("Condition_count", rsGroup.getConditionCount());//打包停單份數
+                GrouphashMap.put("Condition_Time", rsGroup.getConditionTime());//打包停單時間
                 Bundle bundleMap = new Bundle();
-                bundleMap.putSerializable("Group",GrouphashMap);
+                bundleMap.putSerializable("Group", GrouphashMap);
 
-                Navigation.findNavController(v).navigate(R.id.merchbrowseFragment,bundleMap);
+                Navigation.findNavController(v).navigate(R.id.merchbrowseFragment, bundleMap);
             });
         }
 
@@ -397,6 +428,79 @@ public class HomeFragment extends Fragment {
         public int getItemCount() {
             return rsGroups == null ? 0 : rsGroups.size();
         }
+    }
+
+
+    /**
+     * 3. 詢問使用權限
+     */
+    private void requestPermissions() {
+        final int result = ContextCompat.checkSelfPermission(
+                activity, Manifest.permission.ACCESS_FINE_LOCATION);
+        if (result != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, RQ_2);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == RQ_2) {
+            for (int i = 0; i < permissions.length; i++) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //實作取得地點方法
+                    requestPermissions();
+                    getUserloaction();
+                    Toast.makeText(activity, "開始使用定位功能", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(activity, "功能無法使用", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
+    /**
+     * 定位功能檢查
+     */
+    private void checkPositioning() {
+        // 9. 檢查定位
+        // 9.1 取得SettingsClient物件
+        SettingsClient settingsClient = LocationServices.getSettingsClient(activity);
+        // 9.2 檢查裝置是否開啟定位設定
+        Task<LocationSettingsResponse> task =
+                settingsClient.checkLocationSettings(getLocationSettingsRequest());
+        // 9.3 註冊/實作 失敗監聽器: 若裝置未開啟定位，跳轉至定位設定的對話框
+        task.addOnFailureListener(e -> {
+            if (e instanceof ResolvableApiException) {
+                try {
+                    ResolvableApiException resolvable = (ResolvableApiException) e;
+                    // 跳轉至定位設定的對話框
+                    resolvable.startResolutionForResult(activity, RQ_2);
+                } catch (IntentSender.SendIntentException sendEx) {
+                    Log.e(TAG, e.getMessage());
+                }
+            }
+        });
+    }
+
+    /**
+     * 定位設定
+     */
+    private LocationSettingsRequest getLocationSettingsRequest() {
+        // 7. 定位請求物件
+        // 7.1 建立
+        locationRequest = LocationRequest.create();
+        // 7.2 設定更新週期
+        locationRequest.setInterval(10000);
+        // 7.3 設定最快更新週期
+        locationRequest.setFastestInterval(1000);
+        // 7.4 設定優先順序
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        // 8. 建立定位設定物件，並加入步驟7建立的定位請求物件
+        return new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest)
+                .build();
     }
 
 }
