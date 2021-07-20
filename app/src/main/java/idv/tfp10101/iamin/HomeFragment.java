@@ -90,13 +90,13 @@ public class HomeFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
     private SearchView searchView;
     private Member member;
-    private double latitude, longitude; //使用者的緯經度
     private static final int RQ_2 = 2;
     private static final String TAG = "TAG_Location";
 
     private FusedLocationProviderClient fusedLocationClient;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
+    private double userlat,userlng;//使用者的緯經度
 
 
     @Override
@@ -164,7 +164,7 @@ public class HomeFragment extends Fragment {
         //實作取得買家緯精度方法
         getUserloaction();
 
-        showGroup(localGroups);
+//        showGroup(localGroups);
         //輸入監聽
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -272,16 +272,32 @@ public class HomeFragment extends Fragment {
         // 4. 取得定位供應器物件
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
         // 5. 取得Task<Location>物件
-//        //取得最後位置
+        //取得最後位置
         fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
             if (location != null) {
                 //取得緯度
-                latitude = location.getLatitude();
+                userlat = location.getLatitude();
                 //取得經度
-                longitude = location.getLongitude();
+                userlng = location.getLongitude();
                 showGroup(localGroups);
             }
         });
+
+        //取得最新位置
+//        Task<android.location.Location> task2 = fusedLocationClient.getCurrentLocation(
+//                LocationRequest.PRIORITY_HIGH_ACCURACY,
+//                new CancellationTokenSource().getToken()
+//        );
+//        task2.addOnSuccessListener(location -> {
+//            if (location != null) {
+//                //取得緯度
+//                latitude = location.getLatitude();
+//                //取得經度
+//                longitude = location.getLongitude();
+//                intervalPositioning();
+//                showGroup(localGroups);
+//            }
+//        });
     }
 
     //根據所選的分類去搜尋並可以下拉更新
@@ -417,7 +433,7 @@ public class HomeFragment extends Fragment {
                 Double groupLat = location.getLatitude();
                 Double groupLng = location.getLongtitude();
                 //取得買家與所有團購面交地點的距離
-                android.location.Location.distanceBetween(latitude,longitude,groupLat,groupLng,results);
+                android.location.Location.distanceBetween(userlat,userlng,groupLat,groupLng,results);
                 //除以1000從公尺變成公里後加入list
                 distance.add(results[0]/1000);
             }
@@ -517,7 +533,7 @@ public class HomeFragment extends Fragment {
         // 7.2 設定更新週期
         locationRequest.setInterval(10000);
         // 7.3 設定最快更新週期
-        locationRequest.setFastestInterval(0);
+        locationRequest.setFastestInterval(1000);
         // 7.4 設定優先順序
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
@@ -525,6 +541,34 @@ public class HomeFragment extends Fragment {
         return new LocationSettingsRequest.Builder()
                 .addLocationRequest(locationRequest)
                 .build();
+    }
+
+    /**
+     * 定期更新
+     */
+    private void intervalPositioning() {
+        // 10. 定期更新定位
+        // 10.1 實例化/實作 LocationCallback物件
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                /** 取得定位資訊 **/
+                // 取得Location物件
+                final android.location.Location location = locationResult.getLastLocation();
+                // 取得緯度
+                userlat = location.getLatitude();
+                // 取得經度
+                userlng = location.getLongitude();
+                // 取得定位時間
+                final long time = location.getTime();
+            }
+        };
+
+        if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        // 10.2 請求定位更新
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
     }
 
 }
