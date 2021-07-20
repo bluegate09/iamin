@@ -11,7 +11,7 @@ public class MemberOrderDetails {
     private int merchId; // 商品ID
     private int quantity; // 數量
     private int format_total; // 樣式總價
-    private List<Merch> merchList;
+    private Merch merch;
 
     public MemberOrderDetails(int memberOrderDetailsId, int memberOrderId, int merchId, int quantity,
                               int format_total) {
@@ -23,13 +23,13 @@ public class MemberOrderDetails {
         this.format_total = format_total;
     }
 
-    public MemberOrderDetails(int memberOrderDetailsId, int memberOrderId, int merchId, int quantity, int format_total, List<Merch> merchList) {
+    public MemberOrderDetails(int memberOrderDetailsId, int memberOrderId, int merchId, int quantity, int format_total, Merch merch) {
         this.memberOrderDetailsId = memberOrderDetailsId;
         this.memberOrderId = memberOrderId;
         this.merchId = merchId;
         this.quantity = quantity;
         this.format_total = format_total;
-        this.merchList = merchList;
+        this.merch = merch;
     }
 
     public int getMemberOrderDetailsId() {
@@ -72,11 +72,11 @@ public class MemberOrderDetails {
         this.format_total = format_total;
     }
 
-    public List<Merch> getMerchList() {
-        return merchList;
+    public Merch getMerch() {
+        return merch;
     }
 
-    public void setMerchList(List<Merch> merchList) {
-        this.merchList = merchList;
+    public void setMerch(Merch merch) {
+        this.merch = merch;
     }
 }

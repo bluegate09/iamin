@@ -51,7 +51,7 @@ public class MemberCenterMemberOrderFragment extends Fragment {
     private Activity activity;
     private Member member;
     private List<MemberOrder> memberOrderList;
-
+    private RecyclerView recyclerView;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,12 +75,50 @@ public class MemberCenterMemberOrderFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        SearchView searchView = view.findViewById(R.id.)
+        SearchView searchView = view.findViewById(R.id.svOrderSearch);
 
-        RecyclerView recyclerView = view.findViewById(R.id.rvMemberCenterOrder);
+        recyclerView = view.findViewById(R.id.rvMemberCenterOrder);
         recyclerView.setAdapter(new MyAdapter(activity,memberOrderList));
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
 
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (query.isEmpty()) {
+                    showMyOrder(memberOrderList);
+                }else{
+                    List<MemberOrder> searchOrders = new ArrayList<>();
+                    for(MemberOrder result : memberOrderList){
+                        if (String.valueOf(result.getGroupId()).toUpperCase().contains(query.toUpperCase())) {
+                            searchOrders.add(result);
+                        }
+
+                    }showMyOrder(searchOrders);
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(newText.isEmpty())
+                    showMyOrder(memberOrderList);
+                return false;
+            }
+        });
+
+    }
+
+    private void showMyOrder(List<MemberOrder> memberOrders) {
+        if (memberOrders == null || memberOrders.isEmpty()) {
+            Toast.makeText(activity,"no memberOrders found", Toast.LENGTH_SHORT).show();
+        }
+        MyAdapter myAdapter = (MyAdapter) recyclerView.getAdapter();
+        if(myAdapter == null){
+            recyclerView.setAdapter(new MyAdapter(activity,memberOrderList));
+        }else{
+            myAdapter.setMemberOrders(memberOrderList);
+            myAdapter.notifyDataSetChanged();
+        }
     }
 
     class MyAdapter extends RecyclerView.Adapter<MyViewHolder>{
@@ -92,14 +130,14 @@ public class MemberCenterMemberOrderFragment extends Fragment {
             this.memberOrderList = memberOrderList;
         }
 
-
+        void setMemberOrders(List<MemberOrder> memberOrders) {
+            this.memberOrderList = memberOrders;
+        }
 
         @NonNull
         @Override
         public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View itemView = LayoutInflater.from(activity).inflate(R.layout.member_order_listview,parent,false);
-
-
             return new MyViewHolder(itemView);
         }
 
