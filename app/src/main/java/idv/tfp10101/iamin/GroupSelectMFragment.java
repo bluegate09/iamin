@@ -26,6 +26,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import idv.tfp10101.iamin.member.Member;
+import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.merch.Merch;
 import idv.tfp10101.iamin.merch.MerchControl;
 import idv.tfp10101.iamin.merch.MerchSelect;
@@ -38,6 +40,7 @@ public class GroupSelectMFragment extends Fragment {
     private RecyclerView recyclerViewMerch;
     private Button buttonMerchsAdd;
     // 物件
+    private Member member;
     private List<MerchSelect> merchSelects;
     private List<Merch> localMerchs;
     private ArrayList<Integer> selectMerchsId; // 所選擇的商品ID
@@ -120,9 +123,10 @@ public class GroupSelectMFragment extends Fragment {
      * 抓取資料
      */
     private void handleMerchData() {
-        /** 測試資料MemberID = 1 */
+        /** 抓取會員ID */
+        member = MemberControl.getInstance();
         // 跟server抓取所有Merch
-        MerchControl.getAllMerchByMemberId(activity, 1);
+        MerchControl.getAllMerchByMemberId(activity, member.getId());
         localMerchs = MerchControl.getLocalMerchs();
         if (localMerchs == null || localMerchs.isEmpty()) {
             Toast.makeText(activity, R.string.textNoMerchsFound, Toast.LENGTH_SHORT).show();
@@ -305,6 +309,10 @@ public class GroupSelectMFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             final MerchSelect rvMerchSelect = rvMerchSelects.get(position); // 第幾個merch
+            // 如果字數太長就縮小字體
+            if (rvMerchSelect.getMerch().getName().length() > 10) {
+                holder.textViewName.setTextSize(18);
+            }
             holder.textViewName.setText(rvMerchSelect.getMerch().getName());
             holder.textViewPrice.setText(String.valueOf(rvMerchSelect.getMerch().getPrice())); // int -> str
             if (rvMerchSelect.getSelect()) {

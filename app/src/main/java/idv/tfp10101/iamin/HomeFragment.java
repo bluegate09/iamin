@@ -1,13 +1,18 @@
 package idv.tfp10101.iamin;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,6 +30,18 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.CancellationTokenSource;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,7 +54,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -45,6 +64,8 @@ import idv.tfp10101.iamin.Data.HomeData;
 import idv.tfp10101.iamin.Data.HomeDataControl;
 import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.group.GroupControl;
+import idv.tfp10101.iamin.location.Location;
+import idv.tfp10101.iamin.location.LocationControl;
 import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.merch.Merch;
@@ -65,11 +86,14 @@ public class HomeFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
     private SearchView searchView;
     private Member member;
+    private double latitude,longitude; //使用者的緯經度
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // 需要開啟多個執行緒取得各景點圖片，使用執行緒池功能
+        // 需要開啟多個執行緒取得圖片，使用執行緒池功能
         int numProcs = Runtime.getRuntime().availableProcessors();
         Log.d("TAG", "JVM可用的處理器數量: " + numProcs);
         // 建立固定量的執行緒放入執行緒池內並重複利用它們來執行任務
@@ -85,6 +109,7 @@ public class HomeFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_home, container, false);
         return view;
     }
+
     /*
     取得會員資料
      */
@@ -96,7 +121,7 @@ public class HomeFragment extends Fragment {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         //先前有登入就取會員資料
-        if(currentUser != null && member.getuUId() == null){
+        if (currentUser != null && member.getuUId() == null) {
 
             SharedPreferences sharedPreferences = activity.getSharedPreferences("FCM_TOKEN", MODE_PRIVATE);
             String token = sharedPreferences.getString("FCM_TOKEN", "");
@@ -104,12 +129,13 @@ public class HomeFragment extends Fragment {
 
             member.setuUId(currentUser.getUid());
             //tmp
-            MemberControl.memberRemoteAccess(activity,member,"updateTokenbyUid");
-            String jsonMember = MemberControl.memberRemoteAccess(activity,member,"findbyUuid");
-            member = new Gson().fromJson(jsonMember,Member.class);
+            MemberControl.memberRemoteAccess(activity, member, "updateTokenbyUid");
+            String jsonMember = MemberControl.memberRemoteAccess(activity, member, "findbyUuid");
+            member = new Gson().fromJson(jsonMember, Member.class);
             MemberControl.setMember(member);
-            Log.d("TAG_HOME","Fetch Member Date Complete");
+            Log.d("TAG_HOME", "Fetch Member Date Complete");
         }
+
     }
 
     @Override
@@ -220,6 +246,7 @@ public class HomeFragment extends Fragment {
             }
         });
     }
+
     //根據所選的分類去搜尋並可以下拉更新
     private void choosesort(int category_Id,List<Group> categoryGroup){
         searchView.setQuery("",false);
@@ -326,6 +353,7 @@ public class HomeFragment extends Fragment {
         public void onBindViewHolder(@NonNull HomeFragment.HomeAdapter.MyHomeDataViewHolder holder, int position) {
         final Group rsGroup = rsGroups.get(position);
         int GroupID = rsGroup.getGroupId();
+        List<Location> grouplocations = new ArrayList<>();
         Bitmap Groupbitmap = HomeDataControl.getGroupimage(activity,GroupID,imageSize,executor);
             if (Groupbitmap != null) {
                 holder.imv_group.setImageBitmap(Groupbitmap);
@@ -339,7 +367,9 @@ public class HomeFragment extends Fragment {
         holder.pr_bar.setMax(rsGroup.getGoal());
         holder.pr_bar.setProgress(rsGroup.getProgress());
         holder.txv_progress.setText("("+String.valueOf(rsGroup.getProgress())+"/"+String.valueOf(rsGroup.getGoal())+")");
-
+            //取的團購的
+           grouplocations =  LocationControl.getLocationByGroupId(activity,GroupID);
+           int locations = grouplocations.size();
 
             //設定點擊商品觸發
             holder.itemView.setOnClickListener(v ->{

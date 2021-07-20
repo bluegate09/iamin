@@ -44,7 +44,7 @@
         app:layout_constraintTop_toBottomOf="@+id/spinnerSeller" />
 
     <Button
-        android:id="@+id/buttonGroup"
+        android:id="@+id/buttonSubmit"
         android:layout_width="0dp"
         android:layout_height="116dp"
         android:layout_marginStart="24dp"

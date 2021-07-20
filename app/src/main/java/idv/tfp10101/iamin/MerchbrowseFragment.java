@@ -4,20 +4,18 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,10 +30,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.youth.banner.Banner;
+import com.youth.banner.adapter.BannerImageAdapter;
+import com.youth.banner.holder.BannerImageHolder;
+import com.youth.banner.indicator.CircleIndicator;
 
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,8 +55,6 @@ import idv.tfp10101.iamin.merch.Merch;
 import idv.tfp10101.iamin.merch.MerchControl;
 import idv.tfp10101.iamin.network.RemoteAccess;
 
-import static android.content.Context.MODE_PRIVATE;
-
 
 public class MerchbrowseFragment extends Fragment {
     private Activity activity;
@@ -69,6 +67,8 @@ public class MerchbrowseFragment extends Fragment {
     private RecyclerView recyclerViewMerch;
     private Button btn_buy,btn_back,btn_next;
     private Member member;
+    //商品圖片
+    private List<byte[]> images = new ArrayList<>();
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,6 +131,7 @@ public class MerchbrowseFragment extends Fragment {
         if (localMerchs == null || localMerchs.isEmpty()) {
             Toast.makeText(activity, R.string.textNoGroupsFound, Toast.LENGTH_SHORT).show();
         }
+
         //StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(1,RecyclerView.HORIZONTAL);
         recyclerViewMerch.setLayoutManager(new StaggeredGridLayoutManager(1,RecyclerView.HORIZONTAL));
 
@@ -203,7 +204,6 @@ public class MerchbrowseFragment extends Fragment {
                                 }
                             })
                             .setPositiveButton("去買單!!",(dialog, which) -> {
-                                String restult = "你選擇了:";
                                 if (buyerChoose == -1){
                                     Toast.makeText(activity, "請選擇付款方式!!", Toast.LENGTH_SHORT).show();
                                     return;
@@ -240,19 +240,18 @@ public class MerchbrowseFragment extends Fragment {
 
             for (Map.Entry<Merch, Integer> entry : maps.entrySet()) {
                 Merch merch = entry.getKey();
-                int merchID = merch.getMerchId(); //取得商品ID
                 int amount = entry.getValue();  //取得買家所選商品數量
                 int price = merch.getPrice();   //取得當見商品價錢
                 int format_total = price * amount; //單件商品的價錢乘上數量
                 total_price += format_total; //將每個商品的總價加起來
                 total_quantity += amount; //將每個商品的數量加起來
-                Toast.makeText(activity, merch.getName()+"數量:"+String.valueOf(amount), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(activity, merch.getName()+"數量:"+String.valueOf(amount), Toast.LENGTH_SHORT).show();
             }
         //取得最新的團購資訊
         Group group = GroupControl.getGroupbyId(activity,groupID);
         if(group != null) {
             int progress = group.getProgress();
-            int goal = group.getGoal();
+            int status = group.getGroupStatus();
             if ((total_quantity != 0)||(total_price != 0)){
                 //判斷是否在結單時間內
                 if (new Date().before(condition_Time)){
@@ -270,6 +269,28 @@ public class MerchbrowseFragment extends Fragment {
                                     false
                             );
                             setMemberorder(memberOrder);
+                            if ((total_quantity + progress) > goal){
+                                status = 2;
+                            }
+                            Group updaategroup = new Group(
+                                    group.getGroupId(),
+                                    group.getMemberId(),
+                                    group.getName(),
+                                    total_quantity + progress,
+                                    group.getGoal(),
+                                    group.getCategoryId(),
+                                    group.getGroupItem(),
+                                    group.getContactNumber(),
+                                    group.getPaymentMethod(),
+                                    status,
+                                    group.getCaution(),
+                                    group.getPrivacyFlag(),
+                                    group.getTotalAmount(),
+                                    group.getAmount(),
+                                    group.getConditionCount(),
+                                    group.getConditionTime()
+                            );
+                            updateGroup(updaategroup);
                             //Toast.makeText(activity, "沒有超過上限!!", Toast.LENGTH_SHORT).show();
                         }else{
                             Toast.makeText(activity, "已超過能夠買得最大上限請重新選擇!!", Toast.LENGTH_SHORT).show();
@@ -286,6 +307,28 @@ public class MerchbrowseFragment extends Fragment {
                                 false
                         );
                        setMemberorder(memberOrder);
+                        if ((total_quantity + progress) > goal){
+                            status = 2;
+                        }
+                        Group updaategroup = new Group(
+                                group.getGroupId(),
+                                group.getMemberId(),
+                                group.getName(),
+                                total_quantity + progress,
+                                group.getGoal(),
+                                group.getCategoryId(),
+                                group.getGroupItem(),
+                                group.getContactNumber(),
+                                group.getPaymentMethod(),
+                                status,
+                                group.getCaution(),
+                                group.getPrivacyFlag(),
+                                group.getTotalAmount(),
+                                group.getAmount(),
+                                group.getConditionCount(),
+                                group.getConditionTime()
+                        );
+                        updateGroup(updaategroup);
                     }
                 }else{
                     Toast.makeText(activity, "不好意思已經超過了結單時間!!", Toast.LENGTH_SHORT).show();
@@ -323,6 +366,10 @@ public class MerchbrowseFragment extends Fragment {
         }
         MemberOrderDetailsControl.insertMemberOrderDetails(activity,orderDetails);
     }
+
+    private void updateGroup (Group group){
+        int code = GroupControl.updateGroup(activity,group);
+    }
     private void findView(View view) {
         recyclerViewMerch = view.findViewById(R.id.recyclerViewMerch);
 //        GridLayoutManager gridLayoutManager = new GridLayoutManager(activity,2);
@@ -352,7 +399,6 @@ public class MerchbrowseFragment extends Fragment {
     private class MerchAdapter extends RecyclerView.Adapter<MerchAdapter.MyMerchViewHolder>{
         private Map<Merch, Integer> rsMerchs;
         private LayoutInflater layoutInflater;
-        int[] expanded; // 詳細內容展開
 
         public MerchAdapter(Context context, List<Merch> merchs){
             layoutInflater = LayoutInflater.from(context);
@@ -365,17 +411,18 @@ public class MerchbrowseFragment extends Fragment {
 
         public class MyMerchViewHolder extends RecyclerView.ViewHolder{
             TextView txv_merch_name,txv_merch_price,txv_commodity_description;
-            EditText edt_amount;
-            RecyclerView rvMerchimage;
+            TextView txv_amount;
+            Banner banner;
             ImageView btn_sub,btn_add;
             public MyMerchViewHolder(@NonNull View itemView) {
                 super(itemView);
                 txv_merch_name = itemView.findViewById(R.id.txv_merch_name);
                 txv_merch_price = itemView.findViewById(R.id.txv_merch_price);
                 txv_commodity_description = itemView.findViewById(R.id.txv_commodity_description);
-                edt_amount = itemView.findViewById(R.id.edt_amount);
+                txv_amount = itemView.findViewById(R.id.txv_amount);
                 btn_add = itemView.findViewById(R.id.btn_add);
                 btn_sub = itemView.findViewById(R.id.btn_sub);
+                banner = itemView.findViewById(R.id.banner);
             }
         }
 
@@ -404,7 +451,7 @@ public class MerchbrowseFragment extends Fragment {
         String merch_name = rsMerch.getName();
         int merch_price = rsMerch.getPrice();
         String merch_desc = rsMerch.getMerchDesc();
-        holder.edt_amount.setText(String.valueOf(num == null ? 0 : num));
+        holder.txv_amount.setText(String.valueOf(num == null ? 0 : num));
         holder.txv_merch_name.setText(merch_name);
         holder.txv_merch_price.setText("價格:"+String.valueOf(merch_price));
         holder.txv_commodity_description.setText("商品說明:\n"+merch_desc);
@@ -412,15 +459,33 @@ public class MerchbrowseFragment extends Fragment {
         holder.btn_sub.setOnClickListener(v ->{
             if (amount.get() > 0) {
                 rsMerchs.put(rsMerch, amount.decrementAndGet());
-                holder.edt_amount.setText(String.valueOf(amount.get()));
+                holder.txv_amount.setText(String.valueOf(amount.get()));
             }else{
-                holder.edt_amount.setText(String.valueOf(0));
+                holder.txv_amount.setText(String.valueOf(0));
             }
         });
         holder.btn_add.setOnClickListener(v ->{
             rsMerchs.put(rsMerch, amount.incrementAndGet());
-            holder.edt_amount.setText(String.valueOf(amount.get()));
+            holder.txv_amount.setText(String.valueOf(amount.get()));
         });
+
+        // 發送商品圖片請求
+        images = MerchControl.getMerchImgsById(activity, merch_id);
+            List<Bitmap> bitmaps = new ArrayList<>();
+            for (byte[] image: images) {
+                if (image.length != 0){
+                    bitmaps.add(BitmapFactory.decodeByteArray(image,0,image.length));
+                }
+            }
+        holder.banner.addBannerLifecycleObserver((LifecycleOwner) activity)
+                .setIndicator(new CircleIndicator(activity))
+                .setAdapter(new BannerImageAdapter<Bitmap>(bitmaps) {
+                    @Override
+                    public void onBindView(BannerImageHolder holder, Bitmap data, int position, int size) {
+                        holder.imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                        holder.imageView.setImageBitmap(data);
+                    }
+                });
 
         }
         //設定回傳數量

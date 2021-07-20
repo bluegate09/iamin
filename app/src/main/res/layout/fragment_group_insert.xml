@@ -422,7 +422,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <Button
-                android:id="@+id/buttonGroup"
+                android:id="@+id/buttonSubmit"
                 android:layout_width="364dp"
                 android:layout_height="110dp"
                 android:layout_marginStart="24dp"
