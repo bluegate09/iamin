@@ -134,9 +134,14 @@ public class MerchbrowseFragment extends Fragment {
 
         //StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(1,RecyclerView.HORIZONTAL);
         recyclerViewMerch.setLayoutManager(new StaggeredGridLayoutManager(1,RecyclerView.HORIZONTAL));
-
         PagerSnapHelper pagerSnapHelper = new PagerSnapHelper();
         pagerSnapHelper.attachToRecyclerView(recyclerViewMerch);
+        recyclerViewMerch.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
         showMerchs(localMerchs);
         //取得商品列表總數
         int total = recyclerViewMerch.getLayoutManager().getItemCount();
@@ -163,7 +168,6 @@ public class MerchbrowseFragment extends Fragment {
             btn_next.setEnabled(true);
         });
         //按下訂單前做判斷
-
         btn_buy.setOnClickListener(v ->{
             AlertDialog.Builder payment_methodDialog = new AlertDialog.Builder(activity);
             switch (payment_method) {
