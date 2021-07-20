@@ -272,5 +272,14 @@
         android:id="@+id/memberCenterMemberOrderFragment"
         android:name="idv.tfp10101.iamin.MemberCenterMemberOrderFragment"
         android:label="fragment_member_center_member_order"
-        tools:layout="@layout/fragment_member_center_member_order" />
+        tools:layout="@layout/fragment_member_center_member_order" >
+        <action
+            android:id="@+id/action_memberCenterMemberOrderFragment_to_memberCenterOrderDetailsFragment"
+            app:destination="@id/memberCenterOrderDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/memberCenterOrderDetailsFragment"
+        android:name="idv.tfp10101.iamin.MemberCenterOrderDetailsFragment"
+        android:label="fragment_member_center_order_details"
+        tools:layout="@layout/fragment_member_center_order_details" />
 </navigation>

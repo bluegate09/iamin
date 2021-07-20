@@ -150,17 +150,15 @@ public class MemberCenterMemberOrderFragment extends Fragment {
             holder.status.setText(memberOrder.isDeliverStatus() ? "已出貨" : "未出貨");
             holder.paymentMethod.setText("PaymentMethod: " + memberOrder.getPayentMethod());
 
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            holder.itemView.setOnClickListener(v -> {
 
-                    String orderDetailsJson = new Gson().toJson(memberOrderList.get(position).getMemberOrderDetailsList());
+                String orderDetailsJson = new Gson().toJson(memberOrderList.get(position).getMemberOrderDetailsList());
 
-                    Bundle bundle = new Bundle();
-                    bundle.putString("OrderDetails", orderDetailsJson);
-//                    Navigation.findNavController(v).navigate();
-                    Toast.makeText(activity, "XX", Toast.LENGTH_SHORT).show();
-                }
+                Bundle bundle = new Bundle();
+                bundle.putString("OrderDetails", orderDetailsJson);
+
+                Navigation.findNavController(v).navigate(R.id.action_memberCenterMemberOrderFragment_to_memberCenterOrderDetailsFragment);
+
             });
 
         }
