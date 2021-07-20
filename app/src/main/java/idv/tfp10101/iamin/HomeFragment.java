@@ -7,6 +7,7 @@ import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.icu.number.Precision;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -49,10 +50,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.protobuf.Empty;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -141,8 +145,6 @@ public class HomeFragment extends Fragment {
             MemberControl.setMember(member);
             Log.d("TAG_HOME", "Fetch Member Date Complete");
         }
-        // 3. 詢問使用權限
-        requestPermissions();
 
     }
 
@@ -150,13 +152,17 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         findView(view);
-        getUserloaction();
-        //呼叫
+        // 3. 詢問使用權限
+        requestPermissions();
+
         HomeDataControl.getAllGroup(activity);
         localGroups = HomeDataControl.getLocalGroups();
         if (localGroups == null || localGroups.isEmpty()) {
             Toast.makeText(activity, "找不到團購", Toast.LENGTH_SHORT).show();
         }
+
+        //實作取得買家緯精度方法
+        getUserloaction();
 
         showGroup(localGroups);
         //輸入監聽
@@ -215,6 +221,7 @@ public class HomeFragment extends Fragment {
                                 } else {
                                     // 搜尋原始資料內有無包含關鍵字(不區別大小寫)
                                     for (Group group : localGroups) {
+                                        //只顯示團購狀態是1的(1-> 揪團中)
                                         if (group.getName().toUpperCase().contains(newText.toUpperCase())) {
                                             searchGroup.add(group);
                                         }
@@ -254,7 +261,7 @@ public class HomeFragment extends Fragment {
             }
         });
     }
-
+    //取得User的當前位置
     private void getUserloaction() {
         checkPositioning();
 
@@ -272,6 +279,7 @@ public class HomeFragment extends Fragment {
                 latitude = location.getLatitude();
                 //取得經度
                 longitude = location.getLongitude();
+                showGroup(localGroups);
             }
         });
     }
@@ -355,7 +363,7 @@ public class HomeFragment extends Fragment {
         }
 
         public class MyHomeDataViewHolder extends RecyclerView.ViewHolder {
-            TextView txv_group_name, txv_group_conditionTime, txv_progress;
+            TextView txv_group_name, txv_group_conditionTime, txv_progress,txv_distanceMin;
             ImageView imv_group;
             ProgressBar pr_bar;
 
@@ -364,6 +372,7 @@ public class HomeFragment extends Fragment {
                 txv_group_name = itemView.findViewById(R.id.txv_group_name);
                 txv_group_conditionTime = itemView.findViewById(R.id.txv_group_conditionTime);
                 txv_progress = itemView.findViewById(R.id.txv_progress);
+                txv_distanceMin = itemView.findViewById(R.id.txv_distanceMin);
                 imv_group = itemView.findViewById(R.id.imv_group);
                 pr_bar = itemView.findViewById(R.id.pr_bar);
             }
@@ -398,9 +407,26 @@ public class HomeFragment extends Fragment {
             holder.pr_bar.setMax(rsGroup.getGoal());
             holder.pr_bar.setProgress(rsGroup.getProgress());
             holder.txv_progress.setText("(" + String.valueOf(rsGroup.getProgress()) + "/" + String.valueOf(rsGroup.getGoal()) + ")");
-            //取的團購的
+            //取的團購的所有地點
             grouplocations = LocationControl.getLocationByGroupId(activity, GroupID);
             int locations = grouplocations.size();
+            List<Float> distance = new ArrayList<>();
+            for (Location location : grouplocations){
+                float[] results = new float[1];
+                //取得所有面交地點的緯經度
+                Double groupLat = location.getLatitude();
+                Double groupLng = location.getLongtitude();
+                //取得買家與所有團購面交地點的距離
+                android.location.Location.distanceBetween(latitude,longitude,groupLat,groupLng,results);
+                //除以1000從公尺變成公里後加入list
+                distance.add(results[0]/1000);
+            }
+            //由小到大排序(只取最近的距離)
+            Collections.sort(distance);
+            BigDecimal b = new BigDecimal(distance.get(0));
+            //四捨五入到小數第一位
+            float groupDismin = b.setScale(1,BigDecimal.ROUND_HALF_UP).floatValue();
+            holder.txv_distanceMin.setText("距離您"+String.valueOf(groupDismin)+"公里");
 
             //設定點擊商品觸發
             holder.itemView.setOnClickListener(v -> {
@@ -448,8 +474,6 @@ public class HomeFragment extends Fragment {
         if (requestCode == RQ_2) {
             for (int i = 0; i < permissions.length; i++) {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //實作取得地點方法
-                    requestPermissions();
                     getUserloaction();
                     Toast.makeText(activity, "開始使用定位功能", Toast.LENGTH_SHORT).show();
                 } else {
@@ -493,7 +517,7 @@ public class HomeFragment extends Fragment {
         // 7.2 設定更新週期
         locationRequest.setInterval(10000);
         // 7.3 設定最快更新週期
-        locationRequest.setFastestInterval(1000);
+        locationRequest.setFastestInterval(0);
         // 7.4 設定優先順序
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
