@@ -83,6 +83,24 @@ public class MemberCenterFollowTestGround extends Fragment {
                 myMember.setId(member.getId());
                 otherMember.setId(Integer.parseInt(member_id));
 
+                //追隨
+                String url = RemoteAccess.URL_SERVER + "memberController";
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("action", "followMember");
+                jsonObject.addProperty("member",new Gson().toJson(myMember));
+                jsonObject.addProperty("otherMember",new Gson().toJson(otherMember));
+
+                RemoteAccess.getRemoteData(url, jsonObject.toString());
+
+                //取消追蹤
+//                String url = RemoteAccess.URL_SERVER + "memberController";
+//                JsonObject jsonObject = new JsonObject();
+//                jsonObject.addProperty("action", "unFollowMember");
+//                jsonObject.addProperty("member",new Gson().toJson(myMember));
+//                jsonObject.addProperty("otherMember",new Gson().toJson(otherMember));
+//
+//                RemoteAccess.getRemoteData(url, jsonObject.toString());
+
 
 
 

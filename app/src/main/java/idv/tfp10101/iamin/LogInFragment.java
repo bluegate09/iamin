@@ -250,7 +250,11 @@ public class LogInFragment extends Fragment {
                         GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(activity);
 
                         if(signInAccount != null) {
-                            member.setEmail(signInAccount.getEmail());
+
+                            if(signInAccount.getEmail() != null ) {
+//                                Log.d(TAG,signInAccount.getEmail());
+                                member.setEmail(signInAccount.getEmail());
+                            }
                             MemberControl.setMember(member);
                             Navigation.findNavController(etEmail)
                                     .navigate(R.id.action_logInFragment_to_socialLoginFragment);

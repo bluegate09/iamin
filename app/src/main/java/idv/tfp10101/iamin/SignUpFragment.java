@@ -40,7 +40,7 @@ public class SignUpFragment extends Fragment {
     private Activity activity;
     private FirebaseFirestore db;
     private FirebaseAuth auth;
-    private TextInputLayout emailTil,passwordTil,passwordTil2,phoneTil;
+    private TextInputLayout emailTil,passwordTil,passwordTil2,phoneTil,nameTil;
     private EditText etEmail,etPassword,etPassword2,etNickname,etPhoneNumber;
     private Member member;
     private Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
@@ -74,6 +74,8 @@ public class SignUpFragment extends Fragment {
         passwordTil = view.findViewById(R.id.signupPasswordTil);
         passwordTil2 = view.findViewById(R.id.signupPasswordTil2);
         phoneTil = view.findViewById(R.id.signupPhoneTil);
+        nameTil = view.findViewById(R.id.signupNickNameTil);
+
 
         //前往註冊頁面
         view.findViewById(R.id.btSignUp).setOnClickListener(v ->{
@@ -120,8 +122,13 @@ public class SignUpFragment extends Fragment {
             }
 
 
-            if(!(nickname.isEmpty())){
-                member.setNickname(nickname);
+            if(nickname.isEmpty()){
+                nameTil.setErrorEnabled(true);
+                nameTil.setError(getString(R.string.textcantbeblank));
+                isFormatCorrect = false;
+            }else{
+                nameTil.setError(null);
+                nameTil.setErrorEnabled(false);
             }
 
             if(!(phoneNumber.isEmpty())){
@@ -139,6 +146,7 @@ public class SignUpFragment extends Fragment {
             if(password.equals(password2)&&isFormatCorrect){
                 member.setEmail(email);
                 member.setPassword(password);
+                member.setNickname(nickname);
                 //firebase創帳號
                 createAccount(member);
             }else if(password.equals(password2)&&phoneNumber.length() < 10){

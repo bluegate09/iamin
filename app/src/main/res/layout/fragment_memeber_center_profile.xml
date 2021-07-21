@@ -74,22 +74,23 @@
                 android:background="@color/white" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:endIconDrawable="@drawable/eye"
-            app:startIconDrawable="@drawable/lock"
-            android:hint="@string/password">
+<!--        <com.google.android.material.textfield.TextInputLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:endIconDrawable="@drawable/eye"-->
+<!--            app:startIconDrawable="@drawable/lock"-->
+<!--            android:hint="@string/password">-->
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etProfilePassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:inputType="textPassword" />
-        </com.google.android.material.textfield.TextInputLayout>
+<!--            <com.google.android.material.textfield.TextInputEditText-->
+<!--                android:id="@+id/etProfilePassword"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:background="@color/white"-->
+<!--                android:inputType="textPassword" />-->
+<!--        </com.google.android.material.textfield.TextInputLayout>-->
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/memberProfilePhoneTil"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:startIconDrawable="@drawable/phone"
@@ -99,6 +100,9 @@
                 android:id="@+id/etProfilePhoneNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:digits="0987654321"
+                android:maxLength="10"
+                android:inputType="phone"
                 android:background="@color/white" />
         </com.google.android.material.textfield.TextInputLayout>
 

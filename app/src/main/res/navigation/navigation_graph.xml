@@ -102,6 +102,12 @@
         <action
             android:id="@+id/action_memberCenterFragment_to_memberCenterMemberOrderFragment"
             app:destination="@id/memberCenterMemberOrderFragment" />
+        <action
+            android:id="@+id/action_memberCenterFragment_to_memberCenterMyGroupListFragment"
+            app:destination="@id/memberCenterMyGroupListFragment" />
+        <action
+            android:id="@+id/action_memberCenterFragment_to_sellerFragment"
+            app:destination="@id/sellerFragment" />
     </fragment>
     <fragment
         android:id="@+id/memeberCenterFollowFragment"
@@ -121,7 +127,11 @@
         android:id="@+id/memeberCenterProfileFragment"
         android:name="idv.tfp10101.iamin.MemeberCenterProfileFragment"
         android:label="fragment_memeber_center_profile"
-        tools:layout="@layout/fragment_memeber_center_profile" />
+        tools:layout="@layout/fragment_memeber_center_profile" >
+        <action
+            android:id="@+id/action_memeberCenterProfileFragment_to_memberCenterFragment"
+            app:destination="@id/memberCenterFragment" />
+    </fragment>
     <fragment
         android:id="@+id/memberCenterMyWalletDetailsFragment"
         android:name="idv.tfp10101.iamin.MemberCenterMyWalletDetailsFragment"
@@ -279,7 +289,12 @@
     </fragment>
     <fragment
         android:id="@+id/memberCenterOrderDetailsFragment"
-        android:name="idv.tfp10101.iamin.MemberCenterOrderDetailsFragment"
+        android:name="idv.tfp10101.iamin.MemberCenterMemberOrderDetailsFragment"
         android:label="fragment_member_center_order_details"
-        tools:layout="@layout/fragment_member_center_order_details" />
+        tools:layout="@layout/fragment_member_center_member_order_details" />
+    <fragment
+        android:id="@+id/memberCenterMyGroupListFragment"
+        android:name="idv.tfp10101.iamin.MemberCenterMyGroupListFragment"
+        android:label="fragment_member_center_my_group_list"
+        tools:layout="@layout/fragment_member_center_my_group_list" />
 </navigation>

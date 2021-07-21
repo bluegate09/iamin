@@ -134,7 +134,8 @@ public class MainActivity extends AppCompatActivity {
                destination.getId() == R.id.logInFragment||
                destination.getId() == R.id.signUpFragment||
                destination.getId() == R.id.phoneAuthFragment||
-               destination.getId() == R.id.memeberCenterProfileFragment
+               destination.getId() == R.id.memeberCenterProfileFragment||
+               destination.getId() == R.id.memberCenterFragment
             ){
                 bottomNavigationView.setVisibility(View.GONE);
             }else{
