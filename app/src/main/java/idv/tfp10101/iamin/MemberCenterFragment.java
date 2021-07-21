@@ -40,7 +40,7 @@ public class MemberCenterFragment extends Fragment {
     private final static String TAG = "TAG_MemberCenter";
     private Activity activity;
     private FirebaseAuth auth;
-    private TextView nickname, email, rating, followCount;
+    private TextView nickname, email, rating, followCount,memberClass;
     private ImageView ivPic;
     private Member member;
     private Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
@@ -51,8 +51,6 @@ public class MemberCenterFragment extends Fragment {
         activity = getActivity();
         auth = FirebaseAuth.getInstance();
         member = MemberControl.getInstance();
-        Log.d(TAG, "mebmerCenter_onCreate: " + member.getId());
-
     }
 
     @Override
@@ -70,6 +68,16 @@ public class MemberCenterFragment extends Fragment {
         ivPic = view.findViewById(R.id.ivProfilePic);
         rating = view.findViewById(R.id.tvRating);
         followCount = view.findViewById(R.id.tvMCFollowCount);
+        memberClass = view.findViewById(R.id.memberClass);
+
+        Log.d(TAG,"phone_number: " + member.getPhoneNumber());
+
+        if (member.getPhoneNumber() == null || String.valueOf(member.getPhoneNumber()).trim().isEmpty()) {
+            memberClass.setText(R.string.text_general_member);
+        }else{
+            memberClass.setText(R.string.text_senior_member);
+
+        }
 
         setTextView();
         setImageView();
@@ -78,8 +86,8 @@ public class MemberCenterFragment extends Fragment {
         view.findViewById(R.id.btMCProfile).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memeberCenterProfileFragment));
         //前往訂單
-//        view.findViewById(R.id.btMCOrderList).setOnClickListener(v ->
-//                Navigation.findNavController(v).navigate(R.id.action_memberCenter_to_MC_OrderList));
+        view.findViewById(R.id.btMCOrderList).setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memberCenterMemberOrderFragment));
         //前往追隨
         view.findViewById(R.id.btMCFollow).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memeberCenterFollowFragment));
@@ -100,9 +108,11 @@ public class MemberCenterFragment extends Fragment {
                             navigate(R.id.action_memberCenterFragment_to_memberCenterMyWalletFragment,bundle);
                 }
         });
-        //前往賣家中心
-//        view.findViewById(R.id.btMCSellerCenter).setOnClickListener(v ->
-//                Navigation.findNavController(v).navigate(R.id.action_memberCenter_to_MC_SellerCenter));
+
+        //前往我的團購
+        view.findViewById(R.id.btMCSellerCenter).setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_sellerFragment));
+
         //回到賣家
         view.findViewById(R.id.btBacktoHomepage).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_homeFragment));
@@ -128,6 +138,16 @@ public class MemberCenterFragment extends Fragment {
             navController.navigate(R.id.homeFragment);
 
         });
+
+        view.findViewById(R.id.btTestGround).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memberCenterFollowTestGround);
+            }
+        });
+
     }
 
     @Override
@@ -135,6 +155,12 @@ public class MemberCenterFragment extends Fragment {
         super.onStart();
             member = MemberControl.getInstance();
             setTextView();
+        if (member.getPhoneNumber() == null || String.valueOf(member.getPhoneNumber()).trim().isEmpty()) {
+            memberClass.setText(R.string.text_general_member);
+        }else{
+            memberClass.setText(R.string.text_senior_member);
+
+        }
 //            Log.d(TAG, "OnCreate: " + member.isUpdate());
     }
 

@@ -1,49 +1,56 @@
 package idv.tfp10101.iamin;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.view.menu.MenuView;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
-import idv.tfp10101.iamin.merch.Merch;
+import idv.tfp10101.iamin.member_order.MemberOrder;
+import idv.tfp10101.iamin.member_order_details.MemberOrderDetails;
 import idv.tfp10101.iamin.network.RemoteAccess;
 
+import static idv.tfp10101.iamin.member.MemberControl.memberRemoteAccess;
+
 public class MemberCenterMemberOrderFragment extends Fragment {
+    private final String TAG = "TAG_MemberCenterMyOrder";
     private Activity activity;
     private Member member;
-    private List<Group> groups;
-    private RecyclerView rvMemberOrderList;
-
+    private List<MemberOrder> memberOrderList;
+    private RecyclerView recyclerView;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
         member = MemberControl.getInstance();
+
+        String jsonIn = memberRemoteAccess(activity,member,"getMyMemberOrder");
+        Type listType = new TypeToken<List<MemberOrder>>() {}.getType();
+        memberOrderList = new Gson().fromJson(jsonIn, listType);
+
+//        Log.d(TAG, memberOrderList.toString());
     }
 
     @Override
@@ -56,100 +63,116 @@ public class MemberCenterMemberOrderFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        rvMemberOrderList = view.findViewById(R.id.rvMyWallet);
-        rvMemberOrderList.setLayoutManager(new LinearLayoutManager(activity));
+        SearchView searchView = view.findViewById(R.id.svOrderSearch);
 
+        recyclerView = view.findViewById(R.id.rvMemberCenterOrder);
+        recyclerView.setAdapter(new MyAdapter(activity,memberOrderList));
+        recyclerView.setLayoutManager(new LinearLayoutManager(activity));
 
-    }
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (query.isEmpty()) {
+                    showMyOrder(memberOrderList);
+                }else{
+                    List<MemberOrder> searchOrders = new ArrayList<>();
+                    for(MemberOrder result : memberOrderList){
+                        if (String.valueOf(result.getGroupId()).toUpperCase().contains(query.toUpperCase())) {
+                            searchOrders.add(result);
+                        }
 
-    private List<Group> getGroups(){
-        List<Group> groups = new ArrayList<>();
-        if (RemoteAccess.networkConnected(activity)) {
-            String url = RemoteAccess.URL_SERVER + "memberController";
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("action", "getFollowMember");
-            jsonObject.addProperty("member", new Gson().toJson(member));
-            String jsonIn = RemoteAccess.getRemoteData(url, jsonObject.toString());
-
-            //string to jsonArray
-            try {
-                JSONArray jsonArray = new JSONArray(jsonIn);
-                for(int i = 0; i < jsonArray.length(); i++){
-                    JSONObject jsonObject2 = jsonArray.getJSONObject(i);
-//                    Log.d(TAG, jsonObject2.toString() + "<------------- jsonObject2.toString()");
-
-                    int id = jsonObject2.getInt("MEMBER_ID");
-                    String temp_nickname = jsonObject2.getString("NICKNAME");
-                    double temp_rating = jsonObject2.getDouble("RATING");
-                    int temp_followCount = jsonObject2.getInt("FOLLOW_COUNT");
-
-//                    groups.add(i,new Group(id,temp_followCount,temp_rating,temp_nickname));
-
+                    }showMyOrder(searchOrders);
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
+                return true;
             }
 
-        } else {
-            Toast.makeText(activity,"No network", Toast.LENGTH_SHORT).show();
-        }
-        return groups;
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(newText.isEmpty())
+                    showMyOrder(memberOrderList);
+                return false;
+            }
+        });
+
     }
 
-    private class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.MyViewHolder>{
+    private void showMyOrder(List<MemberOrder> memberOrders) {
+        if (memberOrders == null || memberOrders.isEmpty()) {
+            Toast.makeText(activity,"no memberOrders found", Toast.LENGTH_SHORT).show();
+        }
+        MyAdapter myAdapter = (MyAdapter) recyclerView.getAdapter();
+        if(myAdapter == null){
+            recyclerView.setAdapter(new MyAdapter(activity,memberOrderList));
+        }else{
+            myAdapter.setMemberOrders(memberOrderList);
+            myAdapter.notifyDataSetChanged();
+        }
+    }
 
-        private final LayoutInflater layoutInflater;
-        private List<Group> groups;
+    class MyAdapter extends RecyclerView.Adapter<MyViewHolder>{
+        Activity activity;
+        List<MemberOrder> memberOrderList;
 
-        GroupAdapter(Context context, List<Group> groups) {
-            layoutInflater = LayoutInflater.from(context);
-            this.groups = groups;
+        public MyAdapter(Activity activity , List<MemberOrder> memberOrderList){
+            this.activity = activity;
+            this.memberOrderList = memberOrderList;
         }
 
-        class MyViewHolder extends RecyclerView.ViewHolder{
-
-            MyViewHolder(View itemView) {
-                super(itemView);
-            }
-
-        }
-
-        void setGroups(List<Group> groups){
-            this.groups = groups;
+        void setMemberOrders(List<MemberOrder> memberOrders) {
+            this.memberOrderList = memberOrders;
         }
 
         @NonNull
         @Override
         public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View itemView = layoutInflater.inflate(R.layout.item_view_member_center_order_list, parent, false);
+            View itemView = LayoutInflater.from(activity).inflate(R.layout.item_view_member_order,parent,false);
             return new MyViewHolder(itemView);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull MemberCenterMemberOrderFragment.GroupAdapter.MyViewHolder holder, int position) {
-            final Group group = groups.get(position);
+        public void onBindViewHolder(@NonNull MemberCenterMemberOrderFragment.MyViewHolder holder, int position) {
+            final MemberOrder memberOrder = memberOrderList.get(position);
+            holder.groupId.setText("GroupTitle: " + memberOrder.getGroupId());
+            holder.memberOrderId.setText("MemberOrderId: " + memberOrder.getMemberOrderId());
+            holder.totalPrice.setText("TotalPrice: " + memberOrder.getTotal());
+            holder.status.setText(memberOrder.isDeliverStatus() ? "已出貨" : "未出貨");
+            holder.paymentMethod.setText("PaymentMethod: " + memberOrder.getPayentMethod());
+
+            holder.itemView.setOnClickListener(v -> {
+
+                String orderDetailsJson = new Gson().toJson(memberOrder.getMemberOrderDetailsList());
+                List<MemberOrderDetails> list = memberOrder.getMemberOrderDetailsList();
+                Log.d(TAG,"list: " + list.getClass());
+                Log.d(TAG,"orderDetailsJson: " + orderDetailsJson.getClass());
+                Bundle bundle = new Bundle();
+                bundle.putString("OrderDetails", orderDetailsJson);
+
+                Navigation.findNavController(v).navigate(R.id.action_memberCenterMemberOrderFragment_to_memberCenterOrderDetailsFragment,bundle);
+            });
+
         }
 
         @Override
         public int getItemCount() {
-            return groups.size();
+            return memberOrderList.size();
         }
-
-
     }
 
-    private class MySqlGroupData {
-        //itemview 需要的資料
-        // group table
-        private String title;
-        // member_order table
-        private int price;
-        // group table
-        private String deadline;
-        // location table
-        private String location;
+    private static class MyViewHolder extends RecyclerView.ViewHolder{
+        TextView groupId,memberOrderId,totalPrice,status,paymentMethod;
 
-        //需要join group member_order location
+        public MyViewHolder(@NonNull View itemView) {
+            super(itemView);
+            groupId = itemView.findViewById(R.id.memberOrderGroup);
+            memberOrderId = itemView.findViewById(R.id.memberOrderId);
+            totalPrice = itemView.findViewById(R.id.memberOrderTotalPrice);
+            status = itemView.findViewById(R.id.memberOrderDeliverStatus);
+            paymentMethod = itemView.findViewById(R.id.memberOrderPaymentMethod);
+
+
+        }
     }
+
 }
+
 

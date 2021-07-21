@@ -2,6 +2,7 @@ package idv.tfp10101.iamin;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -29,6 +31,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -57,10 +60,12 @@ public class MemeberCenterProfileFragment extends Fragment {
     private Activity activity;
     private Member member;
     private ImageView ivPic;
+    private TextInputLayout phoneTil;
     private byte[] image;
     private FirebaseFirestore db;
     private FirebaseStorage storage;
     private User user;
+    private ProgressDialog loadingBar;
     private Uri contentUri; // 拍照需要的Uri
     private Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
 
@@ -72,6 +77,7 @@ public class MemeberCenterProfileFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
         user = User.getInstance();
+        loadingBar = new ProgressDialog(activity);
 //        Log.d(TAG,"MC_Profile_OnCreate member: " + member.getNickname());
 
     }
@@ -86,10 +92,13 @@ public class MemeberCenterProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         etEmail = view.findViewById(R.id.etProfileEmail);
-        etPassword = view.findViewById(R.id.etProfilePassword);
+//        etPassword = view.findViewById(R.id.etProfilePassword);
         etNickname = view.findViewById(R.id.etProfileNickname);
         etPhoneNumber = view.findViewById(R.id.etProfilePhoneNumber);
         ivPic = view.findViewById(R.id.ivProfilePic);
+
+        phoneTil = view.findViewById(R.id.memberProfilePhoneTil);
+
 
         setTextView();
         setImageView();
@@ -98,7 +107,7 @@ public class MemeberCenterProfileFragment extends Fragment {
         view.findViewById(R.id.btProfileUpdate).setOnClickListener(v -> {
 
             String email = etEmail.getText().toString().trim();
-            String password = etPassword.getText().toString().trim();
+//            String password = etPassword.getText().toString().trim();
             String nickname = etNickname.getText().toString().trim();
             String phoneNumber = etPhoneNumber.getText().toString().trim();
 
@@ -106,25 +115,34 @@ public class MemeberCenterProfileFragment extends Fragment {
                 member.setEmail(email);
             }
 
-            if (!password.isEmpty()){
-                member.setPassword(password);
-            }
+//            if (!password.isEmpty()){
+//                member.setPassword(password);
+//            }
 
             if (!TextUtils.isEmpty(nickname)) {
                 member.setNickname(nickname);
             }
 
             if (!TextUtils.isEmpty(phoneNumber)) {
-                member.setPhoneNumber(phoneNumber);
+                if (phoneNumber.length() < 10) {
+                    phoneTil.setErrorEnabled(true);
+                    phoneTil.setError(getString(R.string.textphoneformaterror));
+                    return;
+                } else {
+                    phoneTil.setError(null);
+                    phoneTil.setErrorEnabled(false);
+                    member.setPhoneNumber(phoneNumber);
+                }
             }
 
-            member.setEmail(email);
-            member.setPassword(password);
+//            member.setPassword(password);
 
-            //mysql更新修改後的資訊
-            sendInfotoMysql(member);
             //member bean 更新
             MemberControl.setMember(member);
+            //mysql更新修改後的資訊
+            sendInfotoMysql(member);
+
+
         });
 
         //照片修改
@@ -143,9 +161,15 @@ public class MemeberCenterProfileFragment extends Fragment {
 
     private void setTextView() {
         etEmail.setText(member.getEmail());
-        etPassword.setText(member.getPassword());
+//        etPassword.setText(member.getPassword());
         etNickname.setText(member.getNickname());
         etPhoneNumber.setText(member.getPhoneNumber());
+
+        if(!(etPhoneNumber.getText().toString().isEmpty())){
+            etPhoneNumber.setEnabled(false);
+        }else{
+            etPhoneNumber.setEnabled(true);
+        }
     }
 
     private void setImageView(){
@@ -301,13 +325,16 @@ public class MemeberCenterProfileFragment extends Fragment {
                 count = 0;
             }
             if (count == 0) {
-                Toast.makeText(activity, "Update failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, getString(R.string.text_update_failed), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(activity, "Update success", Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, getString(R.string.text_update_success), Toast.LENGTH_SHORT).show();
+
+                Navigation.findNavController(etEmail).navigate(R.id.action_memeberCenterProfileFragment_to_memberCenterFragment);
             }
         } else {
-            Toast.makeText(activity, "No net work", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, R.string.test_no_network, Toast.LENGTH_SHORT).show();
         }
+
     }
 
     private void uploadImage(Uri imageUri) {

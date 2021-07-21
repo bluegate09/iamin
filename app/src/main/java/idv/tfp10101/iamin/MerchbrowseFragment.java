@@ -345,16 +345,20 @@ public class MerchbrowseFragment extends Fragment {
     private void updateGroup (Group group){
         NavController navController = Navigation.findNavController(view);
         int code = GroupControl.updateGroup(activity,group);
-        AlertDialog.Builder gohome = new AlertDialog.Builder(activity);
+        if (code == 0 ) {
+            AlertDialog.Builder gohome = new AlertDialog.Builder(activity);
             gohome.setTitle("下單成功!!")
-                .setPositiveButton("回首頁",(dialog, which) -> {
-                    navController.navigate(R.id.homeFragment);
-                })
-                .setNegativeButton("到我的訂單",(dialog, which) -> {
-//                    navController.navigate(R.id.);
-                })
-                .setCancelable(false)
-                .show();
+                    .setPositiveButton("回首頁", (dialog, which) -> {
+                        navController.navigate(R.id.homeFragment);
+                    })
+                    .setNegativeButton("到我的訂單", (dialog, which) -> {
+                        navController.navigate(R.id.memberCenterMemberOrderFragment);
+                    })
+                    .setCancelable(false)
+                    .show();
+        }else{
+            Toast.makeText(activity, "下單失敗", Toast.LENGTH_SHORT).show();
+        }
     }
     //建立選擇付款方式對話匡
     private void createdDialog(){

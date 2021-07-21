@@ -1,5 +1,10 @@
 package idv.tfp10101.iamin.member_order;
 
+import java.util.List;
+import java.util.Objects;
+
+import idv.tfp10101.iamin.member_order_details.MemberOrderDetails;
+
 // 會員訂單
 public class MemberOrder {
     private int memberOrderId;
@@ -9,6 +14,7 @@ public class MemberOrder {
     private int total; // 訂單金額
     private boolean receivePaymentStatus; // 收款狀態
     private boolean deliverStatus; // 發貨狀態
+    private List<MemberOrderDetails> memberOrderDetailsList;
     // 關聯資料
     private String nickname; // 會員暱稱
     private String phone; // 會員電話
@@ -35,6 +41,17 @@ public class MemberOrder {
         this.deliverStatus = deliverStatus;
         this.nickname = nickname;
         this.phone = phone;
+    }
+
+    public MemberOrder(int memberOrderId, int memberId, int groupId, int payentMethod, int total, boolean receivePaymentStatus, boolean deliverStatus, List<MemberOrderDetails> memberOrderDetailsList) {
+        this.memberOrderId = memberOrderId;
+        this.memberId = memberId;
+        this.groupId = groupId;
+        this.payentMethod = payentMethod;
+        this.total = total;
+        this.receivePaymentStatus = receivePaymentStatus;
+        this.deliverStatus = deliverStatus;
+        this.memberOrderDetailsList = memberOrderDetailsList;
     }
 
     public int getMemberOrderId() {
@@ -93,19 +110,26 @@ public class MemberOrder {
         this.deliverStatus = deliverStatus;
     }
 
-    public String getNickname() {
-        return nickname;
+    public List<MemberOrderDetails> getMemberOrderDetailsList() {
+        return memberOrderDetailsList;
     }
 
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
+    public void setMemberOrderDetailsList(List<MemberOrderDetails> memberOrderDetailsList) {
+        this.memberOrderDetailsList = memberOrderDetailsList;}
 
-    public String getPhone() {
-        return phone;
-    }
+        public String getNickname () {
+            return nickname;
+        }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+        public void setNickname (String nickname){
+            this.nickname = nickname;
+        }
+
+        public String getPhone () {
+            return phone;
+        }
+
+        public void setPhone (String phone){
+            this.phone = phone;
+        }
     }
-}

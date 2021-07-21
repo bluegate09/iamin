@@ -21,6 +21,7 @@ public class Constants {
     public static final String TAG = "Iamin_TAG ";
     public static final int REQ_POSITIONING = 1;
     public static final int REQ_LOCATION_SETTINGS = 2;
+    public static final String FCM_Token = "FCM_Token";
 
     /**
      * 設定RecyclerView的Item間距

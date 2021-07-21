@@ -17,9 +17,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,7 +59,8 @@ public class MemberCenterMyWalletFragment extends Fragment {
     private List<MyWallet> myWallets,myWalletsYear;
     private PieData pieData;
     private PieChart pieChart;
-    private AutoCompleteTextView monthDropDown;
+    private Spinner monthDropDown;
+    //    private AutoCompleteTextView monthDropDown;
     private RecyclerView rvMyWallet;
     private String selectMonth, yearStr;
     private TextView yearTitle;
@@ -162,28 +165,33 @@ public class MemberCenterMyWalletFragment extends Fragment {
         monthDropDown.setAdapter(adapterMonth);
         Log.d(TAG,"monthDropDown: " + monthDropDown.getAdapter().isEmpty());
         monthDropDown.getAdapter().isEmpty();
-        monthDropDown.setOnItemClickListener((parent, view1, position, id) -> {
+        monthDropDown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //AutoCompleteTextView DropdownMenu
+                monthDropDown.getAdapter().getItem(0);
+                Log.d(TAG,"monthDropDown: " + monthDropDown.getAdapter().getItem(0));
 
-            //AutoCompleteTextView DropdownMenu
-            monthDropDown.getAdapter().getItem(0);
-            Log.d(TAG,"monthDropDown: " + monthDropDown.getAdapter().getItem(0));
+                if(position == 0){
+                    updateUI(myWalletsYear);
+                }else{
+                    List<MyWallet> tmpList = new ArrayList<>();
+                    //選擇的月
+                    selectMonth = monthDropDown.getAdapter().getItem(position) + "";
 
-            if(position == 0){
-                updateUI(myWalletsYear);
-            }else{
-                List<MyWallet> tmpList = new ArrayList<>();
-                //選擇的月
-                selectMonth = monthDropDown.getAdapter().getItem(position) + "";
-
-                //根據月去抓取資料
-                for(MyWallet tmp : myWalletsYear) {
-                    if(selectMonth.equals(tmp.getUpdateTime().toString().substring(6,7))) {
-                        tmpList.add(tmp);
+                    //根據月去抓取資料
+                    for(MyWallet tmp : myWalletsYear) {
+                        if(selectMonth.equals(tmp.getUpdateTime().toString().substring(6,7))) {
+                            tmpList.add(tmp);
+                        }
                     }
-                }
-
-                updateUI(tmpList);
+                    updateUI(tmpList);
 //                    Log.d(TAG, "MyWallet_adapterMonth: " + date_month);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });

@@ -52,7 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:startIconDrawable="@drawable/icon_user"
-            android:hint="Nickname">
+            android:hint="@string/nickname">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etProfileNickname"
@@ -65,7 +65,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:startIconDrawable="@drawable/email"
-            android:hint="Email">
+            android:hint="@string/email">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etProfileEmail"
@@ -74,31 +74,35 @@
                 android:background="@color/white" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:endIconDrawable="@drawable/eye"
-            app:startIconDrawable="@drawable/lock"
-            android:hint="Password">
+<!--        <com.google.android.material.textfield.TextInputLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:endIconDrawable="@drawable/eye"-->
+<!--            app:startIconDrawable="@drawable/lock"-->
+<!--            android:hint="@string/password">-->
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etProfilePassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:inputType="textPassword" />
-        </com.google.android.material.textfield.TextInputLayout>
+<!--            <com.google.android.material.textfield.TextInputEditText-->
+<!--                android:id="@+id/etProfilePassword"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:background="@color/white"-->
+<!--                android:inputType="textPassword" />-->
+<!--        </com.google.android.material.textfield.TextInputLayout>-->
 
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/memberProfilePhoneTil"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:startIconDrawable="@drawable/phone"
-            android:hint="Phone Number">
+            android:hint="@string/phone_number">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etProfilePhoneNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:digits="0987654321"
+                android:maxLength="10"
+                android:inputType="phone"
                 android:background="@color/white" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -110,7 +114,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="@string/update" />
+            android:text="@string/textUpdate" />
 
     </LinearLayout>
 
