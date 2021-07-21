@@ -25,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
@@ -57,9 +58,11 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -92,7 +95,6 @@ public class HomeFragment extends Fragment {
     private Member member;
     private static final int RQ_2 = 2;
     private static final String TAG = "TAG_Location";
-
     private FusedLocationProviderClient fusedLocationClient;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
@@ -282,22 +284,6 @@ public class HomeFragment extends Fragment {
                 showGroup(localGroups);
             }
         });
-
-        //取得最新位置
-//        Task<android.location.Location> task2 = fusedLocationClient.getCurrentLocation(
-//                LocationRequest.PRIORITY_HIGH_ACCURACY,
-//                new CancellationTokenSource().getToken()
-//        );
-//        task2.addOnSuccessListener(location -> {
-//            if (location != null) {
-//                //取得緯度
-//                latitude = location.getLatitude();
-//                //取得經度
-//                longitude = location.getLongitude();
-//                intervalPositioning();
-//                showGroup(localGroups);
-//            }
-//        });
     }
 
     //根據所選的分類去搜尋並可以下拉更新
@@ -358,6 +344,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
+
     private void findView(View view) {
         bottomNavigationView = view.findViewById(R.id.nv_bar);
         recyclerViewGroup = view.findViewById(R.id.rv_groups);
@@ -374,6 +361,7 @@ public class HomeFragment extends Fragment {
         public HomeAdapter(Context context, List<Group> groups) {
             layoutInflater = LayoutInflater.from(context);
             rsGroups = groups;
+
             /* 螢幕寬度除以4當作將圖的尺寸 */
             imageSize = getResources().getDisplayMetrics().widthPixels / 4;
         }
