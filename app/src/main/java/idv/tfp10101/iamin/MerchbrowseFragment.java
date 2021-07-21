@@ -12,6 +12,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -67,6 +70,8 @@ public class MerchbrowseFragment extends Fragment {
     private RecyclerView recyclerViewMerch;
     private Button btn_buy,btn_back,btn_next;
     private Member member;
+    private TextView txv_merch_details;
+    private int total_quantity = 0,total_price = 0;
     //商品圖片
     private List<byte[]> images = new ArrayList<>();
     @Override
@@ -126,14 +131,16 @@ public class MerchbrowseFragment extends Fragment {
             condition_count = (Integer) GrouphashMap.get("Condition_count");//取得停單份數
             condition_Time = (Timestamp) GrouphashMap.get("Condition_Time");//取得停單時間
         }
+
         MerchControl.getAllMerchByGroupId(activity,groupID);
         localMerchs = MerchControl.getLocalMerchs();
         if (localMerchs == null || localMerchs.isEmpty()) {
             Toast.makeText(activity, R.string.textNoGroupsFound, Toast.LENGTH_SHORT).show();
         }
 
-        //StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(1,RecyclerView.HORIZONTAL);
-        recyclerViewMerch.setLayoutManager(new StaggeredGridLayoutManager(1,RecyclerView.HORIZONTAL));
+        StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(1,RecyclerView.HORIZONTAL);
+        recyclerViewMerch.setLayoutManager(staggeredGridLayoutManager);
+
         PagerSnapHelper pagerSnapHelper = new PagerSnapHelper();
         pagerSnapHelper.attachToRecyclerView(recyclerViewMerch);
         recyclerViewMerch.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -144,7 +151,7 @@ public class MerchbrowseFragment extends Fragment {
         });
         showMerchs(localMerchs);
         //取得商品列表總數
-        int total = recyclerViewMerch.getLayoutManager().getItemCount();
+        int total = staggeredGridLayoutManager.getItemCount();
         AtomicInteger count = new AtomicInteger();
         //預設back按鈕不能按
         btn_back.setVisibility(View.INVISIBLE);
@@ -170,79 +177,46 @@ public class MerchbrowseFragment extends Fragment {
         });
         //按下訂單前做判斷
         btn_buy.setOnClickListener(v ->{
-            AlertDialog.Builder payment_methodDialog = new AlertDialog.Builder(activity);
-            switch (payment_method) {
-                case 1:
-                    payment_methodDialog
-                            .setTitle("團購付款方式")
-                            .setMessage("該團購只支援面交")
-                            .setPositiveButton("去買單!!",(dialog, which) -> {
-                                buyerChoose = 1;
-                                getOrder();
-                            })
-                            .setNegativeButton("我在想一下",(dialog, which) -> {return;})
-                            .setCancelable(false)
-                            .show();
-                    break;
-                case 2:
-                    payment_methodDialog
-                            .setTitle("團購付款方式")
-                            .setMessage("該團購只支援信用卡")
-                            .setPositiveButton("去買單!!",(dialog, which) -> {
-                                buyerChoose = 2;
-                                getOrder();
-                            })
-                            .setNegativeButton("我在想一下",(dialog, which) -> {return;})
-                            .setCancelable(false)
-                            .show();
-                    break;
-                case 3:
-                    final String[] payment_method = {"面交","信用卡交易"};
-                    buyerChoose = -1;
-                    payment_methodDialog
-
-                            .setTitle("團購付款方式")
-                            .setSingleChoiceItems(payment_method, -1, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    buyerChoose = which;
-                                }
-                            })
-                            .setPositiveButton("去買單!!",(dialog, which) -> {
-                                if (buyerChoose == -1){
-                                    Toast.makeText(activity, "請選擇付款方式!!", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                                //判斷買家選擇面交還是信用卡
-                                switch (buyerChoose){
-                                    case 0:
-                                        buyerChoose = 1;
-                                        getOrder();
-                                        break;
-                                    case 1:
-                                        buyerChoose = 2;
-                                        getOrder();
-                                        break;
-                                    default:
-                                    break;
-                                }
-                                //預設第一個選項位置是0,寫進table要+1 1->面交 2->信用卡
-                            })
-                            .setNegativeButton("我在想一下",(dialog, which) -> {return;})
-                            .setCancelable(false)
-                            .show();
-                    break;
-
+            AlertDialog.Builder chackDialog = new AlertDialog.Builder(activity);
+            Map<Merch,Integer> maps = ((MerchAdapter) recyclerViewMerch.getAdapter()).getMerchsMap();
+            StringBuilder merchDetails = new StringBuilder();
+            total_price = 0;
+            total_quantity = 0;
+            for (Map.Entry<Merch, Integer> entry : maps.entrySet()) {
+                Merch merch = entry.getKey();
+                String merchName = merch.getName();
+                int amount = entry.getValue();  //取得買家所選商品數量
+                int price = merch.getPrice();   //取得當見商品價錢
+                int format_total = price * amount; //單件商品的價錢乘上數量
+                total_price += format_total; //將每個商品的總價加起來
+                total_quantity += amount; //將每個商品的數量加起來
+                if (amount != 0) {
+                    merchDetails.append(merchName + " 數量:" + amount + "商品總價" + format_total + "\n");
+                }
+            }
+            if (total_price != 0) {
+                chackDialog.setTitle("確認訂單明細")
+                        .setMessage(merchDetails + "總價" + total_price)
+                        .setPositiveButton("去選擇付款方式", (dialog, which) -> {
+                            //建立選擇付款方式對話匡
+                            createdDialog();
+                        })
+                        .setNegativeButton("我在想一下", (dialog, which) -> {
+                            return;
+                        })
+                        .setCancelable(false)
+                        .show();
+            }else {
+                Toast.makeText(activity, "請選擇商品及數量!!", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     //取得買家下單
     private void getOrder(){
-        int total_quantity = 0; //買家選擇的總數量
-        int total_price = 0;    //買家商品總價(訂單)
+        total_quantity = 0; //買家選擇的總數量
+        total_price = 0;    //買家商品總價(訂單)
         Map<Merch,Integer> maps = ((MerchAdapter) recyclerViewMerch.getAdapter()).getMerchsMap();
-
             for (Map.Entry<Merch, Integer> entry : maps.entrySet()) {
                 Merch merch = entry.getKey();
                 int amount = entry.getValue();  //取得買家所選商品數量
@@ -257,7 +231,6 @@ public class MerchbrowseFragment extends Fragment {
         if(group != null) {
             int progress = group.getProgress();
             int status = group.getGroupStatus();
-            if ((total_quantity != 0)||(total_price != 0)){
                 //判斷是否在結單時間內
                 if (new Date().before(condition_Time)){
                     //判斷團購是否有設定最大購買上限 -1=沒設上限
@@ -338,12 +311,9 @@ public class MerchbrowseFragment extends Fragment {
                 }else{
                     Toast.makeText(activity, "不好意思已經超過了結單時間!!", Toast.LENGTH_SHORT).show();
                 }
-            }else{
-                Toast.makeText(activity, "請選擇商品及數量!!", Toast.LENGTH_SHORT).show();
-            }
         }
     }
-    //建立買家訂單主表
+    //建立買家訂單明細
     private void setMemberorder(MemberOrder memberOrder){
 
         //member_order_ID是回傳的自動編號值
@@ -373,7 +343,84 @@ public class MerchbrowseFragment extends Fragment {
     }
     //更新團購
     private void updateGroup (Group group){
+        NavController navController = Navigation.findNavController(view);
         int code = GroupControl.updateGroup(activity,group);
+        AlertDialog.Builder gohome = new AlertDialog.Builder(activity);
+            gohome.setTitle("下單成功!!")
+                .setPositiveButton("回首頁",(dialog, which) -> {
+                    navController.navigate(R.id.homeFragment);
+                })
+                .setNegativeButton("到我的訂單",(dialog, which) -> {
+//                    navController.navigate(R.id.);
+                })
+                .setCancelable(false)
+                .show();
+    }
+    //建立選擇付款方式對話匡
+    private void createdDialog(){
+        AlertDialog.Builder payment_methodDialog = new AlertDialog.Builder(activity);
+        switch (payment_method) {
+            case 1:
+                payment_methodDialog
+                        .setTitle("團購付款方式")
+                        .setMessage("該團購只支援面交")
+                        .setPositiveButton("去買單!!",(dialog, which) -> {
+                            buyerChoose = 1;
+                            getOrder();
+                        })
+                        .setNegativeButton("我在想一下",(dialog, which) -> {return;})
+                        .setCancelable(false)
+                        .show();
+                break;
+            case 2:
+                payment_methodDialog
+                        .setTitle("團購付款方式")
+                        .setMessage("該團購只支援信用卡")
+                        .setPositiveButton("去買單!!",(dialog, which) -> {
+                            buyerChoose = 2;
+                            getOrder();
+                        })
+                        .setNegativeButton("我在想一下",(dialog, which) -> {return;})
+                        .setCancelable(false)
+                        .show();
+                break;
+            case 3:
+                final String[] payment_method = {"面交","信用卡交易"};
+                buyerChoose = -1;
+                payment_methodDialog
+                        .setTitle("團購付款方式")
+                        .setSingleChoiceItems(payment_method, -1, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                buyerChoose = which;
+                            }
+                        })
+                        .setPositiveButton("去買單!!",(dialog, which) -> {
+                            if (buyerChoose == -1){
+                                Toast.makeText(activity, "請選擇付款方式!!", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            //判斷買家選擇面交還是信用卡
+                            switch (buyerChoose){
+                                case 0:
+                                    buyerChoose = 1;
+                                    getOrder();
+                                    break;
+                                case 1:
+                                    buyerChoose = 2;
+                                    getOrder();
+                                    break;
+                                default:
+                                    break;
+                            }
+                            //預設第一個選項位置是0,寫進table要+1 1->面交 2->信用卡
+                        })
+                        .setNegativeButton("我在想一下",(dialog, which) -> {return;})
+                        .setCancelable(false)
+                        .show();
+                break;
+
+        }
     }
 
     private void findView(View view) {
@@ -384,6 +431,7 @@ public class MerchbrowseFragment extends Fragment {
         btn_buy = view.findViewById(R.id.btn_buy);
         btn_back = view.findViewById(R.id.btn_back);
         btn_next = view.findViewById(R.id.btn_next);
+        txv_merch_details = view.findViewById(R.id.txv_merch_details);
 
     }
 
@@ -451,6 +499,7 @@ public class MerchbrowseFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull MerchbrowseFragment.MerchAdapter.MyMerchViewHolder holder, int position) {
         final Merch rsMerch = (Merch) rsMerchs.keySet().toArray()[position];
+        StringBuilder merchDetils = new StringBuilder();
         Integer num = rsMerchs.get(rsMerch);
         AtomicInteger amount = new AtomicInteger(num == null ? 0 : num);
         int merch_id = rsMerch.getMerchId();
