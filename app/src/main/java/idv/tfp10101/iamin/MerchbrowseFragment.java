@@ -147,25 +147,26 @@ public class MerchbrowseFragment extends Fragment {
         int total = recyclerViewMerch.getLayoutManager().getItemCount();
         AtomicInteger count = new AtomicInteger();
         //預設back按鈕不能按
-        btn_back.setEnabled(false);
+        btn_back.setVisibility(View.INVISIBLE);
         //如果商品總數只有1，也將next按鈕設為false
         if ((total - 1) == 0 ){
-            btn_next.setEnabled(false);
+            btn_back.setVisibility(View.GONE);
+            btn_next.setVisibility(View.GONE);
         }
         //點選next按鈕跳轉至下一商品，並將back按鈕打開
         btn_next.setOnClickListener(v ->{
             recyclerViewMerch.smoothScrollToPosition(count.incrementAndGet());
             if (count.get() == (total-1)){
-                btn_next.setEnabled(false);
+                btn_next.setVisibility(View.INVISIBLE);
             }
-            btn_back.setEnabled(true);
+            btn_back.setVisibility(View.VISIBLE);
         });
         btn_back.setOnClickListener(v ->{
             recyclerViewMerch.smoothScrollToPosition(count.decrementAndGet());
             if (count.get() == 0){
-                btn_back.setEnabled(false);
+                btn_back.setVisibility(View.INVISIBLE);
             }
-            btn_next.setEnabled(true);
+            btn_next.setVisibility(View.VISIBLE);
         });
         //按下訂單前做判斷
         btn_buy.setOnClickListener(v ->{
@@ -370,10 +371,11 @@ public class MerchbrowseFragment extends Fragment {
         }
         MemberOrderDetailsControl.insertMemberOrderDetails(activity,orderDetails);
     }
-
+    //更新團購
     private void updateGroup (Group group){
         int code = GroupControl.updateGroup(activity,group);
     }
+
     private void findView(View view) {
         recyclerViewMerch = view.findViewById(R.id.recyclerViewMerch);
 //        GridLayoutManager gridLayoutManager = new GridLayoutManager(activity,2);
