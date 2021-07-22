@@ -116,7 +116,7 @@ public class MemberCenterMyWalletFragment extends Fragment {
 
         Log.d(TAG,"onViewCreate");
 
-        monthDropDown = view.findViewById(R.id.monthAutoCompleteTextView);
+        monthDropDown = view.findViewById(R.id.spinnerWallet);
         yearTitle = view.findViewById(R.id.myWalletTextTitle);
 
         leftArrow = view.findViewById(R.id.myWalletLeftArrow);
@@ -163,7 +163,7 @@ public class MemberCenterMyWalletFragment extends Fragment {
         adapterMonth = new ArrayAdapter<>(activity, R.layout.mywallet_dropdown, date_month);
         adapterMonth.notifyDataSetChanged();
         monthDropDown.setAdapter(adapterMonth);
-        Log.d(TAG,"monthDropDown: " + monthDropDown.getAdapter().isEmpty());
+//        Log.d(TAG,"monthDro   pDown: " + monthDropDown.getAdapter().isEmpty());
         monthDropDown.getAdapter().isEmpty();
         monthDropDown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
