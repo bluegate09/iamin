@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             String data = bundle.getString("data");
+
             // 可以依據data來決定要去哪一Fragment頁面
             Log.d(Constants.TAG, "data: " + data);
 //            Toast.makeText(this, "data: " + data, Toast.LENGTH_SHORT).show();
@@ -66,7 +67,15 @@ public class MainActivity extends AppCompatActivity {
                     R.id.nav_host_fragment
             );
             // 再利用Fragment ID切換到指定Fragment
-            navController.navigate(R.id.sellerFragment);
+            if (data != null) {
+                switch (data) {
+                    case "Reach_Notification":
+                        navController.navigate(R.id.memberCenterMemberOrderFragment);
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         /** 測試用 */
