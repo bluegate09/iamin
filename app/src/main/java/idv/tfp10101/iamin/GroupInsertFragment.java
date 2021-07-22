@@ -33,6 +33,8 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.google.android.material.textfield.TextInputLayout;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -70,6 +72,7 @@ public class GroupInsertFragment extends Fragment {
     private EditText editTextCaution; // 注意事項
     private RadioGroup RadioGroupPrivacy;
     private Button buttonGroupInsert;
+    private TextInputLayout layoutNumber;
     // 物件
     private Member member;
     List<GroupCategory> groupCategories; // 種類清單
@@ -109,6 +112,7 @@ public class GroupInsertFragment extends Fragment {
         editTextCaution = view.findViewById(R.id.editTextCaution);
         RadioGroupPrivacy = view.findViewById(R.id.RadioGroupPrivacy);
         buttonGroupInsert = view.findViewById(R.id.buttonSubmit);
+        layoutNumber = view.findViewById(R.id.layoutNumber);
 
         navController = Navigation.findNavController(view);
     }
@@ -409,15 +413,15 @@ public class GroupInsertFragment extends Fragment {
             /** 標題 */
             if (editTextName.getText().toString().trim().isEmpty()) {
                 Toast.makeText(activity, "標題未設定", Toast.LENGTH_SHORT).show();
-                editTextName.setHintTextColor(resources.getColor(R.color.colorRed));
+//                editTextName.setHintTextColor(resources.getColor(R.color.colorRed));
                 scrollViewMain.scrollTo(0, v.findViewById(R.id.editTextName).getTop());
                 return;
             }
             /** 目標份數 */
             if (editTextGoal.getText().toString().trim().isEmpty()) {
                 Toast.makeText(activity, "標目標份數未設定", Toast.LENGTH_SHORT).show();
-                editTextGoal.setHint("需設定");
-                editTextGoal.setHintTextColor(resources.getColor(R.color.colorRed));
+//                editTextGoal.setHint("需設定");
+//                editTextGoal.setHintTextColor(resources.getColor(R.color.colorRed));
                 scrollViewMain.scrollTo(0, v.findViewById(R.id.editTextGoal).getTop());
                 return;
             }
@@ -478,13 +482,13 @@ public class GroupInsertFragment extends Fragment {
             /** 聯絡電話 */
             if (editTextContactNumber.getText().toString().trim().isEmpty()) {
                 Toast.makeText(activity, "聯絡電話未設定", Toast.LENGTH_SHORT).show();
-                scrollViewMain.scrollTo(0, v.findViewById(R.id.editTextContactNumber).getTop());
+                scrollViewMain.scrollTo(0, v.findViewById(R.id.layoutNumber).getTop());
                 return;
             }
             String pattern = "09[0-9]{8}";
             if (!editTextContactNumber.getText().toString().trim().matches(pattern)) {
                 Toast.makeText(activity, "電話格式錯誤", Toast.LENGTH_SHORT).show();
-                scrollViewMain.scrollTo(0, v.findViewById(R.id.editTextContactNumber).getTop());
+                scrollViewMain.scrollTo(0, v.findViewById(R.id.layoutNumber).getTop());
                 return;
             }
             /** 收款方式 (1.面交 2.信用卡 3.兩者皆可) */
@@ -698,7 +702,7 @@ public class GroupInsertFragment extends Fragment {
             //layoutParams.gravity = Gravity.CENTER;
             layoutParams.rightMargin = 8;
             textView.setLayoutParams(layoutParams);
-            textView.setTextSize(24);
+            textView.setTextSize(18);
             String string = giavd.MerchName().get(count) + "\t\t\t\t\t\t$ " + giavd.MerchPrice().get(count);
             textView.setText(string);
             linearLayoutMerchs.addView(textView);
@@ -712,6 +716,6 @@ public class GroupInsertFragment extends Fragment {
             }
         }
         // 顯示商品總金額
-        textViewTotalAmount.setText("總金額： " + totalAmount + " NT");
+        textViewTotalAmount.setText("商品總金額： " + totalAmount + " NT");
     }
 }

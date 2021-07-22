@@ -19,7 +19,7 @@
     <string name="textNoMerchFound">找不到商品</string>
     <string name="textGoal">目標</string>
     <string name="textMerchDetails">商品：</string>
-    <string name="textTotalAmount">總金額</string>
+    <string name="textTotalAmount">預估賺取金額</string>
     <string name="textDeadline">截止時間：</string>
     <string name="textNoGroupsFound">找不到團購清單</string>
     <string name="textGoalNeeds">目標 份數：</string>
