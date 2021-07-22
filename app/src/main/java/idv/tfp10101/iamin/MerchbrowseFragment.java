@@ -162,11 +162,9 @@ public class MerchbrowseFragment extends Fragment {
         int result = MemberControl.chackfollowed(activity,member.getId(),SellerID.getId());
         if (result == 1){
             imv_followed.setImageResource(R.drawable.heart_red);
-            isfollowed = true;
         }
         if (result == 0){
             imv_followed.setImageResource(R.drawable.heart_white);
-            isfollowed = false;
         }
         Drawable.ConstantState white = activity.getResources().getDrawable(R.drawable.heart_white).getConstantState();
         Drawable.ConstantState red = activity.getResources().getDrawable(R.drawable.heart_red).getConstantState();
@@ -180,6 +178,7 @@ public class MerchbrowseFragment extends Fragment {
                         .setPositiveButton("確定", (dialog, which) -> {
                             MemberControl.followed(activity, member.getId(), SellerID.getId());
                             imv_followed.setImageResource(R.drawable.heart_white);
+                            Toast.makeText(activity, "已取消追蹤", Toast.LENGTH_SHORT).show();
                         })
                         .setNegativeButton("哎呀手滑了", (dialog, which) -> {
                             return;
@@ -188,10 +187,11 @@ public class MerchbrowseFragment extends Fragment {
                         .show();
             }else{
                 MemberControl.followed(activity, member.getId(), SellerID.getId());
+                Toast.makeText(activity, "已加入追蹤", Toast.LENGTH_SHORT).show();
                 imv_followed.setImageResource(R.drawable.heart_red);
             }
         });
-          
+
         //發送賣家圖片請求
         Bitmap bitmap = MemberControl.getsellerimageByMemberId(activity,SellerID);
         imv_Seller.setImageBitmap(bitmap);
