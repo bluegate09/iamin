@@ -142,4 +142,9 @@
     <string name="text_merch_details">\"MerchDeatils: \"</string>
     <string name="my_group_list">My Group List</string>
     <string name="statistic_chart">Statistic Chart</string>
+    <string name="text_paymentmethod">"PaymentMethod: "</string>
+    <string name="text_total_price">\"TotalPrice: \"</string>
+    <string name="text_member_order_id">\"MemberOrderId: \"</string>
+    <string name="deadline">DeadLine</string>
+    <string name="pick_up_location">Pick Up Location:</string>
 </resources>

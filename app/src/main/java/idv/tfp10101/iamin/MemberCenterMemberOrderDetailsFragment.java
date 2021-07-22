@@ -15,12 +15,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
@@ -28,6 +32,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import idv.tfp10101.iamin.group.Group;
+import idv.tfp10101.iamin.group.GroupControl;
+import idv.tfp10101.iamin.location.Location;
 import idv.tfp10101.iamin.member_order.MemberOrder;
 import idv.tfp10101.iamin.member_order_details.MemberOrderDetails;
 import idv.tfp10101.iamin.merch.Merch;
@@ -39,6 +46,12 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
     private Activity activity;
     private List<MemberOrderDetails> memberOrderDetailsList;
     private RecyclerView recyclerView;
+    private List<Location> locations;
+    private TextView deadLine;
+    private ListView listView;
+    private ImageButton btGooglePay;
+    private String paymentMethod;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,13 +61,23 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
 
         Bundle bundle = getArguments();
         String orderDetailsJson = "";
+        String locationJson = "";
+        paymentMethod ="";
         if(bundle!=null) {
             orderDetailsJson = bundle.getString("OrderDetails");
+            locationJson = bundle.getString("Locations");
+            paymentMethod = bundle.getString("GroupStatus");
         }else{
             Log.d(TAG,"bundle is null");
         }
+
+        Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
+        //fetch memberOrderdetailsList
         Type listType = new TypeToken<List<MemberOrderDetails>>() {}.getType();
-        memberOrderDetailsList = new Gson().fromJson(orderDetailsJson,listType);
+        memberOrderDetailsList = gson.fromJson(orderDetailsJson,listType);
+        //fetch locations
+        Type listType_location = new TypeToken<List<Location>>() {}.getType();
+        locations = gson.fromJson(locationJson,listType_location);
 
     }
 
@@ -70,11 +93,37 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        deadLine = view.findViewById(R.id.MemberOrderDetailDeadLine);
+        listView = view.findViewById(R.id.memberCenterOrderDetailsListView);
+
+        btGooglePay = view.findViewById(R.id.btGooglePay);
+        btGooglePay.setVisibility(View.GONE);
+
         SearchView searchView = view.findViewById(R.id.svOrderDetailsSearch);
 
         recyclerView = view.findViewById(R.id.rvMemberCenterOrderDetails);
         recyclerView.setAdapter(new MyAdapter(activity,memberOrderDetailsList));
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
+
+        //ArrayList handle
+        ArrayList<String> arrayList = new ArrayList<>();
+
+        for(Location loc: locations){
+            String str = "Pick Up Location: " + "\nLatitude: " + loc.getLatitude() + "\nLongtitude: " +loc.getLongtitude();
+            arrayList.add(str);
+        }
+    
+        ArrayAdapter arrayAdapter = new ArrayAdapter(activity, android.R.layout.simple_list_item_1,arrayList);
+        listView.setAdapter(arrayAdapter);
+        
+        //截止日期
+        deadLine.setText("Pick Up Time: " + locations.get(0).getPickup_time());
+
+        //googlePay imageButton
+        if(!(paymentMethod.equals("1"))){
+            btGooglePay.setVisibility(View.VISIBLE);
+            btGooglePay.setEnabled(true);
+        }
 
         showMyOrder(memberOrderDetailsList);
 
@@ -85,11 +134,10 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
                     showMyOrder(memberOrderDetailsList);
                 }else{
                     List<MemberOrderDetails> searchOrders = new ArrayList<>();
-                    for(MemberOrderDetails result : memberOrderDetailsList){
-                        if (String.valueOf(result.getName()).toUpperCase().contains(query.toUpperCase())) {
-                            searchOrders.add(result);
+                    for(MemberOrderDetails memberOrderDetails : memberOrderDetailsList){
+                        if (memberOrderDetails.getMerch().getName().toUpperCase().contains(query.toUpperCase())) {
+                            searchOrders.add(memberOrderDetails);
                         }
-
                     }
                     showMyOrder(searchOrders);
                 }
@@ -104,13 +152,13 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         });
     }
 
-    private void showMyOrder(List<MemberOrderDetails> memberOrderDetailslist){
-        if(memberOrderDetailslist == null || memberOrderDetailslist.isEmpty()){
+    private void showMyOrder(List<MemberOrderDetails> memberOrderDetailsList){
+        if(memberOrderDetailsList == null || memberOrderDetailsList.isEmpty()){
             Toast.makeText(activity,"no memberOrdersDetails found", Toast.LENGTH_SHORT).show();
         }
         MyAdapter myAdapter = (MyAdapter) recyclerView.getAdapter();
         if(myAdapter == null){
-            recyclerView.setAdapter(new MyAdapter(activity,memberOrderDetailslist));
+            recyclerView.setAdapter(new MyAdapter(activity,memberOrderDetailsList));
         }else{
             myAdapter.setMemberOrderDetailsList(memberOrderDetailsList);
             myAdapter.notifyDataSetChanged();
@@ -146,6 +194,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
             holder.totalPrice.setText(getString(R.string.text_total_format) + String.valueOf(memberOrderDetails.getFormat_total())+"元");
             holder.quantity.setText(getString(R.string.text_quantity) + String.valueOf(memberOrderDetails.getQuantity()));
             holder.merchDesc.setText(getString(R.string.text_merch_details) + memberOrderDetails.getMerch().getMerchDesc());
+
             int id = memberOrderDetails.getMerchId();
 
             byte[] image = MerchControl.getMerchImgById(activity, id);
@@ -166,7 +215,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
 
     private static class MyViewHolder extends RecyclerView.ViewHolder{
         final private TextView index,merchName,totalPrice,quantity,merchDesc;
-        private ImageView merchImage;
+        final  ImageView merchImage;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -176,6 +225,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
             quantity = itemView.findViewById(R.id.memberOrderDetailsQuantity);
             merchImage = itemView.findViewById(R.id.memberOrderDetailImageView);
             merchDesc = itemView.findViewById(R.id.memberOrderDetailsMerchDesc);
+
         }
 
     }

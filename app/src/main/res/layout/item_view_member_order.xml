@@ -1,66 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout7"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="16dp"
-    android:background="@color/white"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@color/white">
+
 
     <TextView
         android:id="@+id/memberOrderId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:layout_marginEnd="16dp"
-        android:text="index" />
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="5dp"
+        android:text="index"
+        app:layout_constraintBottom_toTopOf="@+id/memberOrderGroup"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+
+        android:id="@+id/memberOrderGroup"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_marginBottom="10dp"
+        android:text="Group ID"
+        android:textColor="#000"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/memberOrderTotalPrice"
+        app:layout_constraintStart_toStartOf="@+id/memberOrderTotalPrice"
+        app:layout_constraintTop_toBottomOf="@+id/memberOrderId" />
 
-        <TextView
+    <TextView
+        android:id="@+id/memberOrderTotalPrice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="Total Price"
+        android:textColor="#000"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/memberOrderPaymentMethod"
+        app:layout_constraintEnd_toEndOf="@+id/memberOrderPaymentMethod"
+        app:layout_constraintStart_toStartOf="@+id/memberOrderPaymentMethod"
+        app:layout_constraintTop_toBottomOf="@+id/memberOrderGroup" />
 
-            android:id="@+id/memberOrderGroup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="Group ID"
-            android:textColor="#000"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+    <TextView
+        android:id="@+id/memberOrderPaymentMethod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="37dp"
+        android:layout_marginLeft="37dp"
+        android:layout_marginBottom="11dp"
+        android:text="paymentMethod"
+        android:textColor="#000"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/memberOrderDeliverStatus"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/memberOrderTotalPrice" />
 
-        <TextView
-            android:id="@+id/memberOrderTotalPrice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="Total Price"
-            android:textColor="#000"
-            android:textSize="15sp"
-            android:textStyle="bold" />
+    <TextView
+        android:id="@+id/memberOrderDeliverStatus"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="deliverStatus"
+        android:textColor="#000"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/memberOrderPaymentMethod"
+        app:layout_constraintStart_toStartOf="@+id/memberOrderPaymentMethod"
+        app:layout_constraintTop_toBottomOf="@+id/memberOrderPaymentMethod" />
 
-        <TextView
-            android:id="@+id/memberOrderPaymentMethod"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="paymentMethod"
-            android:textColor="#000"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/memberOrderDeliverStatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="deliverStatus"
-            android:textColor="#000"
-            android:textSize="15sp"
-            android:textStyle="bold" />
+    <TextView
+        android:id="@+id/memberOrderstatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="Status"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
-    </LinearLayout>
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

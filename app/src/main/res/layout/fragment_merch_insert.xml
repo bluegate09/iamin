@@ -31,7 +31,7 @@
             <EditText
                 android:id="@+id/editTextMerchInsertDesc"
                 android:layout_width="364dp"
-                android:layout_height="150dp"
+                android:layout_height="100dp"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="24dp"
@@ -42,24 +42,7 @@
                 android:singleLine="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editTextMerchInsertPrice" />
-
-            <EditText
-                android:id="@+id/editTextMerchInsertPrice"
-                android:layout_width="365dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="24dp"
-                android:digits="0987654321"
-                android:ems="10"
-                android:hint="優惠價(阿拉伯數字)"
-                android:inputType="number"
-                android:singleLine="true"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editTextMerchInsertName" />
+                app:layout_constraintTop_toBottomOf="@+id/textInputLayout3" />
 
             <Button
                 android:id="@+id/buttonMerchUpdate"
@@ -79,23 +62,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/editTextMerchInsertDesc" />
 
-            <EditText
-                android:id="@+id/editTextMerchInsertName"
-                android:layout_width="365dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="24dp"
-                android:ems="10"
-                android:hint="請輸入商品名稱(最多30字)"
-                android:inputType="textPersonName"
-                android:maxLength="30"
-                android:singleLine="true"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/recyclerViewMerchInsert" />
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerViewMerchInsert"
                 android:layout_width="260dp"
@@ -107,6 +73,56 @@
                 app:layout_constraintTop_toTopOf="parent">
 
             </androidx.recyclerview.widget.RecyclerView>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayout2"
+                android:layout_width="365dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="24dp"
+                android:background="@color/colorBackground"
+                app:helperText="*必填"
+                app:helperTextTextColor="@color/colorRed"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recyclerViewMerchInsert">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTextMerchInsertName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorBackground"
+                    android:hint="請輸入商品名稱(最多20字)"
+                    android:inputType="textPersonName"
+                    android:maxLength="20"
+                    android:textStyle="bold" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayout3"
+                android:layout_width="365dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="24dp"
+                android:background="@color/colorBackground"
+                app:helperText="*必填"
+                app:helperTextTextColor="@color/colorRed"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textInputLayout2">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTextMerchInsertPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorBackground"
+                    android:hint="優惠價(阿拉伯數字)"
+                    android:inputType="number"
+                    android:singleLine="true"
+                    android:textStyle="bold" />
+            </com.google.android.material.textfield.TextInputLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

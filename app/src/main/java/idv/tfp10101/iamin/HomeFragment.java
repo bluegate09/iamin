@@ -81,6 +81,7 @@ import idv.tfp10101.iamin.network.RemoteAccess;
 
 import static android.content.Context.MODE_PRIVATE;
 import static android.media.CamcorderProfile.get;
+import static idv.tfp10101.iamin.Constants.FCM_Token;
 
 
 public class HomeFragment extends Fragment {
@@ -135,10 +136,9 @@ public class HomeFragment extends Fragment {
         //先前有登入就取會員資料
         if (currentUser != null && member.getuUId() == null) {
 
-            SharedPreferences sharedPreferences = activity.getSharedPreferences("FCM_TOKEN", MODE_PRIVATE);
-            String token = sharedPreferences.getString("FCM_TOKEN", "");
+            SharedPreferences sharedPreferences = activity.getSharedPreferences(FCM_Token, MODE_PRIVATE);
+            String token = sharedPreferences.getString(FCM_Token, "");
             member.setFCM_token(token);
-
             member.setuUId(currentUser.getUid());
             //tmp
             MemberControl.memberRemoteAccess(activity, member, "updateTokenbyUid");

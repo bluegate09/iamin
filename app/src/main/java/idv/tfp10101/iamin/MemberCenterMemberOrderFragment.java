@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
@@ -26,6 +27,10 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import idv.tfp10101.iamin.group.Group;
+import idv.tfp10101.iamin.group.GroupControl;
+import idv.tfp10101.iamin.location.Location;
+import idv.tfp10101.iamin.location.LocationControl;
 import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.member_order.MemberOrder;
@@ -38,6 +43,7 @@ public class MemberCenterMemberOrderFragment extends Fragment {
     private final String TAG = "TAG_MemberCenterMyOrder";
     private Activity activity;
     private Member member;
+    private Group group;
     private List<MemberOrder> memberOrderList;
     private RecyclerView recyclerView;
     @Override
@@ -96,8 +102,8 @@ public class MemberCenterMemberOrderFragment extends Fragment {
 
     }
 
-    private void showMyOrder(List<MemberOrder> memberOrders) {
-        if (memberOrders == null || memberOrders.isEmpty()) {
+    private void showMyOrder(List<MemberOrder> memberOrderList) {
+        if (memberOrderList == null || memberOrderList.isEmpty()) {
             Toast.makeText(activity,"no memberOrders found", Toast.LENGTH_SHORT).show();
         }
         MyAdapter myAdapter = (MyAdapter) recyclerView.getAdapter();
@@ -132,24 +138,55 @@ public class MemberCenterMemberOrderFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull MemberCenterMemberOrderFragment.MyViewHolder holder, int position) {
             final MemberOrder memberOrder = memberOrderList.get(position);
-            holder.groupId.setText("GroupTitle: " + memberOrder.getGroupId());
-            holder.memberOrderId.setText("MemberOrderId: " + memberOrder.getMemberOrderId());
-            holder.totalPrice.setText("TotalPrice: " + memberOrder.getTotal());
+
+            group = GroupControl.getGroupbyId(activity,memberOrder.getGroupId());
+
+//            團購狀態 (1.揪團中 2.達標 3.失敗or放棄)
+            String str1 = "";
+            if(group.getGroupStatus() == 1){
+                str1 = "揪團中";
+            }else if(group.getGroupStatus() == 2){
+                str1 = "達標";
+            }else{
+                str1 = "放棄";
+            }
+
+            holder.groupStatus.setText(str1);
+            holder.groupName.setText(group.getName());
+            holder.memberOrderId.setText(getString(R.string.text_member_order_id) + memberOrder.getMemberOrderId());
+            holder.totalPrice.setText(getString(R.string.text_total_price) + memberOrder.getTotal());
             holder.status.setText(memberOrder.isDeliverStatus() ? "已出貨" : "未出貨");
-            holder.paymentMethod.setText("PaymentMethod: " + memberOrder.getPayentMethod());
+
+            String str = "";//收款方式 (1.面交 2.信用卡 3.兩者皆可)
+            if(memberOrder.getPayentMethod() == 1){
+                str = "面交";
+            }else if(memberOrder.getPayentMethod() == 2){
+                str = "信用卡";
+            }else{
+                str = "兩者皆可";
+            }
+            holder.paymentMethod.setText(getString(R.string.text_paymentmethod) + str);
 
             holder.itemView.setOnClickListener(v -> {
 
-                String orderDetailsJson = new Gson().toJson(memberOrder.getMemberOrderDetailsList());
-                List<MemberOrderDetails> list = memberOrder.getMemberOrderDetailsList();
-                Log.d(TAG,"list: " + list.getClass());
-                Log.d(TAG,"orderDetailsJson: " + orderDetailsJson.getClass());
+                Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
+
+                String orderDetailsJson = gson.toJson(memberOrder.getMemberOrderDetailsList());
+//                List<MemberOrderDetails> list = memberOrder.getMemberOrderDetailsList();
+//                Log.d(TAG,"list: " + list.getClass());
+//                Log.d(TAG,"orderDetailsJson: " + orderDetailsJson.getClass());
+
+                //取地區資料
+                List<Location> locations = LocationControl.getLocationByGroupId(activity,memberOrder.getGroupId());
+                String locationsJson = gson.toJson(locations);
+
                 Bundle bundle = new Bundle();
                 bundle.putString("OrderDetails", orderDetailsJson);
+                bundle.putString("Locations",locationsJson);
+                bundle.putString("GroupStatus",String.valueOf(memberOrder.getPayentMethod()));
 
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterMemberOrderFragment_to_memberCenterOrderDetailsFragment,bundle);
             });
-
         }
 
         @Override
@@ -159,19 +196,20 @@ public class MemberCenterMemberOrderFragment extends Fragment {
     }
 
     private static class MyViewHolder extends RecyclerView.ViewHolder{
-        TextView groupId,memberOrderId,totalPrice,status,paymentMethod;
+        TextView groupName,memberOrderId,totalPrice,status,paymentMethod,groupStatus;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            groupId = itemView.findViewById(R.id.memberOrderGroup);
+            groupName = itemView.findViewById(R.id.memberOrderGroup);
             memberOrderId = itemView.findViewById(R.id.memberOrderId);
             totalPrice = itemView.findViewById(R.id.memberOrderTotalPrice);
             status = itemView.findViewById(R.id.memberOrderDeliverStatus);
             paymentMethod = itemView.findViewById(R.id.memberOrderPaymentMethod);
-
+            groupStatus = itemView.findViewById(R.id.memberOrderstatus);
 
         }
     }
+
 
 }
 
