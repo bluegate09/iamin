@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,6 +22,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -62,24 +64,25 @@ import idv.tfp10101.iamin.network.RemoteAccess;
 public class MerchbrowseFragment extends Fragment {
     private Activity activity;
     private View view;
-    private int groupID,sellerID,progress,goal,payment_method,group_status,condition_count;
+    private int groupID, sellerID, progress, goal, payment_method, group_status, condition_count;
     private int buyerChoose;//買家選擇的付款方式 1->面交,2->信用卡
     private String contact_number,caution;
     private Timestamp condition_Time;
     private List<Merch> localMerchs;
     private RecyclerView recyclerViewMerch;
-    private Button btn_buy,btn_back,btn_next;
+    private Button btn_buy, btn_back, btn_next;
     private Member member;
-    private TextView txv_merch_details;
-    private int total_quantity = 0,total_price = 0;
+    private TextView txv_Seller, txv_Email, txv_Seller_phone, txv_followed, txv_rating; //賣家資料
+    private ImageView imv_Seller, imv_followed; //賣家圖片與追隨與否圖片
+    private TextView txv_caution;
+    private int total_quantity = 0, total_price = 0;
+    private Boolean isfollowed = false;
     //商品圖片
     private List<byte[]> images = new ArrayList<>();
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         member = MemberControl.getInstance();
-
-
     }
 
     @Override
@@ -137,6 +140,61 @@ public class MerchbrowseFragment extends Fragment {
         if (localMerchs == null || localMerchs.isEmpty()) {
             Toast.makeText(activity, R.string.textNoGroupsFound, Toast.LENGTH_SHORT).show();
         }
+        //包請求,請求需要傳merber回去
+        Member SellerID = new Member();
+        SellerID.setId(sellerID);
+        //取得賣家資料
+        Member seller = MemberControl.getsellerByMemberId(activity,SellerID);
+        if (seller != null){
+            txv_Seller.setText(seller.getNickname());
+            txv_Email.setText(seller.getEmail());
+            txv_Seller_phone.setText(seller.getPhoneNumber());
+            txv_followed.setText(String.valueOf(seller.getFollow_count()));
+            txv_rating.setText(String.valueOf(seller.getRating()));
+        }
+        if (caution == null){
+            txv_caution.setVisibility(View.GONE);
+        }else {
+            txv_caution.setVisibility(View.VISIBLE);
+            txv_caution.setText("注意事項:" + "\n" + caution);
+        }
+        //判斷是否有追蹤過此賣家 如果有就填滿愛心
+        int result = MemberControl.chackfollowed(activity,member.getId(),SellerID.getId());
+        if (result == 1){
+            imv_followed.setImageResource(R.drawable.heart_red);
+            isfollowed = true;
+        }
+        if (result == 0){
+            imv_followed.setImageResource(R.drawable.heart_white);
+            isfollowed = false;
+        }
+        Drawable.ConstantState white = activity.getResources().getDrawable(R.drawable.heart_white).getConstantState();
+        Drawable.ConstantState red = activity.getResources().getDrawable(R.drawable.heart_red).getConstantState();
+//        實作點一下換圖並判斷是否有追隨 沒有就追 有就取消
+          imv_followed.setOnClickListener(v ->{
+            Drawable.ConstantState imageView = imv_followed.getDrawable().getCurrent().getConstantState();
+            int chackresult = MemberControl.chackfollowed(activity,member.getId(),SellerID.getId());
+            if (imageView.equals(red)) {
+                AlertDialog.Builder followed = new AlertDialog.Builder(activity);
+                followed.setTitle("您確定要取消追蹤此賣家嗎")
+                        .setPositiveButton("確定", (dialog, which) -> {
+                            MemberControl.followed(activity, member.getId(), SellerID.getId());
+                            imv_followed.setImageResource(R.drawable.heart_white);
+                        })
+                        .setNegativeButton("哎呀手滑了", (dialog, which) -> {
+                            return;
+                        })
+                        .setCancelable(true)
+                        .show();
+            }else{
+                MemberControl.followed(activity, member.getId(), SellerID.getId());
+                imv_followed.setImageResource(R.drawable.heart_red);
+            }
+        });
+          
+        //發送賣家圖片請求
+        Bitmap bitmap = MemberControl.getsellerimageByMemberId(activity,SellerID);
+        imv_Seller.setImageBitmap(bitmap);
 
         StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(1,RecyclerView.HORIZONTAL);
         recyclerViewMerch.setLayoutManager(staggeredGridLayoutManager);
@@ -176,6 +234,7 @@ public class MerchbrowseFragment extends Fragment {
             btn_next.setVisibility(View.VISIBLE);
         });
         //按下訂單前做判斷
+
         btn_buy.setOnClickListener(v ->{
             AlertDialog.Builder chackDialog = new AlertDialog.Builder(activity);
             Map<Merch,Integer> maps = ((MerchAdapter) recyclerViewMerch.getAdapter()).getMerchsMap();
@@ -435,7 +494,14 @@ public class MerchbrowseFragment extends Fragment {
         btn_buy = view.findViewById(R.id.btn_buy);
         btn_back = view.findViewById(R.id.btn_back);
         btn_next = view.findViewById(R.id.btn_next);
-        txv_merch_details = view.findViewById(R.id.txv_merch_details);
+        txv_Seller = view.findViewById(R.id.txv_Seller);
+        txv_Email = view.findViewById(R.id.txv_Email);
+        txv_Seller_phone = view.findViewById(R.id.txv_Seller_phone);
+        txv_followed = view.findViewById(R.id.txv_followed);
+        txv_rating = view.findViewById(R.id.txv_rating);
+        txv_caution = view.findViewById(R.id.txv_caution);
+        imv_Seller = view.findViewById(R.id.imv_Seller);
+        imv_followed = view.findViewById(R.id.imv_followed);
 
     }
 
