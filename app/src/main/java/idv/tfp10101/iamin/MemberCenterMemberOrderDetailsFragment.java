@@ -47,7 +47,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
     private List<MemberOrderDetails> memberOrderDetailsList;
     private RecyclerView recyclerView;
     private List<Location> locations;
-    private TextView location,deadLine;
+    private TextView deadLine;
     private ListView listView;
     private ImageButton btGooglePay;
     private String paymentMethod;
@@ -93,7 +93,6 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        location = view.findViewById(R.id.MemberOrderDetailLocation);
         deadLine = view.findViewById(R.id.MemberOrderDetailDeadLine);
         listView = view.findViewById(R.id.memberCenterOrderDetailsListView);
 
@@ -215,8 +214,8 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
     }
 
     private static class MyViewHolder extends RecyclerView.ViewHolder{
-        private TextView index,merchName,totalPrice,quantity,merchDesc;
-        private ImageView merchImage;
+        final private TextView index,merchName,totalPrice,quantity,merchDesc;
+        final  ImageView merchImage;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
