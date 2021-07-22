@@ -135,10 +135,13 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
                 app:boxStrokeWidth="0dp"
                 app:boxStrokeWidthFocused="0dp"
+                android:id="@+id/signupNickNameTil"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:hint="@string/nickname"
+                app:helperText="@string/text_helper_required"
+                app:helperTextTextColor="#80FF0000"
                 app:startIconDrawable="@drawable/icon_user">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -177,10 +180,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/textsignup" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
 
         </LinearLayout>
 

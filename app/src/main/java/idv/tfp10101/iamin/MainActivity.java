@@ -24,6 +24,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import static idv.tfp10101.iamin.Constants.FCM_Token;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -76,9 +78,9 @@ public class MainActivity extends AppCompatActivity {
                     String token = task.getResult();
                     Log.d(Constants.TAG, "MainActivityToken: " + token);
 
-                    SharedPreferences pref = this.getSharedPreferences("FCM_TOKEN", MODE_PRIVATE);
+                    SharedPreferences pref = this.getSharedPreferences(FCM_Token, MODE_PRIVATE);
                     pref.edit()
-                            .putString("FCM_TOKEN",token)
+                            .putString(FCM_Token,token)
                             .apply();
 
                 }
@@ -140,7 +142,8 @@ public class MainActivity extends AppCompatActivity {
                destination.getId() == R.id.logInFragment||
                destination.getId() == R.id.signUpFragment||
                destination.getId() == R.id.phoneAuthFragment||
-               destination.getId() == R.id.memeberCenterProfileFragment
+               destination.getId() == R.id.memeberCenterProfileFragment||
+               destination.getId() == R.id.memberCenterFragment
             ){
                 bottomNavigationView.setVisibility(View.GONE);
             }else{

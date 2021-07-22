@@ -1,7 +1,6 @@
 package idv.tfp10101.iamin.member_order;
 
 import android.content.Context;
-import android.util.Base64;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -10,10 +9,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 import idv.tfp10101.iamin.R;
+
 import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.location.Location;
 import idv.tfp10101.iamin.merch.Merch;

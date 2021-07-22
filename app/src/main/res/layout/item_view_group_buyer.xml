@@ -63,6 +63,13 @@
                     android:textSize="20sp" />
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/txv_distanceMin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:textSize="20sp" />
+
         </LinearLayout>
 
     </LinearLayout>
