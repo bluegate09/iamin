@@ -2,17 +2,18 @@ package idv.tfp10101.iamin;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -56,7 +57,14 @@ public class MainActivity extends AppCompatActivity {
             String data = bundle.getString("data");
             // 可以依據data來決定要去哪一Fragment頁面
             Log.d(Constants.TAG, "data: " + data);
-            Toast.makeText(this, "data: " + data, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "data: " + data, Toast.LENGTH_SHORT).show();
+            // 先取得NavController
+            NavController navController = Navigation.findNavController(
+                    this,
+                    R.id.nav_host_fragment
+            );
+            // 再利用Fragment ID切換到指定Fragment
+            navController.navigate(R.id.sellerFragment);
         }
 
         /** 測試用 */

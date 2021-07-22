@@ -125,6 +125,7 @@
             android:layout_marginEnd="16dp"
             android:text="TextView"
             android:textSize="14dp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/textViewDeadline" />
 

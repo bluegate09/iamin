@@ -151,7 +151,7 @@ public class ReachNotificationFragment extends Fragment {
                 jsonObject.addProperty("groupId", groupId);
                 jsonObject.addProperty("title", title);
                 jsonObject.addProperty("body", body);
-                jsonObject.addProperty("data", "data------");
+                jsonObject.addProperty("data", "Reach_Notification");
 
                 // requst
                 String jsonString = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
@@ -166,7 +166,6 @@ public class ReachNotificationFragment extends Fragment {
                             navController.popBackStack();
                         }
                     });
-
                     // 顯示
                     builder.show();
                 }else {

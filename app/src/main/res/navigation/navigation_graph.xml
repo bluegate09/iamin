@@ -232,6 +232,12 @@
         <action
             android:id="@+id/action_sellerFragment_to_merchFragment"
             app:destination="@id/merchFragment" />
+        <action
+            android:id="@+id/action_sellerFragment_to_memeberCenterProfileFragment"
+            app:destination="@id/memeberCenterProfileFragment" />
+        <action
+            android:id="@+id/action_sellerFragment_to_logInFragment"
+            app:destination="@id/logInFragment" />
     </fragment>
     <fragment
         android:id="@+id/messageFragment"

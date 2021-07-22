@@ -26,6 +26,22 @@ public class Member implements Serializable {
     private String FCM_token;
 
     public Member() {
+        this(
+            -1,
+            -1,
+            -1,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        );
     }
 
     public Member(int id, String uUid){
