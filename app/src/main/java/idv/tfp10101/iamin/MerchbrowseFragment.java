@@ -236,6 +236,20 @@ public class MerchbrowseFragment extends Fragment {
         //按下訂單前做判斷
 
         btn_buy.setOnClickListener(v ->{
+            NavController navController = Navigation.findNavController(view);
+            if ( member.getId() == -1){
+                AlertDialog.Builder signup = new AlertDialog.Builder(activity);
+                signup.setTitle("您好像沒有登入喔")
+                        .setPositiveButton("去登入", (dialog, which) -> {
+                            navController.navigate(R.id.logInFragment);
+                        })
+                        .setNegativeButton("去註冊", (dialog, which) -> {
+                            navController.navigate(R.id.signUpFragment);
+                        })
+                        .setCancelable(false)
+                        .show();
+                return;
+            }
             AlertDialog.Builder chackDialog = new AlertDialog.Builder(activity);
             Map<Merch,Integer> maps = ((MerchAdapter) recyclerViewMerch.getAdapter()).getMerchsMap();
             StringBuilder merchDetails = new StringBuilder();
@@ -287,6 +301,7 @@ public class MerchbrowseFragment extends Fragment {
             }
         //取得最新的團購資訊
         Group group = GroupControl.getGroupbyId(activity,groupID);
+        NavController navController = Navigation.findNavController(view);
         if(group != null) {
             int progress = group.getProgress();
             int status = group.getGroupStatus();
@@ -295,7 +310,7 @@ public class MerchbrowseFragment extends Fragment {
                     //判斷團購是否有設定最大購買上限 -1=沒設上限
                     if (condition_count != -1){
                         //判斷買家購買的數量加上當前進度是否過團購上限
-                        if((total_quantity + progress) < condition_count){
+                        if((total_quantity + progress) <= condition_count){
                             MemberOrder memberOrder = new MemberOrder(
                                     0,
                                     member.getId(),
@@ -330,7 +345,8 @@ public class MerchbrowseFragment extends Fragment {
                             updateGroup(updaategroup);
                             //Toast.makeText(activity, "沒有超過上限!!", Toast.LENGTH_SHORT).show();
                         }else{
-                            Toast.makeText(activity, "已超過能夠買得最大上限請重新選擇!!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(activity, "已超過能夠買得最大上限請重新選擇!!", Toast.LENGTH_LONG).show();
+                            //navController.navigate(R.id.merchbrowseFragment);
                         }
                     }else{
                         //建立memberOrder資料
