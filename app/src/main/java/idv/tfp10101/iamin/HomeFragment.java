@@ -100,6 +100,7 @@ public class HomeFragment extends Fragment {
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
     private double userlat,userlng;//使用者的緯經度
+    private List<HomeData> localHomeDatas;  //把團購跟使用者最短距離裝成Homedata
 
 
     @Override
@@ -282,6 +283,42 @@ public class HomeFragment extends Fragment {
                 //取得經度
                 userlng = location.getLongitude();
                 showGroup(localGroups);
+                coumputeDistancemin();
+            }
+        });
+    }
+
+    //計算使用者與團購的最短距離打包成Homedata(group,distancemin)並排序
+    private void coumputeDistancemin(){
+
+        localHomeDatas =  new ArrayList<>();
+        HomeData homeData;
+        for (Group group: localGroups){
+            List<Float> distance = new ArrayList<>();
+            List<Location> locations = group.getLocations();
+            for (Location grouplocation : locations){
+                float[] results = new float[1];
+                //取得所有面交地點的緯經度
+                Double groupLat = grouplocation.getLatitude();
+                Double groupLng = grouplocation.getLongtitude();
+                //取得買家與所有團購面交地點的距離
+                android.location.Location.distanceBetween(userlat,userlng,groupLat,groupLng,results);
+                //除以1000從公尺變成公里後加入list
+                distance.add(results[0]/1000);
+            }
+            //由小到大排序(只取最近的距離)
+            Collections.sort(distance);
+            BigDecimal b = new BigDecimal(distance.get(0));
+            //四捨五入到小數第一位
+            float groupDismin = b.setScale(0,BigDecimal.ROUND_HALF_UP).floatValue();
+            homeData = new HomeData(group,groupDismin);
+            localHomeDatas.add(homeData);
+        }
+        //將Homedata用使用者與團購的最短距離排序
+        Collections.sort(localHomeDatas, new Comparator<HomeData>() {
+            @Override
+            public int compare(HomeData o1, HomeData o2) {
+                return (int) (o1.getDistance()-o2.getDistance());
             }
         });
     }
@@ -305,7 +342,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (newText.equals("")) {
+                if (newText.equals("")||newText.isEmpty()) {
                     showGroup(searchGroup);
                 } else {
                     // 搜尋原始資料內有無包含關鍵字(不區別大小寫)
@@ -343,7 +380,6 @@ public class HomeFragment extends Fragment {
             groupAdapter.notifyDataSetChanged();
         }
     }
-
 
     private void findView(View view) {
         bottomNavigationView = view.findViewById(R.id.nv_bar);
@@ -459,7 +495,6 @@ public class HomeFragment extends Fragment {
             return rsGroups == null ? 0 : rsGroups.size();
         }
     }
-
 
     /**
      * 3. 詢問使用權限
