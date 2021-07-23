@@ -100,6 +100,7 @@ public class HomeFragment extends Fragment {
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
     private double userlat,userlng;//使用者的緯經度
+    private List<HomeData> localHomeDatas;  //把團購跟使用者最短距離裝成Homedata
 
 
     @Override
@@ -165,8 +166,8 @@ public class HomeFragment extends Fragment {
 
         //實作取得買家緯精度方法
         getUserloaction();
-
-//        showGroup(localGroups);
+        //將searchView清空
+        searchView.setQuery("", false);
         //輸入監聽
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -176,17 +177,17 @@ public class HomeFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                List<Group> searchGroup = new ArrayList<>();
+                List<HomeData> searchHomeData = new ArrayList<>();
                 if (newText.equals("")) {
-                    showGroup(localGroups);
+                    showGroup(localHomeDatas);
                 } else {
                     // 搜尋原始資料內有無包含關鍵字(不區別大小寫)
-                    for (Group group : localGroups) {
-                        if (group.getName().toUpperCase().contains(newText.toUpperCase())) {
-                            searchGroup.add(group);
+                    for (HomeData group : localHomeDatas) {
+                        if (group.getGroup().getName().toUpperCase().contains(newText.toUpperCase())) {
+                            searchHomeData.add(group);
                         }
                     }
-                    showGroup(searchGroup);
+                    showGroup(searchHomeData);
                 }
                 return true;
             }
@@ -194,7 +195,7 @@ public class HomeFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(() -> {
             //開啟動畫
             swipeRefreshLayout.setRefreshing(true);
-            showGroup(localGroups);
+            showGroup(localHomeDatas);
             searchView.setQuery("", false);
             swipeRefreshLayout.setRefreshing(false);
         });
@@ -208,7 +209,7 @@ public class HomeFragment extends Fragment {
                 switch (item.getItemId()) {
                     case R.id.no:
                         searchView.setQuery("", false);
-                        showGroup(localGroups);
+                        showGroup(localHomeDatas);
                         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                             @Override
                             public boolean onQueryTextSubmit(String query) {
@@ -217,18 +218,18 @@ public class HomeFragment extends Fragment {
 
                             @Override
                             public boolean onQueryTextChange(String newText) {
-                                List<Group> searchGroup = new ArrayList<>();
+                                List<HomeData> searchHomeData = new ArrayList<>();
                                 if (newText.equals("")) {
-                                    showGroup(localGroups);
+                                    showGroup(localHomeDatas);
                                 } else {
                                     // 搜尋原始資料內有無包含關鍵字(不區別大小寫)
-                                    for (Group group : localGroups) {
+                                    for (HomeData group : localHomeDatas) {
                                         //只顯示團購狀態是1的(1-> 揪團中)
-                                        if (group.getName().toUpperCase().contains(newText.toUpperCase())) {
-                                            searchGroup.add(group);
+                                        if ((group.getGroup().getProgress() != group.getGroup().getConditionCount())) {
+                                            searchHomeData.add(group);
                                         }
                                     }
-                                    showGroup(searchGroup);
+                                    showGroup(searchHomeData);
                                 }
                                 return true;
                             }
@@ -236,26 +237,26 @@ public class HomeFragment extends Fragment {
                         swipeRefreshLayout.setOnRefreshListener(() -> {
                             //開啟動畫
                             swipeRefreshLayout.setRefreshing(true);
-                            showGroup(localGroups);
+                            showGroup(localHomeDatas);
                             searchView.setQuery("", false);
                             swipeRefreshLayout.setRefreshing(false);
                         });
                         Toast.makeText(activity, "未分類", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.food:
-                        choosesort(1, localGroups);
+                        choosesort(1, localHomeDatas);
                         Toast.makeText(activity, "美食", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.life:
-                        choosesort(2, localGroups);
+                        choosesort(2, localHomeDatas);
                         Toast.makeText(activity, "生活用品", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.theerc:
-                        choosesort(3, localGroups);
+                        choosesort(3, localHomeDatas);
                         Toast.makeText(activity, "3C", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.other:
-                        choosesort(4, localGroups);
+                        choosesort(4, localHomeDatas);
                         Toast.makeText(activity, "其他", Toast.LENGTH_SHORT).show();
                         return true;
                 }
@@ -281,21 +282,58 @@ public class HomeFragment extends Fragment {
                 userlat = location.getLatitude();
                 //取得經度
                 userlng = location.getLongitude();
-                showGroup(localGroups);
+                coumputeDistancemin();
+                showGroup(localHomeDatas);
+            }
+        });
+    }
+
+    //計算使用者與團購的最短距離打包成Homedata(group,distancemin)並排序
+    private void coumputeDistancemin(){
+
+        localHomeDatas =  new ArrayList<>();
+        HomeData homeData;
+        for (Group group: localGroups){
+            List<Float> distance = new ArrayList<>();
+            List<Location> locations = group.getLocations();
+            for (Location grouplocation : locations){
+                float[] results = new float[1];
+                //取得所有面交地點的緯經度
+                Double groupLat = grouplocation.getLatitude();
+                Double groupLng = grouplocation.getLongtitude();
+                //取得買家與所有團購面交地點的距離
+                android.location.Location.distanceBetween(userlat,userlng,groupLat,groupLng,results);
+                //除以1000從公尺變成公里後加入list
+                distance.add(results[0]/1000);
+            }
+            //由小到大排序(只取最近的距離)
+            Collections.sort(distance);
+            BigDecimal b = new BigDecimal(distance.get(0));
+            //四捨五入到小數第一位
+            float groupDismin = b.setScale(0,BigDecimal.ROUND_HALF_UP).floatValue();
+            homeData = new HomeData(group,groupDismin);
+            localHomeDatas.add(homeData);
+        }
+        //將Homedata用使用者與團購的最短距離排序
+        Collections.sort(localHomeDatas, new Comparator<HomeData>() {
+            @Override
+            public int compare(HomeData o1, HomeData o2) {
+                return (int) (o1.getDistance()-o2.getDistance());
             }
         });
     }
 
     //根據所選的分類去搜尋並可以下拉更新
-    private void choosesort(int category_Id, List<Group> categoryGroup) {
+    private void choosesort(int category_Id, List<HomeData> categoryHomeData) {
         searchView.setQuery("", false);
-        List<Group> selectGroup = new ArrayList<>();
-        for (Group category : categoryGroup) {
-            if (category.getCategoryId() == category_Id) {
-                selectGroup.add(category);
+        List<HomeData> selectHomeData = new ArrayList<>();
+        for (HomeData category : categoryHomeData) {
+            //類別ID與為達到團購最大上限
+            if ((category.getGroup().getCategoryId() == category_Id) && (category.getGroup().getProgress() != category.getGroup().getConditionCount())) {
+                selectHomeData.add(category);
             }
         }
-        List<Group> searchGroup = new ArrayList<>();
+        List<HomeData> searchHomeData = new ArrayList<>();
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -305,45 +343,44 @@ public class HomeFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (newText.equals("")) {
-                    showGroup(searchGroup);
+                if (newText.equals("")||newText.isEmpty()) {
+                    showGroup(selectHomeData);
                 } else {
                     // 搜尋原始資料內有無包含關鍵字(不區別大小寫)
-                    for (Group group : searchGroup) {
-                        if (group.getName().toUpperCase().contains(newText.toUpperCase())) {
-                            searchGroup.add(group);
+                    for (HomeData group : selectHomeData) {
+                        if (group.getGroup().getName().toUpperCase().contains(newText.toUpperCase())) {
+                            searchHomeData.add(group);
                         }
                     }
-                    showGroup(searchGroup);
+                    showGroup(searchHomeData);
                 }
                 return true;
             }
         });
-        showGroup(selectGroup);
+        showGroup(selectHomeData);
 
         swipeRefreshLayout.setOnRefreshListener(() -> {
             swipeRefreshLayout.setRefreshing(true);
             searchView.setQuery("", false);
-            showGroup(selectGroup);
+            showGroup(selectHomeData);
             swipeRefreshLayout.setRefreshing(false);
         });
     }
 
-    private void showGroup(List<Group> localGroups) {
+    private void showGroup(List<HomeData> localHomeDatas) {
         /** RecyclerView */
         // 檢查
         HomeFragment.HomeAdapter groupAdapter = (HomeFragment.HomeAdapter) recyclerViewGroup.getAdapter();
         if (groupAdapter == null) {
-            recyclerViewGroup.setAdapter(new HomeFragment.HomeAdapter(activity, localGroups));
+            recyclerViewGroup.setAdapter(new HomeFragment.HomeAdapter(activity, localHomeDatas));
             int px = (int) Constants.convertDpToPixel(8, activity); // 間距 8 dp
             recyclerViewGroup.addItemDecoration(new Constants.SpacesItemDecoration("bottom", px));
         } else {
             // 資訊重新載入刷新
-            groupAdapter.setGroups(localGroups);
+            groupAdapter.setGroups(localHomeDatas);
             groupAdapter.notifyDataSetChanged();
         }
     }
-
 
     private void findView(View view) {
         bottomNavigationView = view.findViewById(R.id.nv_bar);
@@ -354,13 +391,13 @@ public class HomeFragment extends Fragment {
     }
 
     private class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyHomeDataViewHolder> {
-        private List<Group> rsGroups;
+        private List<HomeData> rsHomeDatas;
         private LayoutInflater layoutInflater;
         private final int imageSize;
 
-        public HomeAdapter(Context context, List<Group> groups) {
+        public HomeAdapter(Context context, List<HomeData> homedatas) {
             layoutInflater = LayoutInflater.from(context);
-            rsGroups = groups;
+            rsHomeDatas = homedatas;
 
             /* 螢幕寬度除以4當作將圖的尺寸 */
             imageSize = getResources().getDisplayMetrics().widthPixels / 4;
@@ -382,8 +419,8 @@ public class HomeFragment extends Fragment {
             }
         }
 
-        public void setGroups(List<Group> Groups) {
-            rsGroups = Groups;
+        public void setGroups(List<HomeData> HomeDatas) {
+            rsHomeDatas = HomeDatas;
         }
 
         @NonNull
@@ -395,8 +432,10 @@ public class HomeFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull HomeFragment.HomeAdapter.MyHomeDataViewHolder holder, int position) {
-            final Group rsGroup = rsGroups.get(position);
-            int GroupID = rsGroup.getGroupId();
+            final HomeData rsHomeData = rsHomeDatas.get(position);
+            int GroupID = rsHomeData.getGroup().getGroupId();
+
+
             List<Location> grouplocations = new ArrayList<>();
             Bitmap Groupbitmap = HomeDataControl.getGroupimage(activity, GroupID, imageSize, executor);
             if (Groupbitmap != null) {
@@ -404,16 +443,16 @@ public class HomeFragment extends Fragment {
             } else {
                 holder.imv_group.setImageResource(R.drawable.no_image);
             }
-            holder.txv_group_name.setText(rsGroup.getName());
-            Timestamp ts = rsGroup.getConditionTime();
+            holder.txv_group_name.setText(rsHomeData.getGroup().getName());
+            Timestamp ts = rsHomeData.getGroup().getConditionTime();
             DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
             holder.txv_group_conditionTime.setText("結單日期:" + "\n" + sdf.format(ts));
-            holder.pr_bar.setMax(rsGroup.getGoal());
-            holder.pr_bar.setProgress(rsGroup.getProgress());
-            holder.txv_progress.setText("(" + String.valueOf(rsGroup.getProgress()) + "/" + String.valueOf(rsGroup.getGoal()) + ")");
+            holder.pr_bar.setMax(rsHomeData.getGroup().getGoal());
+            holder.pr_bar.setProgress(rsHomeData.getGroup().getProgress());
+            holder.txv_progress.setText("(" + String.valueOf(rsHomeData.getGroup().getProgress()) + "/" + String.valueOf(rsHomeData.getGroup().getGoal()) + ")");
+
             //取的團購的所有地點
             grouplocations = LocationControl.getLocationByGroupId(activity, GroupID);
-            int locations = grouplocations.size();
             List<Float> distance = new ArrayList<>();
             for (Location location : grouplocations){
                 float[] results = new float[1];
@@ -434,19 +473,17 @@ public class HomeFragment extends Fragment {
 
             //設定點擊商品觸發
             holder.itemView.setOnClickListener(v -> {
-                // Toast.makeText(activity, String.valueOf(id), Toast.LENGTH_SHORT).show();
-
                 HashMap<String, Object> GrouphashMap = new HashMap<>();
-                GrouphashMap.put("GroupID", rsGroup.getGroupId());//打包團購ID
-                GrouphashMap.put("SellerID", rsGroup.getMemberId());//打包團購發起人ID
-                GrouphashMap.put("Progress", rsGroup.getProgress());//打包團購進度
-                GrouphashMap.put("Goal", rsGroup.getGoal());//打包團購目標
-                GrouphashMap.put("Contact_Number", rsGroup.getContactNumber());//打包團購聯絡電話
-                GrouphashMap.put("Payment_Method", rsGroup.getPaymentMethod());//打包付款方式
-                GrouphashMap.put("Group_status", rsGroup.getGroupStatus());//打包團購狀態
-                GrouphashMap.put("Caution", rsGroup.getCaution());//打包注意事項
-                GrouphashMap.put("Condition_count", rsGroup.getConditionCount());//打包停單份數
-                GrouphashMap.put("Condition_Time", rsGroup.getConditionTime());//打包停單時間
+                GrouphashMap.put("GroupID", rsHomeData.getGroup().getGroupId());//打包團購ID
+                GrouphashMap.put("SellerID", rsHomeData.getGroup().getMemberId());//打包團購發起人ID
+                GrouphashMap.put("Progress", rsHomeData.getGroup().getProgress());//打包團購進度
+                GrouphashMap.put("Goal", rsHomeData.getGroup().getGoal());//打包團購目標
+                GrouphashMap.put("Contact_Number", rsHomeData.getGroup().getContactNumber());//打包團購聯絡電話
+                GrouphashMap.put("Payment_Method", rsHomeData.getGroup().getPaymentMethod());//打包付款方式
+                GrouphashMap.put("Group_status", rsHomeData.getGroup().getGroupStatus());//打包團購狀態
+                GrouphashMap.put("Caution", rsHomeData.getGroup().getCaution());//打包注意事項
+                GrouphashMap.put("Condition_count", rsHomeData.getGroup().getConditionCount());//打包停單份數
+                GrouphashMap.put("Condition_Time", rsHomeData.getGroup().getConditionTime());//打包停單時間
                 Bundle bundleMap = new Bundle();
                 bundleMap.putSerializable("Group", GrouphashMap);
 
@@ -456,10 +493,9 @@ public class HomeFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return rsGroups == null ? 0 : rsGroups.size();
-        }
+            return rsHomeDatas == null ? 0 : rsHomeDatas.size();
+}
     }
-
 
     /**
      * 3. 詢問使用權限

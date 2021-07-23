@@ -152,7 +152,8 @@ public class MainActivity extends AppCompatActivity {
                destination.getId() == R.id.signUpFragment||
                destination.getId() == R.id.phoneAuthFragment||
                destination.getId() == R.id.memeberCenterProfileFragment||
-               destination.getId() == R.id.memberCenterFragment
+               destination.getId() == R.id.memberCenterFragment||
+               destination.getId() == R.id.merchbrowseFragment
             ){
                 bottomNavigationView.setVisibility(View.GONE);
             }else{
