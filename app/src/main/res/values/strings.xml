@@ -147,4 +147,6 @@
     <string name="text_member_order_id">\"MemberOrderId: \"</string>
     <string name="deadline">DeadLine</string>
     <string name="pick_up_location">Pick Up Location:</string>
+    <string name="text_money_ntd">" NTD"</string>
+    <string name="pickup_time">Pickup Time:</string>
 </resources>

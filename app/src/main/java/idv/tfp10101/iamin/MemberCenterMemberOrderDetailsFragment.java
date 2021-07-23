@@ -193,7 +193,12 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
             holder.merchName.setText(getString(R.string.text_merch_name) + memberOrderDetails.getMerch().getName());
             holder.totalPrice.setText(getString(R.string.text_total_format) + String.valueOf(memberOrderDetails.getFormat_total())+"元");
             holder.quantity.setText(getString(R.string.text_quantity) + String.valueOf(memberOrderDetails.getQuantity()));
-            holder.merchDesc.setText(getString(R.string.text_merch_details) + memberOrderDetails.getMerch().getMerchDesc());
+            holder.merchDesc.setText(getString(R.string.text_merch_details));
+            if(memberOrderDetails.getMerch().getMerchDesc().length() > 10){
+                holder.description.setTextSize(12);
+                holder.description.setText(memberOrderDetails.getMerch().getMerchDesc());
+            }
+
 
             int id = memberOrderDetails.getMerchId();
 
@@ -214,7 +219,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
     }
 
     private static class MyViewHolder extends RecyclerView.ViewHolder{
-        final private TextView index,merchName,totalPrice,quantity,merchDesc;
+        final private TextView index,merchName,totalPrice,quantity,merchDesc,description;
         final  ImageView merchImage;
 
         public MyViewHolder(@NonNull View itemView) {
@@ -225,6 +230,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
             quantity = itemView.findViewById(R.id.memberOrderDetailsQuantity);
             merchImage = itemView.findViewById(R.id.memberOrderDetailImageView);
             merchDesc = itemView.findViewById(R.id.memberOrderDetailsMerchDesc);
+            description = itemView.findViewById(R.id.detailsMerchDesc);
 
         }
 

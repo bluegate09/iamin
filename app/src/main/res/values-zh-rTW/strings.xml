@@ -92,7 +92,7 @@
     <string name="text_phone_number">手機號碼</string>
     <string name="membercenter">會員中心</string>
     <string name="spending">開銷</string>
-    <string name="month">月</string>
+    <string name="month">月份</string>
     <string name="year">年</string>
     <string name="income">收入</string>
     <string name="textNoSellerFound">沒有找到賣家</string>
@@ -140,6 +140,8 @@
     <string name="text_paymentmethod">付款方式: </string>
     <string name="text_total_price">總價:</string>
     <string name="text_member_order_id">訂單編號:</string>
-    <string name="deadline">DeadLine</string>
-    <string name="pick_up_location">Pick Up Location:</string>
+    <string name="deadline">截止日期</string>
+    <string name="pick_up_location">取貨地點: </string>
+    <string name="text_money_ntd">" 元"</string>
+    <string name="pickup_time">取貨時間:</string>
 </resources>

@@ -180,6 +180,8 @@ public class MemberCenterMemberOrderFragment extends Fragment {
                 List<Location> locations = LocationControl.getLocationByGroupId(activity,memberOrder.getGroupId());
                 String locationsJson = gson.toJson(locations);
 
+
+
                 Bundle bundle = new Bundle();
                 bundle.putString("OrderDetails", orderDetailsJson);
                 bundle.putString("Locations",locationsJson);

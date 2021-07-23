@@ -5,6 +5,8 @@
 
     <View
         android:id="@+id/myWalletColorView"
+        android:padding="8dp"
+        android:layout_margin="8dp"
         android:layout_width="20dp"
         android:layout_height="match_parent"/>
 
@@ -15,6 +17,12 @@
 
         <TextView
             android:id="@+id/myWalletCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/myWalletTotalPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="TextView" />

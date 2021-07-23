@@ -2,6 +2,7 @@ package idv.tfp10101.iamin;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -139,15 +141,6 @@ public class MemberCenterFragment extends Fragment {
 
         });
 
-        view.findViewById(R.id.btTestGround).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-                Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memberCenterFollowTestGround);
-            }
-        });
-
     }
 
     @Override
@@ -159,7 +152,6 @@ public class MemberCenterFragment extends Fragment {
             memberClass.setText(R.string.text_general_member);
         }else{
             memberClass.setText(R.string.text_senior_member);
-
         }
 //            Log.d(TAG, "OnCreate: " + member.isUpdate());
     }
