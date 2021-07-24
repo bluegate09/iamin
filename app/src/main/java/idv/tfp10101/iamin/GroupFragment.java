@@ -34,6 +34,8 @@ import java.util.List;
 
 import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.group.GroupControl;
+import idv.tfp10101.iamin.member.Member;
+import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.merch.Merch;
 import idv.tfp10101.iamin.merch.MerchControl;
 
@@ -50,6 +52,7 @@ public class GroupFragment extends Fragment {
     private ImageView imageViewSuccessPag;
     private ImageView imageViewPaymentPag;
     // 物件
+    private Member member;
     private List<Group> localGroups;
 
     /**
@@ -59,7 +62,7 @@ public class GroupFragment extends Fragment {
     private void findViews(View view) {
         searchViewGroup = view.findViewById(R.id.searchViewSeller);
         swipeRefreshLayoutGroup = view.findViewById(R.id.swipeRefreshLayoutGroup);
-        buttonGroupInsert = view.findViewById(R.id.buttonGroup);
+        buttonGroupInsert = view.findViewById(R.id.buttonSubmit);
         imageViewMerchPag = view.findViewById(R.id.imageViewMerchPag);
         imageViewGroupPag = view.findViewById(R.id.imageViewGroupPag);
         imageViewSuccessPag = view.findViewById(R.id.imageViewSuccessPag);
@@ -104,9 +107,10 @@ public class GroupFragment extends Fragment {
 
         findViews(view);
 
-        /** 設定預設memberId */
+        /** 抓取會員ID */
+        member = MemberControl.getInstance();
         // 跟server抓取所有Group
-        GroupControl.getAllGroupByMemberId(activity, 1);
+        GroupControl.getAllGroupByMemberId(activity, member.getId());
         localGroups = GroupControl.getLocalGroup();
         if (localGroups == null || localGroups.isEmpty()) {
             Toast.makeText(activity, R.string.textNoGroupsFound, Toast.LENGTH_SHORT).show();
@@ -171,7 +175,7 @@ public class GroupFragment extends Fragment {
      */
     private void handleSwipeRefresh() {
         swipeRefreshLayoutGroup.setOnRefreshListener(() -> {
-            GroupControl.getAllGroupByMemberId(activity, 1);
+            GroupControl.getAllGroupByMemberId(activity, member.getId());
             localGroups = GroupControl.getLocalGroup();
             // 播放動畫
             swipeRefreshLayoutGroup.setRefreshing(true);

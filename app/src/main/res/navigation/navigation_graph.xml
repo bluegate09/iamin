@@ -96,6 +96,18 @@
         <action
             android:id="@+id/action_memberCenterFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_memberCenterFragment_to_memberCenterFollowTestGround"
+            app:destination="@id/memberCenterFollowTestGround" />
+        <action
+            android:id="@+id/action_memberCenterFragment_to_memberCenterMemberOrderFragment"
+            app:destination="@id/memberCenterMemberOrderFragment" />
+        <action
+            android:id="@+id/action_memberCenterFragment_to_memberCenterMyGroupListFragment"
+            app:destination="@id/memberCenterMyGroupListFragment" />
+        <action
+            android:id="@+id/action_memberCenterFragment_to_sellerFragment"
+            app:destination="@id/sellerFragment" />
     </fragment>
     <fragment
         android:id="@+id/memeberCenterFollowFragment"
@@ -115,7 +127,11 @@
         android:id="@+id/memeberCenterProfileFragment"
         android:name="idv.tfp10101.iamin.MemeberCenterProfileFragment"
         android:label="fragment_memeber_center_profile"
-        tools:layout="@layout/fragment_memeber_center_profile" />
+        tools:layout="@layout/fragment_memeber_center_profile" >
+        <action
+            android:id="@+id/action_memeberCenterProfileFragment_to_memberCenterFragment"
+            app:destination="@id/memberCenterFragment" />
+    </fragment>
     <fragment
         android:id="@+id/memberCenterMyWalletDetailsFragment"
         android:name="idv.tfp10101.iamin.MemberCenterMyWalletDetailsFragment"
@@ -189,6 +205,9 @@
         <action
             android:id="@+id/action_reachFragment_to_paymentInformationFragment"
             app:destination="@id/paymentInformationFragment" />
+        <action
+            android:id="@+id/action_reachFragment_to_reachNotificationFragment"
+            app:destination="@id/reachNotificationFragment" />
     </fragment>
     <fragment
         android:id="@+id/merchInsertFragment"
@@ -229,6 +248,12 @@
         <action
             android:id="@+id/action_sellerFragment_to_merchFragment"
             app:destination="@id/merchFragment" />
+        <action
+            android:id="@+id/action_sellerFragment_to_memeberCenterProfileFragment"
+            app:destination="@id/memeberCenterProfileFragment" />
+        <action
+            android:id="@+id/action_sellerFragment_to_logInFragment"
+            app:destination="@id/logInFragment" />
     </fragment>
     <fragment
         android:id="@+id/messageFragment"
@@ -245,8 +270,37 @@
             app:destination="@id/memberCenterFragment" />
     </fragment>
     <fragment
+        android:id="@+id/reachNotificationFragment"
+        android:name="idv.tfp10101.iamin.ReachNotificationFragment"
+        android:label="fragment_reach_notification"
+        tools:layout="@layout/fragment_reach_notification" />
+    <fragment
         android:id="@+id/memberForgetPassword"
         android:name="idv.tfp10101.iamin.MemberForgetPassword"
         android:label="fragment_member_forget_password"
         tools:layout="@layout/fragment_member_forget_password" />
+    <fragment
+        android:id="@+id/memberCenterFollowTestGround"
+        android:name="idv.tfp10101.iamin.MemberCenterFollowTestGround"
+        android:label="fragment_member_center_follow_test_ground"
+        tools:layout="@layout/fragment_member_center_follow_test_ground" />
+    <fragment
+        android:id="@+id/memberCenterMemberOrderFragment"
+        android:name="idv.tfp10101.iamin.MemberCenterMemberOrderFragment"
+        android:label="fragment_member_center_member_order"
+        tools:layout="@layout/fragment_member_center_member_order" >
+        <action
+            android:id="@+id/action_memberCenterMemberOrderFragment_to_memberCenterOrderDetailsFragment"
+            app:destination="@id/memberCenterOrderDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/memberCenterOrderDetailsFragment"
+        android:name="idv.tfp10101.iamin.MemberCenterMemberOrderDetailsFragment"
+        android:label="fragment_member_center_order_details"
+        tools:layout="@layout/fragment_member_center_member_order_details" />
+    <fragment
+        android:id="@+id/memberCenterMyGroupListFragment"
+        android:name="idv.tfp10101.iamin.MemberCenterMyGroupListFragment"
+        android:label="fragment_member_center_my_group_list"
+        tools:layout="@layout/fragment_member_center_my_group_list" />
 </navigation>

@@ -5,58 +5,121 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
-
         android:layout_width="match_parent"
-        android:layout_height="230dp"
-        android:orientation="horizontal">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/ivFollowPortrait"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="8dp"
-            android:src="@drawable/silhouettes" />
+        android:layout_height="match_parent"
+        android:layout_margin="8dp"
+        android:background="@color/colorSecondaryLight"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/btMemberUnfollow"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_weight="0.5"
+                android:src="@drawable/heart_white" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/ivFollowPortrait"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:src="@drawable/avatar" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvFollowNickname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="賣家"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/txv_Email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="賣家Email"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/txv_Seller_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="聯絡電話"
+                    android:textSize="20sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/tvFollowNickname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:padding="4dp"
-                android:text="@string/nickname"
-                android:textSize="40dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvFollowRating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:padding="4dp"
-                android:text="@string/rating"
-                android:textSize="20dp" />
+                <TextView
+                    android:id="@+id/heartIcon2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:includeFontPadding="false"
+                    android:padding="8dp"
+                    android:text="♥被追蹤次數"
+                    android:textSize="25sp" />
 
-            <TextView
-                android:id="@+id/tvFollowCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:padding="4dp"
-                android:text="@string/follow_count"
-                android:textSize="20dp" />
+                <TextView
+                    android:id="@+id/tvFollowCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:text="TextView"
+                    android:textSize="20sp" />
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/tvFollowbt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:padding="20dp"
-                android:text="💋" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/rating2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:includeFontPadding="false"
+                    android:padding="8dp"
+                    android:text="⭐評分分數"
+                    android:textSize="25sp" />
+
+                <TextView
+                    android:id="@+id/tvFollowRating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:text="TextView"
+                    android:textSize="20sp" />
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -64,11 +127,7 @@
             android:id="@+id/tvFollowStatus"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:padding="20dp"
-            android:layout_marginBottom="8dp"
-            android:text="new!" />
-
+            android:text="最新團購: " />
 
     </LinearLayout>
 

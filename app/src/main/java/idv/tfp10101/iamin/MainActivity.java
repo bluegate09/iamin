@@ -4,22 +4,31 @@ import androidx.annotation.FractionRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import android.app.Activity;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -30,15 +39,38 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.FirebaseMessaging;
 
-public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "TAG_MainActivity";
+import static idv.tfp10101.iamin.Constants.FCM_Token;
 
+public class MainActivity extends AppCompatActivity {
+    /**
+     * FCMService 本地廣播
+     */
+    BroadcastReceiver broadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 //        handleBottomNavigationView();
+
+        /** FCMService 本地廣播 */
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                /** 建立AlertDialog */
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle(intent.getStringExtra("title"));
+                builder.setMessage(intent.getStringExtra("body"));
+                builder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                // 顯示
+                builder.show();
+            }
+        };
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("FCMService"));
 
         /** FCM_Serller 相關設定 */
         // 設定app在背景時收到FCM，會自動顯示notification（前景時則不會自動顯示）
@@ -67,9 +99,25 @@ public class MainActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             String data = bundle.getString("data");
+
             // 可以依據data來決定要去哪一Fragment頁面
             Log.d(Constants.TAG, "data: " + data);
-            Toast.makeText(this, "data: " + data, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "data: " + data, Toast.LENGTH_SHORT).show();
+            // 先取得NavController
+            NavController navController = Navigation.findNavController(
+                    this,
+                    R.id.nav_host_fragment
+            );
+            // 再利用Fragment ID切換到指定Fragment
+            if (data != null) {
+                switch (data) {
+                    case "Reach_Notification":
+                        navController.navigate(R.id.memberCenterMemberOrderFragment);
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         /** 測試用 */
@@ -81,9 +129,9 @@ public class MainActivity extends AppCompatActivity {
                     String token = task.getResult();
                     Log.d(Constants.TAG, "MainActivityToken: " + token);
 
-                    SharedPreferences pref = this.getSharedPreferences("FCM_TOKEN", MODE_PRIVATE);
+                    SharedPreferences pref = this.getSharedPreferences(FCM_Token, MODE_PRIVATE);
                     pref.edit()
-                            .putString("FCM_TOKEN",token)
+                            .putString(FCM_Token, token)
                             .apply();
 
                 }
@@ -94,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<String> task) {
 
-                Log.d("TAG_MAIN","Token: " + task.getResult());
+                Log.d("TAG_MAIN", "Token: " + task.getResult());
             }
         });
     }
@@ -121,6 +169,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         handleBottomNavigationView();
+        /** FCMService 本地廣播 */
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
     }
 
     @Override
@@ -141,15 +191,19 @@ public class MainActivity extends AppCompatActivity {
                 Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-            if(destination.getId() == R.id.memberCenterMyWalletFragment||
-               destination.getId() == R.id.logInFragment||
-               destination.getId() == R.id.signUpFragment||
-               destination.getId() == R.id.phoneAuthFragment||
-               destination.getId() == R.id.memeberCenterProfileFragment ||
-                    destination.getId() == R.id.messageFragment
-            ){
+            if (
+                    destination.getId() == R.id.memberCenterMyWalletFragment ||
+                    destination.getId() == R.id.logInFragment ||
+                    destination.getId() == R.id.signUpFragment ||
+                    destination.getId() == R.id.phoneAuthFragment ||
+                    destination.getId() == R.id.memeberCenterProfileFragment ||
+                    destination.getId() == R.id.messageFragment ||
+                    destination.getId() == R.id.memeberCenterProfileFragment ||
+                    destination.getId() == R.id.memberCenterFragment ||
+                    destination.getId() == R.id.merchbrowseFragment
+            ) {
                 bottomNavigationView.setVisibility(View.GONE);
-            }else{
+            } else {
                 bottomNavigationView.setVisibility(View.VISIBLE);
             }
         });

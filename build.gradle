@@ -3,6 +3,9 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+
+        // QR Code 需要
+        jcenter()
     }
     dependencies {
         classpath "com.android.tools.build:gradle:4.2.1"
@@ -21,6 +24,8 @@ allprojects {
         google()
         mavenCentral()
 
+        // QR Code 需要
+        jcenter()
         // Ucrop需要
         maven { url "https://jitpack.io" }
     }

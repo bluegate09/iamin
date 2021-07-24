@@ -33,6 +33,8 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.google.android.material.textfield.TextInputLayout;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -42,6 +44,8 @@ import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.group.GroupCategory;
 import idv.tfp10101.iamin.group.GroupControl;
 import idv.tfp10101.iamin.group.GroupInsertAddViewData;
+import idv.tfp10101.iamin.member.Member;
+import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.merch.Merch;
 import idv.tfp10101.iamin.merch.MerchControl;
 
@@ -68,12 +72,9 @@ public class GroupInsertFragment extends Fragment {
     private EditText editTextCaution; // 注意事項
     private RadioGroup RadioGroupPrivacy;
     private Button buttonGroupInsert;
-
-    private ImageView imageViewMerchPag;
-    private ImageView imageViewGroupPag;
-    private ImageView imageViewSuccessPag;
-    private ImageView imageViewPaymentPag;
+    private TextInputLayout layoutNumber;
     // 物件
+    private Member member;
     List<GroupCategory> groupCategories; // 種類清單
     private int totalAmount = 0; // 總金額
     private Boolean isConditionCount = false; // 停單條件
@@ -110,14 +111,10 @@ public class GroupInsertFragment extends Fragment {
         linearLayoutLocation = view.findViewById(R.id.linearLayoutLocation);
         editTextCaution = view.findViewById(R.id.editTextCaution);
         RadioGroupPrivacy = view.findViewById(R.id.RadioGroupPrivacy);
-        buttonGroupInsert = view.findViewById(R.id.buttonGroup);
+        buttonGroupInsert = view.findViewById(R.id.buttonSubmit);
+        layoutNumber = view.findViewById(R.id.layoutNumber);
 
         navController = Navigation.findNavController(view);
-
-        imageViewMerchPag = view.findViewById(R.id.imageViewMerchPag);
-        imageViewGroupPag = view.findViewById(R.id.imageViewGroupPag);
-        imageViewSuccessPag = view.findViewById(R.id.imageViewSuccessPag);
-        imageViewPaymentPag = view.findViewById(R.id.imageViewPaymentPag);
     }
 
     /**
@@ -159,6 +156,9 @@ public class GroupInsertFragment extends Fragment {
         if (ConditionTime != null) {
             textViewConditionTime.setText(ConditionTime);
         }
+
+        /** 抓取會員ID */
+        member = MemberControl.getInstance();
 
         // 加入商品
         handleAddMerch();
@@ -413,15 +413,15 @@ public class GroupInsertFragment extends Fragment {
             /** 標題 */
             if (editTextName.getText().toString().trim().isEmpty()) {
                 Toast.makeText(activity, "標題未設定", Toast.LENGTH_SHORT).show();
-                editTextName.setHintTextColor(resources.getColor(R.color.colorRed));
+//                editTextName.setHintTextColor(resources.getColor(R.color.colorRed));
                 scrollViewMain.scrollTo(0, v.findViewById(R.id.editTextName).getTop());
                 return;
             }
             /** 目標份數 */
             if (editTextGoal.getText().toString().trim().isEmpty()) {
                 Toast.makeText(activity, "標目標份數未設定", Toast.LENGTH_SHORT).show();
-                editTextGoal.setHint("需設定");
-                editTextGoal.setHintTextColor(resources.getColor(R.color.colorRed));
+//                editTextGoal.setHint("需設定");
+//                editTextGoal.setHintTextColor(resources.getColor(R.color.colorRed));
                 scrollViewMain.scrollTo(0, v.findViewById(R.id.editTextGoal).getTop());
                 return;
             }
@@ -434,7 +434,7 @@ public class GroupInsertFragment extends Fragment {
             for (int merchId : giavd.MerchsId()) {
                 Merch merch = new Merch(
                         merchId,
-                        0,
+                        member.getId(),
                         "",
                         0,
                         "",
@@ -482,13 +482,13 @@ public class GroupInsertFragment extends Fragment {
             /** 聯絡電話 */
             if (editTextContactNumber.getText().toString().trim().isEmpty()) {
                 Toast.makeText(activity, "聯絡電話未設定", Toast.LENGTH_SHORT).show();
-                scrollViewMain.scrollTo(0, v.findViewById(R.id.editTextContactNumber).getTop());
+                scrollViewMain.scrollTo(0, v.findViewById(R.id.layoutNumber).getTop());
                 return;
             }
             String pattern = "09[0-9]{8}";
             if (!editTextContactNumber.getText().toString().trim().matches(pattern)) {
                 Toast.makeText(activity, "電話格式錯誤", Toast.LENGTH_SHORT).show();
-                scrollViewMain.scrollTo(0, v.findViewById(R.id.editTextContactNumber).getTop());
+                scrollViewMain.scrollTo(0, v.findViewById(R.id.layoutNumber).getTop());
                 return;
             }
             /** 收款方式 (1.面交 2.信用卡 3.兩者皆可) */
@@ -517,7 +517,7 @@ public class GroupInsertFragment extends Fragment {
             /** 團購 Table */
             Group group = new Group(
                     -1,
-                    1, // 會員ID(目前是假資料)
+                    member.getId(), // 會員ID
                     editTextName.getText().toString().trim(), // 標題 (清除左右空白)
                     0, // 目標進度
                     Integer.parseInt(editTextGoal.getText().toString().trim()), // 目標份數
@@ -569,6 +569,20 @@ public class GroupInsertFragment extends Fragment {
             // 顯示
             builder.show();
         });
+
+        // 長按自動建立資料
+        buttonGroupInsert.setOnLongClickListener(view -> {
+            editTextName.setText("紅龍冷凍組"); // 標題
+            editTextGoal.setText("10"); // 目標份數
+            spinnerCategory.setSelection(0); // 類別 ID
+            editTextItem.setText("冷凍食品"); // 團購項目
+            editTextContactNumber.setText("0955337573"); // 聯絡電話
+            isCC = true; isFF = true; // 收款方式
+            editTextCaution.setText("冷凍商品請準時取貨，若未及時取貨貨品主購自行處理"); // 注意事項
+            isPrivacy = false; // 隱私設定
+
+            return true;
+        });
     }
 
     /**
@@ -611,6 +625,7 @@ public class GroupInsertFragment extends Fragment {
                     // 清空
                     giavd.Lats().clear();
                     giavd.Lngs().clear();
+                    giavd.LatLngs().clear();
                     // 緯度[]
                     double[] latArr = bundle.getDoubleArray("lats");
                     // 經度[]
@@ -701,7 +716,7 @@ public class GroupInsertFragment extends Fragment {
             //layoutParams.gravity = Gravity.CENTER;
             layoutParams.rightMargin = 8;
             textView.setLayoutParams(layoutParams);
-            textView.setTextSize(24);
+            textView.setTextSize(18);
             String string = giavd.MerchName().get(count) + "\t\t\t\t\t\t$ " + giavd.MerchPrice().get(count);
             textView.setText(string);
             linearLayoutMerchs.addView(textView);
@@ -715,6 +730,6 @@ public class GroupInsertFragment extends Fragment {
             }
         }
         // 顯示商品總金額
-        textViewTotalAmount.setText("總金額： " + totalAmount + " NT");
+        textViewTotalAmount.setText("商品總金額： " + totalAmount + " NT");
     }
 }

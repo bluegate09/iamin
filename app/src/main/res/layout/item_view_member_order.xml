@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout7"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    android:background="@color/white">
+
+
+    <TextView
+        android:id="@+id/memberOrderId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="5dp"
+        android:text="index"
+        app:layout_constraintBottom_toTopOf="@+id/memberOrderGroup"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+
+        android:id="@+id/memberOrderGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="Group ID"
+        android:textColor="#000"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/memberOrderTotalPrice"
+        app:layout_constraintStart_toStartOf="@+id/memberOrderTotalPrice"
+        app:layout_constraintTop_toBottomOf="@+id/memberOrderId" />
+
+    <TextView
+        android:id="@+id/memberOrderTotalPrice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="Total Price"
+        android:textColor="#000"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/memberOrderPaymentMethod"
+        app:layout_constraintEnd_toEndOf="@+id/memberOrderPaymentMethod"
+        app:layout_constraintStart_toStartOf="@+id/memberOrderPaymentMethod"
+        app:layout_constraintTop_toBottomOf="@+id/memberOrderGroup" />
+
+    <TextView
+        android:id="@+id/memberOrderPaymentMethod"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="11dp"
+        android:text="paymentMethod"
+        android:textColor="#000"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/memberOrderDeliverStatus"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/memberOrderTotalPrice" />
+
+    <TextView
+        android:id="@+id/memberOrderDeliverStatus"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="deliverStatus"
+        android:textColor="#000"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/memberOrderPaymentMethod"
+        app:layout_constraintStart_toStartOf="@+id/memberOrderPaymentMethod"
+        app:layout_constraintTop_toBottomOf="@+id/memberOrderPaymentMethod" />
+
+
+    <ImageView
+        android:id="@+id/memberOrderstatus"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_width="80dp"
+        android:layout_height="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/seller_status1" />
+
+    <TextView
+        android:id="@+id/memberOrdertoDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/text_order_details"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/memberOrderFinger"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="☛"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/memberOrdertoDetails"
+        app:layout_constraintEnd_toStartOf="@+id/memberOrdertoDetails" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

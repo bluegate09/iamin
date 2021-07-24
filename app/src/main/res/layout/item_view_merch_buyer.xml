@@ -11,18 +11,24 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:background="@color/colorSecondaryLight"
         android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvMerchimage"
-            android:layout_width="250dp"
-            android:layout_height="250dp" />
+        <com.youth.banner.Banner
+            android:id="@+id/banner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:banner_loop_time="2000"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </LinearLayout>
 
@@ -69,15 +75,16 @@
                 android:background="@color/colorSecondary"
                 app:srcCompat="@drawable/sub_icon" />
 
-            <EditText
-                android:id="@+id/edt_amount"
+            <TextView
+                android:id="@+id/txv_amount"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
                 android:gravity="center"
                 android:inputType="number"
-                android:text="0" />
+                android:text="0"
+                android:textSize="20sp" />
 
             <ImageView
                 android:id="@+id/btn_add"

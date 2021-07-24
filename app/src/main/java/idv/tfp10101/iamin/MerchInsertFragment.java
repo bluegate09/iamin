@@ -45,6 +45,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import idv.tfp10101.iamin.member.Member;
+import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.merch.Merch;
 import idv.tfp10101.iamin.merch.MerchControl;
 
@@ -65,6 +67,7 @@ public class MerchInsertFragment extends Fragment {
     private EditText editTextMerchInsertDesc;
     private Button buttonMerchSubmit;
     // 物件
+    private Member member;
     private List<byte[]> images = new ArrayList<>();
     private int imgCount = 0;
     private final int IMAGE_MAX = 5;
@@ -148,6 +151,10 @@ public class MerchInsertFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         findViews(view);
+
+        /** 抓取會員ID */
+        member = MemberControl.getInstance();
+
         // 導航控制
         final NavController navController = Navigation.findNavController(view);
 
@@ -265,16 +272,17 @@ public class MerchInsertFragment extends Fragment {
             // date處理(抓取與防呆)
             Boolean passed = true;
             if (editTextMerchInsertName.getText().toString().isEmpty()) {
-                editTextMerchInsertName.setHint("必填欄位-商品名稱(最多30字)");
-                editTextMerchInsertName.setHintTextColor(resources.getColor(R.color.colorRed));
+//                editTextMerchInsertName.setHint("必填欄位-商品名稱(最多30字)");
+//                editTextMerchInsertName.setHintTextColor(resources.getColor(R.color.colorRed));
                 passed = false;
             }
             if (editTextMerchInsertPrice.getText().toString().isEmpty()) {
-                editTextMerchInsertPrice.setHint("必填欄位-優惠價(阿拉伯數字)");
-                editTextMerchInsertPrice.setHintTextColor(resources.getColor(R.color.colorRed));
+//                editTextMerchInsertPrice.setHint("必填欄位-優惠價(阿拉伯數字)");
+//                editTextMerchInsertPrice.setHintTextColor(resources.getColor(R.color.colorRed));
                 passed = false;
             }
             if (!passed) {
+                Toast.makeText(activity, "有必填欄位尚未填寫！", Toast.LENGTH_SHORT).show();
                 return;
             }
             /** 建立AlertDialog */
@@ -292,7 +300,7 @@ public class MerchInsertFragment extends Fragment {
                 String desc = editTextMerchInsertDesc.getText().toString();
                 Merch merch = new Merch(
                         0,
-                        1,
+                        member.getId(),
                         name,
                         price,
                         desc,
@@ -312,6 +320,15 @@ public class MerchInsertFragment extends Fragment {
             });
             // 顯示
             builder.show();
+        });
+
+        /** 測試專用 */
+        buttonMerchSubmit.setOnLongClickListener(view -> {
+            // 設定預設資料
+            editTextMerchInsertName.setText("紅龍牛肉捲");
+            editTextMerchInsertPrice.setText("280");
+            editTextMerchInsertDesc.setText("10 入");
+            return  true;
         });
     }
 
@@ -353,8 +370,8 @@ public class MerchInsertFragment extends Fragment {
         Uri destinationUri = Uri.fromFile(file);
         // 使用UCrop建立Intent
         Intent cropIntent = UCrop.of(sourceImageUri, destinationUri)
-                .withAspectRatio(1, 1) // 設定裁減比例
-//                .withMaxResultSize(500, 500) // 設定結果尺寸不可超過指定寬高
+                .withAspectRatio(0.5f, 0.5f) // 設定裁減比例
+                .withMaxResultSize(100, 100) // 設定結果尺寸不可超過指定寬高
                 .getIntent(activity);
         // Launcher() -> 進行跳轉 等待接收回傳結果 -> cropPictureResult()
         cropPictureLauncher.launch(cropIntent);
@@ -391,7 +408,7 @@ public class MerchInsertFragment extends Fragment {
                 // 記憶體 的 OutputStream
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 // compress壓縮 (格式, 壓縮品質, 存放位置)
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 10, out);
                 // bitmap壓縮 -> out -> 轉成byte陣列 (準備requst)
                 images.add(out.toByteArray());
                 // 圖片計數

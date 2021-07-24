@@ -2,6 +2,7 @@ package idv.tfp10101.iamin;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -41,6 +43,7 @@ public class MemberCenterFragment extends Fragment {
     private Activity activity;
     private FirebaseAuth auth;
     private TextView nickname, email, rating, followCount;
+    private ImageView memberClass;
     private ImageView ivPic;
     private Member member;
     private Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
@@ -51,8 +54,6 @@ public class MemberCenterFragment extends Fragment {
         activity = getActivity();
         auth = FirebaseAuth.getInstance();
         member = MemberControl.getInstance();
-        Log.d(TAG, "mebmerCenter_onCreate: " + member.getId());
-
     }
 
     @Override
@@ -70,6 +71,15 @@ public class MemberCenterFragment extends Fragment {
         ivPic = view.findViewById(R.id.ivProfilePic);
         rating = view.findViewById(R.id.tvRating);
         followCount = view.findViewById(R.id.tvMCFollowCount);
+        memberClass = view.findViewById(R.id.memberClass);
+
+        Log.d(TAG,"phone_number: " + member.getPhoneNumber());
+
+        if (member.getPhoneNumber() == null || String.valueOf(member.getPhoneNumber()).trim().isEmpty()) {
+            memberClass.setImageResource(R.drawable.silver_member);
+        }else{
+            memberClass.setImageResource(R.drawable.golden_member);
+        }
 
         setTextView();
         setImageView();
@@ -78,8 +88,8 @@ public class MemberCenterFragment extends Fragment {
         view.findViewById(R.id.btMCProfile).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memeberCenterProfileFragment));
         //前往訂單
-//        view.findViewById(R.id.btMCOrderList).setOnClickListener(v ->
-//                Navigation.findNavController(v).navigate(R.id.action_memberCenter_to_MC_OrderList));
+        view.findViewById(R.id.btMCOrderList).setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memberCenterMemberOrderFragment));
         //前往追隨
         view.findViewById(R.id.btMCFollow).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memeberCenterFollowFragment));
@@ -100,9 +110,11 @@ public class MemberCenterFragment extends Fragment {
                             navigate(R.id.action_memberCenterFragment_to_memberCenterMyWalletFragment,bundle);
                 }
         });
-        //前往賣家中心
-//        view.findViewById(R.id.btMCSellerCenter).setOnClickListener(v ->
-//                Navigation.findNavController(v).navigate(R.id.action_memberCenter_to_MC_SellerCenter));
+
+        //前往我的團購
+        view.findViewById(R.id.btMCSellerCenter).setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_sellerFragment));
+
         //回到賣家
         view.findViewById(R.id.btBacktoHomepage).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_homeFragment));
@@ -128,6 +140,7 @@ public class MemberCenterFragment extends Fragment {
             navController.navigate(R.id.homeFragment);
 
         });
+
     }
 
     @Override
@@ -135,6 +148,11 @@ public class MemberCenterFragment extends Fragment {
         super.onStart();
             member = MemberControl.getInstance();
             setTextView();
+        if (member.getPhoneNumber() == null || String.valueOf(member.getPhoneNumber()).trim().isEmpty()) {
+            memberClass.setImageResource(R.drawable.silver_member);
+        }else{
+            memberClass.setImageResource(R.drawable.golden_member);
+        }
 //            Log.d(TAG, "OnCreate: " + member.isUpdate());
     }
 

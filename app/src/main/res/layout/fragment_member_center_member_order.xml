@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/colorBackground"
     tools:context=".MemberCenterMemberOrderFragment"
     android:padding="8dp">
 
@@ -17,47 +18,28 @@
         android:background="@drawable/searchview_background"
         android:iconifiedByDefault="false"
         android:queryBackground="@android:color/transparent"
-        android:queryHint="Search" />
+        android:queryHint="@string/text_group_name" >
 
-    <com.google.android.material.button.MaterialButtonToggleGroup
-        android:id="@+id/toggleButton"
+    </SearchView>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="8dp">
-        <Button
-            android:id="@+id/btOderOngoing"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="@string/ongoing"
-            android:backgroundTint="#FFC107"
-            />
-        <Button
-            android:id="@+id/btOrderReach"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/reach"
-            android:backgroundTint="@color/teal_200"
-            />
-        <Button
-            android:id="@+id/btOrderFailed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/failed"
-            android:backgroundTint="#8C1111"
-            />
-    </com.google.android.material.button.MaterialButtonToggleGroup>
+        android:orientation="vertical">
+
+        <Spinner
+            android:id="@+id/memberOrderSpinner"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_margin="16dp"
+            android:layout_weight="1" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvMemberOrderList"
+        android:id="@+id/rvMemberCenterOrder"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginHorizontal="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@color/white"
-        android:padding="4dp" />
+        android:layout_height="match_parent" />
+
+
 </LinearLayout>

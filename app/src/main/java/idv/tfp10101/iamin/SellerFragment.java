@@ -1,7 +1,9 @@
 package idv.tfp10101.iamin;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,11 +31,17 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.group.GroupControl;
+import idv.tfp10101.iamin.member.Member;
+import idv.tfp10101.iamin.member.MemberControl;
+import idv.tfp10101.iamin.member_order.MemberOrder;
+import idv.tfp10101.iamin.member_order.MemberOrderControl;
 
 public class SellerFragment extends Fragment {
     private Activity activity;
@@ -43,12 +52,14 @@ public class SellerFragment extends Fragment {
     private RecyclerView recyclerViewSeller;
     private Button buttonGroup;
     // 物件
+    private Member member;
     private List<Group> localGroups = new ArrayList<>(); // 取得目前已達標的團購
     private List<Group> filterGroups = new ArrayList<>(); // 取得已篩選達標的團購
-
     private Map<Integer, String> mapGroupStatus = new HashMap<>(); // 團購種類MAP
     private int groupStatus = 0; // 目前團購spinner的狀態
     private String groupSearch = ""; // 搜尋的字串
+    // 導航控制(頁面切換用)
+    private NavController navController;
     /**
      * 取得xml元件
      * @param view Activity下的view
@@ -56,10 +67,12 @@ public class SellerFragment extends Fragment {
     private void findViews(View view) {
         searchViewSeller = view.findViewById(R.id.searchViewSeller);
         spinnerSeller = view.findViewById(R.id.spinnerSeller);
-        buttonGroup = view.findViewById(R.id.buttonGroup);
+        buttonGroup = view.findViewById(R.id.buttonSubmit);
         // 先載入RecyclerView元件，但是還沒有掛上Adapter
         recyclerViewSeller = view.findViewById(R.id.recyclerViewSeller);
         recyclerViewSeller.setLayoutManager(new LinearLayoutManager(activity));
+
+        navController = Navigation.findNavController(view);
     }
 
     /**
@@ -97,11 +110,42 @@ public class SellerFragment extends Fragment {
 
         findViews(view);
 
-        // 一開始先判斷
 
-        /** 設定預設memberId */
+
+        /** 抓取會員ID */
+        member = MemberControl.getInstance();
+        // 如果沒有登入
+        if (member.getId() == -1) {
+            /** 建立AlertDialog */
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            builder.setTitle("還未登入喔請先登入會員");
+            builder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // 切換頁面
+                    navController.navigate(R.id.action_sellerFragment_to_logInFragment);
+                }
+            });
+            // 顯示
+            builder.show();
+        }else if (member.getPhoneNumber() == null || member.getPhoneNumber().isEmpty()) {
+            // 一開始先判斷有沒有登入有驗證的會員
+            /** 建立AlertDialog */
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            builder.setTitle("您還不是認證會員喔！將移到會員中心更新會員資料");
+            builder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // 切換頁面
+                    navController.navigate(R.id.action_sellerFragment_to_memeberCenterProfileFragment);
+                }
+            });
+            // 顯示
+            builder.show();
+        }
+
         // 跟server抓取所有Group
-        GroupControl.getAllGroupByMemberId(activity, 1);
+        GroupControl.getAllGroupByMemberId(activity, member.getId());
         localGroups = GroupControl.getLocalGroup();
         if (localGroups == null || localGroups.isEmpty()) {
             Toast.makeText(activity, R.string.textNoGroupsFound, Toast.LENGTH_SHORT).show();
@@ -304,9 +348,23 @@ public class SellerFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             final Group rsGroup = rsGroups.get(position); // 第幾個group
-
+            //
             holder.textViewName.setText(rsGroup.getName());
-            holder.textViewNumber.setText("000");
+            // 參加人數-抓取會員訂單
+            holder.textViewNumber.setText("0"); // 預設
+            List<MemberOrder> memberOrders =
+                    MemberOrderControl.getMemberOrderByGroupId(
+                            activity,
+                            rsGroup.getGroupId(),
+                            "PaymentInformation");
+            Set<Integer> memberIds = new HashSet<>();
+            if (memberOrders != null) {
+                for (MemberOrder memberOrder : memberOrders) {
+                    memberIds.add(memberOrder.getMemberId());
+                    holder.textViewNumber.setText(String.valueOf(memberIds.size()));
+                }
+            }
+            //
             holder.textViewCount.setText(String.valueOf(rsGroup.getProgress()));   // int -> str
             // 截止時間
             String time = timestampToString(rsGroup.getConditionTime());

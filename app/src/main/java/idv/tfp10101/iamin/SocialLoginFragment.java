@@ -1,6 +1,7 @@
 package idv.tfp10101.iamin;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -23,6 +24,10 @@ import com.google.gson.JsonObject;
 import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.network.RemoteAccess;
+
+import static android.content.Context.MODE_PRIVATE;
+import static idv.tfp10101.iamin.Constants.FCM_Token;
+import static idv.tfp10101.iamin.member.MemberControl.memberRemoteAccess;
 
 public class SocialLoginFragment extends Fragment {
     private String TAG = "TAG_SocialLoginFragment";
@@ -52,7 +57,6 @@ public class SocialLoginFragment extends Fragment {
         etNickName= view.findViewById(R.id.etSocialSignUpNickName);
         til = view.findViewById(R.id.tilSocialSignUp);
 
-
         view.findViewById(R.id.btSocialLogin).setOnClickListener(v -> {
             String nickname = etNickName.getText().toString().trim();
             if(nickname.isEmpty()){
@@ -69,14 +73,14 @@ public class SocialLoginFragment extends Fragment {
     private void sendDateToMysql(String nickname) {
         FirebaseAuth auth = FirebaseAuth.getInstance();
 
+        SharedPreferences sharedPreferences = activity.getSharedPreferences(FCM_Token, MODE_PRIVATE);
+        String myToken = sharedPreferences.getString(FCM_Token, "");
+        member.setFCM_token(myToken);
+
         member.setuUId(auth.getCurrentUser().getUid());
         member.setNickname(nickname);
 
-        String memberUrl = RemoteAccess.URL_SERVER + "memberController";
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("action", "signup");
-        jsonObject.addProperty("member", new Gson().toJson(member));
-        String json = RemoteAccess.getRemoteData(memberUrl, jsonObject.toString());
+        String json = memberRemoteAccess(activity,member,"signup");
         member = new Gson().fromJson(json,Member.class);
         Log.d(TAG,"member: " + member);
         if(member == null){
