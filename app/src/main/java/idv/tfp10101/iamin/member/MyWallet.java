@@ -14,6 +14,7 @@ public class MyWallet {
 	private int price;
 	private int totalPrice;
 	private int deliverStatus;
+	private int quantity;
 	private Timestamp startTime;
 	private Timestamp updateTime;
 	private String category;
@@ -115,5 +116,13 @@ public class MyWallet {
 
 	public void setGroupName(String groupName) {
 		this.groupName = groupName;
+	}
+
+	public int getQuantity() {
+		return quantity;
+	}
+
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
 	}
 }

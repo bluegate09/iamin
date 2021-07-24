@@ -7,7 +7,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,7 +23,6 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MyWallet;
 
 public class MemberCenterMyWalletDetailsFragment extends Fragment {
@@ -97,7 +95,7 @@ public class MemberCenterMyWalletDetailsFragment extends Fragment {
         }
 
         class MyViewHolder extends RecyclerView.ViewHolder {
-            TextView groupTitleWallet, nameWallet,priceWallet,dateWallet;
+            TextView groupTitleWallet, nameWallet,priceWallet,dateWallet,number;
 
             MyViewHolder(View itemView) {
                 super(itemView);
@@ -105,6 +103,7 @@ public class MemberCenterMyWalletDetailsFragment extends Fragment {
                 nameWallet = itemView.findViewById(R.id.nameWallet);
                 priceWallet = itemView.findViewById(R.id.priceWallet);
                 dateWallet = itemView.findViewById(R.id.dateWallet);
+                number = itemView.findViewById(R.id.numberWallet);
             }
         }
 
@@ -124,10 +123,10 @@ public class MemberCenterMyWalletDetailsFragment extends Fragment {
         public void onBindViewHolder(@NonNull MemberCenterMyWalletDetailsFragment.MyWalletDetailsAdapter.MyViewHolder myViewHolder, int position) {
             final MyWallet myWalletDetails = myWalletListDetails.get(position);
             myViewHolder.dateWallet.setText(myWalletDetails.getUpdateTime().toString());
-            myViewHolder.priceWallet.setText(String.valueOf(myWalletDetails.getTotalPrice() + getString(R.string.text_money_ntd)));
+            myViewHolder.priceWallet.setText(myWalletDetails.getTotalPrice() + getString(R.string.text_money_ntd));
             myViewHolder.nameWallet.setText(myWalletDetails.getName());
             myViewHolder.groupTitleWallet.setText(myWalletDetails.getGroupName());
-
+            myViewHolder.number.setText(String.valueOf(myWalletDetails.getQuantity()));
 
 
         }

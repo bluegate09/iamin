@@ -146,10 +146,13 @@
     <string name="text_total_price">TotalPrice: </string>
     <string name="text_member_order_id">MemberOrderId: </string>
     <string name="deadline">DeadLine</string>
-    <string name="pick_up_location">Pick Up Location:</string>
+    <string name="pick_up_location1">Pick Up Location 1:</string>
+    <string name="pick_up_location2">Pick Up Location 2:</string>
+    <string name="pick_up_location3">Pick Up Location 3:</string>
     <string name="text_money_ntd">" NTD"</string>
     <string name="pickup_time">Pickup Time:</string>
     <string name="text_group_name">Group Name</string>
     <string name="text_details_all">All</string>
     <string name="text_order_details">Order details</string>
+    <string name="text_perchase_number">Perchase number:</string>
 </resources>

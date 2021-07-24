@@ -246,20 +246,6 @@
                 android:insetBottom="0dp"
                 android:text="@string/homepage"
                 android:textAlignment="textStart" />
-            <Button
-                android:drawableEnd="@drawable/member_profile_arrow"
-                android:background="@drawable/bg_black_border_button"
-                app:backgroundTint="@null"
-                android:textColor="@color/black"
-                android:id="@+id/btTestGround"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:text="追隨功能測試"
-                android:textAlignment="textStart" />
 
             <Button
                 android:background="@drawable/bg_black_border_button"
