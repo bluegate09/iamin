@@ -284,9 +284,6 @@ public class HomeFragment extends Fragment {
         );
         task.addOnSuccessListener(location -> {
             if (location != null) {
-
-//                intervalPositioning();
-
                 //取得緯度
                 userlat = location.getLatitude();
                 //取得經度
@@ -301,6 +298,7 @@ public class HomeFragment extends Fragment {
     private void coumputeDistancemin(){
 
         localHomeDatas =  new ArrayList<>();
+
         HomeData homeData;
         for (Group group: localGroups){
             List<Float> distance = new ArrayList<>();
@@ -448,10 +446,9 @@ public class HomeFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull HomeFragment.HomeAdapter.MyHomeDataViewHolder holder, int position) {
             final HomeData rsHomeData = rsHomeDatas.get(position);
+
             int GroupID = rsHomeData.getGroup().getGroupId();
 
-
-            List<Location> grouplocations = new ArrayList<>();
             Bitmap Groupbitmap = HomeDataControl.getGroupimage(activity, GroupID, imageSize, executor);
             if (Groupbitmap != null) {
                 holder.imv_group.setImageBitmap(Groupbitmap);
@@ -467,42 +464,34 @@ public class HomeFragment extends Fragment {
             holder.txv_progress.setText("(" + String.valueOf(rsHomeData.getGroup().getProgress()) + "/" + String.valueOf(rsHomeData.getGroup().getGoal()) + ")");
 
             //取的團購的所有地點
-            grouplocations = LocationControl.getLocationByGroupId(activity, GroupID);
-            List<Float> distance = new ArrayList<>();
-            for (Location location : grouplocations){
-                float[] results = new float[1];
-                //取得所有面交地點的緯經度
-                Double groupLat = location.getLatitude();
-                Double groupLng = location.getLongtitude();
-                //取得買家與所有團購面交地點的距離
-                android.location.Location.distanceBetween(userlat,userlng,groupLat,groupLng,results);
-                //除以1000從公尺變成公里後加入list
-                distance.add(results[0]/1000);
-            }
-            //由小到大排序(只取最近的距離)
-            Collections.sort(distance);
-            BigDecimal b = new BigDecimal(distance.get(0));
-            //四捨五入到小數第一位
-            float groupDismin = b.setScale(1,BigDecimal.ROUND_HALF_UP).floatValue();
-            holder.txv_distanceMin.setText("距離您"+String.valueOf(groupDismin)+"公里");
+//            grouplocations = LocationControl.getLocationByGroupId(activity, GroupID);
+//            List<Float> distance = new ArrayList<>();
+//            for (Location location : grouplocations){
+//                float[] results = new float[1];
+//                //取得所有面交地點的緯經度
+//                Double groupLat = location.getLatitude();
+//                Double groupLng = location.getLongtitude();
+//                //取得買家與所有團購面交地點的距離
+//                android.location.Location.distanceBetween(userlat,userlng,groupLat,groupLng,results);
+//                //除以1000從公尺變成公里後加入list
+//                distance.add(results[0]/1000);
+//            }
+//            //由小到大排序(只取最近的距離)
+//            Collections.sort(distance);
+//            BigDecimal b = new BigDecimal(distance.get(0));
+//            //四捨五入到小數第一位
+//            float groupDismin = b.setScale(1,BigDecimal.ROUND_HALF_UP).floatValue();
+            holder.txv_distanceMin.setText("距離您"+String.valueOf(rsHomeData.getDistance())+"公里");
 
             //設定點擊商品觸發
             holder.itemView.setOnClickListener(v -> {
-                HashMap<String, Object> GrouphashMap = new HashMap<>();
-                GrouphashMap.put("GroupID", rsHomeData.getGroup().getGroupId());//打包團購ID
-                GrouphashMap.put("SellerID", rsHomeData.getGroup().getMemberId());//打包團購發起人ID
-                GrouphashMap.put("Progress", rsHomeData.getGroup().getProgress());//打包團購進度
-                GrouphashMap.put("Goal", rsHomeData.getGroup().getGoal());//打包團購目標
-                GrouphashMap.put("Contact_Number", rsHomeData.getGroup().getContactNumber());//打包團購聯絡電話
-                GrouphashMap.put("Payment_Method", rsHomeData.getGroup().getPaymentMethod());//打包付款方式
-                GrouphashMap.put("Group_status", rsHomeData.getGroup().getGroupStatus());//打包團購狀態
-                GrouphashMap.put("Caution", rsHomeData.getGroup().getCaution());//打包注意事項
-                GrouphashMap.put("Condition_count", rsHomeData.getGroup().getConditionCount());//打包停單份數
-                GrouphashMap.put("Condition_Time", rsHomeData.getGroup().getConditionTime());//打包停單時間
-                Bundle bundleMap = new Bundle();
-                bundleMap.putSerializable("Group", GrouphashMap);
 
-                Navigation.findNavController(v).navigate(R.id.merchbrowseFragment, bundleMap);
+                Bundle bundle = new Bundle();
+                bundle.putInt("GroupID", GroupID);
+                bundle.putDouble("Userlat",userlat);
+                bundle.putDouble("Userlng",userlng);
+
+                Navigation.findNavController(v).navigate(R.id.merchbrowseFragment, bundle);
             });
         }
 
@@ -572,11 +561,11 @@ public class HomeFragment extends Fragment {
         // 7.2 設定更新週期
         locationRequest.setInterval(10000);
         // 7.3 設定最快更新週期
-        locationRequest.setFastestInterval(100);
+        locationRequest.setFastestInterval(3000);
         // 7.4 設定優先順序
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        locationRequest.setNumUpdates(2);
+//        locationRequest.setNumUpdates(2);
 
         // 8. 建立定位設定物件，並加入步驟7建立的定位請求物件
         return new LocationSettingsRequest.Builder()
