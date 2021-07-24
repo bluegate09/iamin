@@ -8,6 +8,9 @@ import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.google.gson.JsonObject;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -15,18 +18,20 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
 import idv.tfp10101.iamin.Constants;
+import idv.tfp10101.iamin.R;
 
 
 /**
  * Server連線 Action總表
  */
 public class RemoteAccess {
+    private static final String TAG = "TAG_RemoteAccess";
     // 根網址
 //    public static String URL_SERVER = "http://10.0.2.2:8080/iamin_JavaServlet/";
     //實機測試
-    public static String URL_SERVER = "http://192.168.1.101:8080/iamin_JavaServlet/";
+//    public static String URL_SERVER = "http://192.168.1.101:8080/iamin_JavaServlet/";
 
-    //public static String URL_SERVER = "http://219.68.160.213:8080/iamin_JavaServlet/";
+    public static String URL_SERVER = "http://219.68.160.213:8080/iamin_JavaServlet/";
 
     /**
      * (Json)抓取server資料
@@ -49,15 +54,38 @@ public class RemoteAccess {
         }
     }
 
+    public static void sendChatTokenToServer(String token, Context context) {
+        if (networkConnected(context)) {
+            String url = URL_SERVER + "FcmChatServlet";
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("action", "register");
+            jsonObject.addProperty("registrationToken", token);
+            RemoteAccess.getRemoteData(url, jsonObject.toString());
+        } else {
+            Toast.makeText(context, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
     /**
      * (Images)抓取server資料
      * @param url
 //     * @param requst
      * @return
      */
-//    public static List<byte[]> getRemoteImages(String url, String requst) {
-//
-//    }
+    public static String getRemoteChatData(String url, String outStr) {
+        JsonCallable callable = new JsonCallable(url, outStr);
+        FutureTask<String> task = new FutureTask<>(callable);
+        Thread thread = new Thread(task);
+        thread.start();
+        try {
+            return task.get();
+        } catch (Exception e) {
+            Log.e(TAG, "getRemoteData(): " + e.toString());
+            task.cancel(true);
+            return "";
+        }
+    }
 
     // 適用取得一張圖
     public static Bitmap getRemoteImage(String url, String outStr) {

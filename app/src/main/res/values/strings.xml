@@ -127,4 +127,11 @@
     <string name="text_verification_account">Account verification</string>
     <string name="text_account_verification_message">Please wait for a while…</string>
     <string name="text_welcome_back">Welcome Come Back</string>
+    <string name="textMessageIsInvalid">Message Is Invalid</string>
+    <string name="textSendMessage">Send Message</string>
+    <string name="textSendMessageFail">Send Message Fail</string>
+    <string name="textNoMessageFound">No Message Found</string>
+    <string name="textMessage">Message</string>
+    <string name="default_notification_channel_id">default_channel_id</string>
+    <string name="chat_notification_channel_id">chat_notification_channel_id</string>
 </resources>

@@ -1,14 +1,21 @@
 package idv.tfp10101.iamin;
 
+import androidx.annotation.FractionRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,12 +31,14 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "TAG_MainActivity";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        handleBottomNavigationView();
+//        handleBottomNavigationView();
 
         /** FCM_Serller 相關設定 */
         // 設定app在背景時收到FCM，會自動顯示notification（前景時則不會自動顯示）
@@ -37,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String channelId = "seller_notification_channel_id";
             String channelName = "seller_notification_channel_name";
+            String channelChatId = "chat_notification_channel_id";
+            String channelChatName = "chat_notification_channel_name";
             /*
                 NotificationManager -> 需設定2大類
                 1. Notification本身訊息 (icon, 圖示, title, body, 自訂資料)
@@ -48,9 +59,11 @@ public class MainActivity extends AppCompatActivity {
             notificationManager.createNotificationChannel(new NotificationChannel(channelId,
                     channelName, NotificationManager.IMPORTANCE_DEFAULT));
             // 本身訊息 (icon 圖示 已在manifest設定， 訊息部分由Server發送)
+            notificationManager.createNotificationChannel(new NotificationChannel(channelChatId,
+                    channelChatName, NotificationManager.IMPORTANCE_DEFAULT));
         }
 
-        // 當Notification被點擊時會開啟App來到MainActivity，需取得自訂資料後，在跳轉Fragment頁面
+//         當Notification被點擊時會開啟App來到MainActivity，需取得自訂資料後，在跳轉Fragment頁面
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             String data = bundle.getString("data");
@@ -132,24 +145,13 @@ public class MainActivity extends AppCompatActivity {
                destination.getId() == R.id.logInFragment||
                destination.getId() == R.id.signUpFragment||
                destination.getId() == R.id.phoneAuthFragment||
-               destination.getId() == R.id.memeberCenterProfileFragment
+               destination.getId() == R.id.memeberCenterProfileFragment ||
+                    destination.getId() == R.id.messageFragment
             ){
                 bottomNavigationView.setVisibility(View.GONE);
             }else{
                 bottomNavigationView.setVisibility(View.VISIBLE);
             }
-
-//            if (
-//                    navController.getCurrentDestination().getId() == R.id.homeFragment ||
-//                    navController.getCurrentDestination().getId() == R.id.chatFragment
-//                            || navController.getCurrentDestination().getId() == R.id.logInFragment
-//            ) {
-//                bottomNavigationView.setVisibility(View.VISIBLE);
-//            } else {
-//                bottomNavigationView.setVisibility(View.GONE);
-//            }
         });
     }
-
-
 }

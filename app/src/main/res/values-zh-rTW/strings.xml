@@ -122,4 +122,11 @@
     <string name="text_verification_account">帳號驗證中</string>
     <string name="text_account_verification_message">請稍等…</string>
     <string name="text_welcome_back">歡迎回來</string>
+    <string name="textMessageIsInvalid">Message Is Invalid</string>
+    <string name="textSendMessage">Send Message</string>
+    <string name="textSendMessageFail">Send Message Fail</string>
+    <string name="textNoMessageFound">No Message Found</string>
+    <string name="textMessage">Message</string>
+    <string name="default_notification_channel_id">default_channel_id</string>
+    <string name="chat_notification_channel_id">chat_notification_channel_id</string>
 </resources>

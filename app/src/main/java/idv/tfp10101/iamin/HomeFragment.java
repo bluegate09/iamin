@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.protobuf.Empty;
@@ -68,7 +69,8 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        // Chat token在這裡取得
+        getTokenSendServer();
         // 需要開啟多個執行緒取得各景點圖片，使用執行緒池功能
         int numProcs = Runtime.getRuntime().availableProcessors();
         Log.d("TAG", "JVM可用的處理器數量: " + numProcs);
@@ -367,6 +369,18 @@ public class HomeFragment extends Fragment {
         public int getItemCount() {
             return rsGroups == null ? 0 : rsGroups.size();
         }
+    }
+
+    // send Chat token
+    private void getTokenSendServer() {
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                if (task.getResult() != null) {
+                    String token = task.getResult();
+                    RemoteAccess.sendChatTokenToServer(token, activity);
+                }
+            }
+        });
     }
 
 }
