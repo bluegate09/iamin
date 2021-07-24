@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorBackground"
     android:orientation="vertical"
     tools:context=".MemberCenterFragment">
 
@@ -28,47 +29,33 @@
             android:id="@+id/mcUsername"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
             android:layout_marginStart="15dp"
-            android:layout_marginTop="45dp"
+            android:layout_marginTop="40dp"
             android:layout_toEndOf="@id/ivProfilePic"
             android:text="@string/username"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
 
-        <ScrollView
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/mcEmail"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/mcUsername"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="20dp"
-            android:layout_toEndOf="@+id/ivProfilePic">
+            android:layout_alignStart="@+id/mcUsername"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/account"
+            android:textSize="16sp" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/mcEmail"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginTop="2dp"
-                    android:text="@string/account"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/memberClass"
-                    android:padding="16dp"
-                    android:background="@drawable/rounded_edittext"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginTop="8dp"
-                    android:text="Normal Member"
-                    android:textSize="16sp" />
-
-            </LinearLayout>
-        </ScrollView>
+        <ImageView
+            android:id="@+id/memberClass"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/mcUsername"
+            android:layout_alignStart="@+id/mcUsername"
+            android:layout_marginStart="-30dp"
+            android:layout_marginTop="40dp"
+            android:src="@drawable/golden_member" />
 
     </RelativeLayout>
 

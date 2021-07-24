@@ -2,6 +2,7 @@ package idv.tfp10101.iamin;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -40,7 +42,8 @@ public class MemberCenterFragment extends Fragment {
     private final static String TAG = "TAG_MemberCenter";
     private Activity activity;
     private FirebaseAuth auth;
-    private TextView nickname, email, rating, followCount,memberClass;
+    private TextView nickname, email, rating, followCount;
+    private ImageView memberClass;
     private ImageView ivPic;
     private Member member;
     private Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
@@ -73,10 +76,9 @@ public class MemberCenterFragment extends Fragment {
         Log.d(TAG,"phone_number: " + member.getPhoneNumber());
 
         if (member.getPhoneNumber() == null || String.valueOf(member.getPhoneNumber()).trim().isEmpty()) {
-            memberClass.setText(R.string.text_general_member);
+            memberClass.setImageResource(R.drawable.silver_member);
         }else{
-            memberClass.setText(R.string.text_senior_member);
-
+            memberClass.setImageResource(R.drawable.golden_member);
         }
 
         setTextView();
@@ -139,15 +141,6 @@ public class MemberCenterFragment extends Fragment {
 
         });
 
-        view.findViewById(R.id.btTestGround).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-                Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memberCenterFollowTestGround);
-            }
-        });
-
     }
 
     @Override
@@ -156,10 +149,9 @@ public class MemberCenterFragment extends Fragment {
             member = MemberControl.getInstance();
             setTextView();
         if (member.getPhoneNumber() == null || String.valueOf(member.getPhoneNumber()).trim().isEmpty()) {
-            memberClass.setText(R.string.text_general_member);
+            memberClass.setImageResource(R.drawable.silver_member);
         }else{
-            memberClass.setText(R.string.text_senior_member);
-
+            memberClass.setImageResource(R.drawable.golden_member);
         }
 //            Log.d(TAG, "OnCreate: " + member.isUpdate());
     }

@@ -1,31 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:padding="16dp"
-    android:layout_margin="8dp"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout8"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:padding="8dp"
+    android:layout_margin="8dp">
 
-    <View
-        android:id="@+id/walletViewBackgroundColor"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="0.1" />
+    <TextView
+        android:id="@+id/iconWallet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="⚈"
+        android:textSize="20sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/groupTitleWallet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_marginTop="16dp"
+        android:text="groupTitle"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@+id/iconWallet"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/nameWallet"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="50sp"
-        android:layout_weight="1"
-        android:text="TextView" />
+        android:text="merchName"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@+id/groupTitleWallet"
+        app:layout_constraintTop_toBottomOf="@+id/groupTitleWallet" />
+
+    <TextView
+        android:id="@+id/numberWallet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Perchase number"
+        app:layout_constraintStart_toStartOf="@+id/nameWallet"
+        app:layout_constraintTop_toBottomOf="@+id/nameWallet" />
 
     <TextView
         android:id="@+id/priceWallet"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:textSize="50sp"
-        android:layout_weight="1"
-        android:text="TextView" />
-</LinearLayout>
+        android:layout_marginTop="8dp"
+        android:text="Price"
+        app:layout_constraintStart_toStartOf="@+id/numberWallet"
+        app:layout_constraintTop_toBottomOf="@+id/numberWallet" />
+
+    <TextView
+        android:id="@+id/dateWallet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="date"
+        android:textSize="12sp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/priceWallet"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

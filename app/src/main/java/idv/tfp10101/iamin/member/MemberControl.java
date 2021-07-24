@@ -17,6 +17,8 @@ import idv.tfp10101.iamin.network.RemoteAccess;
 
 public class MemberControl {
 
+    private final static String TAG = "TAG_MemberControl";
+
     private static Member memberInstance;
     public static Member getInstance(){
         if(memberInstance == null){
@@ -31,9 +33,6 @@ public class MemberControl {
         }
         memberInstance = member;
     }
-
-
-    private final static String TAG = "TAG_MemberControl";
 
     /**
      *

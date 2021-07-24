@@ -2,15 +2,15 @@ package idv.tfp10101.iamin;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
@@ -19,29 +19,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -50,16 +47,16 @@ import java.util.Set;
 
 import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
+import idv.tfp10101.iamin.member.MyPercentFormatter;
 import idv.tfp10101.iamin.member.MyWallet;
 
-import static android.content.Context.MODE_PRIVATE;
 import static idv.tfp10101.iamin.member.MemberControl.memberRemoteAccess;
 
 public class MemberCenterMyWalletFragment extends Fragment {
     private final static String TAG = "TAG_MyWallet";
     private Activity activity;
     private Member member;
-    private List<MyWallet> myWallets,myWalletsYear;
+    private List<MyWallet> myWallets,myWalletsYear,dataForBundle;
     private PieData pieData;
     private PieChart pieChart;
     private Spinner monthDropDown;
@@ -123,11 +120,10 @@ public class MemberCenterMyWalletFragment extends Fragment {
 //        rvMyWallet = view.findViewById(R.id.rvMyWallet);
 //        rvMyWallet.setLayoutManager(new LinearLayoutManager(activity));
 
-        ;
-
         listView = view.findViewById(R.id.myWalletListView);
-//        myListAdapter adapter = new myListAdapter(activity,R.layout.my_wallet_adapter_view_layout,getMyWalletEntries(myWallets));
-//        listView.setAdapter(adapter);
+        myListAdapter adapter = new myListAdapter(activity,R.layout.my_wallet_adapter_view_layout,getMyWalletData(myWallets));
+
+        listView.setAdapter(adapter);
 
         date_year = new ArrayList<>();
         date_month = new ArrayList<>();
@@ -154,7 +150,8 @@ public class MemberCenterMyWalletFragment extends Fragment {
         sortMonthForDropDown(myWalletsYear);
         //pieChart設定
         handlePieChartConfig(view);
-        //更新pieChart 及 recycleView
+        //更新pieChart 及 listView
+        dataForBundle = myWalletsYear;
         updateUI(myWalletsYear);
 
 
@@ -167,9 +164,8 @@ public class MemberCenterMyWalletFragment extends Fragment {
         monthDropDown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //AutoCompleteTextView DropdownMenu
                 monthDropDown.getAdapter().getItem(0);
-                Log.d(TAG,"monthDropDown: " + monthDropDown.getAdapter().getItem(0));
+//                Log.d(TAG,"monthDropDown: " + monthDropDown.getAdapter().getItem(0));
 
                 if(position == 0){
                     updateUI(myWalletsYear);
@@ -184,6 +180,7 @@ public class MemberCenterMyWalletFragment extends Fragment {
                             tmpList.add(tmp);
                         }
                     }
+                    dataForBundle = tmpList;
                     updateUI(tmpList);
 //                    Log.d(TAG, "MyWallet_adapterMonth: " + date_month);
                 }
@@ -276,38 +273,6 @@ public class MemberCenterMyWalletFragment extends Fragment {
     }
 
 
-    private void updateUI(List<MyWallet> myWallets) {
-        pieData = setPieData(getMyWalletEntries(myWallets));
-        pieChart.setData(pieData);
-        pieChart.invalidate();
-        pieData.setValueFormatter(new PercentFormatter(pieChart));
-        //更新recycle view
-//        showWalletList(myWallets);
-
-    }
-
-
-    private void handlePieChartConfig(View view) {
-        //處理pieChart
-        pieChart = view.findViewById(R.id.pieChart);
-        /* 設定可否旋轉 */
-        pieChart.setRotationEnabled(false);
-        /* 設定圓心文字 */
-        pieChart.setCenterText(getString(R.string.spending));
-        /* 設定圓心文字大小 */
-        pieChart.setCenterTextSize(25);
-
-        pieChart.getDescription().setEnabled(false);
-//        Description description = new Description();
-//        description.setText("");
-//        description.setTextSize(25);
-//        pieChart.setDescription(description);
-        pieChart.getLegend().setEnabled(false);
-        pieChart.animateY(1000, Easing.EaseInOutCubic);
-
-        pieChart.setUsePercentValues(true);
-    }
-
     //整理年份
     private void sortYearForDropDown(List<MyWallet> myWallets) {
         Set<String> hash_set_year = new HashSet<>();
@@ -329,7 +294,7 @@ public class MemberCenterMyWalletFragment extends Fragment {
         }
         //增加All time
         date_month.clear();
-//        date_month.add(getString(R.string.alltime));
+        date_month.add(getString(R.string.alltime));
         date_month.addAll(hash_set_month);
 
         //排序讓alltime在最上面 java8 addAll()
@@ -351,14 +316,116 @@ public class MemberCenterMyWalletFragment extends Fragment {
         });
     }
 
-//    public class myListAdapter extends ArrayAdapter<pieData>{
-//        private Context context;
-//
-//        public myListAdapter(Context context, List<>  ArrayList<MemberCenterMyWalletFragment.pieData> objects, Context context) {
-//            super(context, resource, objects);
-//            this.context = context;
-//        }
-//    }
+    public class myListAdapter extends ArrayAdapter<MyWalletData>{
+        private Context context;
+        private int resource;
+        private ArrayList<MyWalletData> myWalletData;
+
+        public myListAdapter(Context context, int resource, ArrayList<MyWalletData> myWalletData) {
+            super(context, resource, myWalletData);
+            this.context = context;
+            this.resource = resource;
+            this.myWalletData = myWalletData;
+        }
+
+        void setMyWallets(ArrayList<MyWalletData> myWalletData) {
+            this.myWalletData = myWalletData;
+        }
+
+        public View getView(int position, View convertView, ViewGroup parent){
+
+
+            LayoutInflater inflater = LayoutInflater.from(context);
+            convertView = inflater.inflate(resource,parent,false);
+
+            TextView tvCategory = convertView.findViewById(R.id.myWalletCategory);
+            TextView tvTotalPrice = convertView.findViewById(R.id.myWalletTotalPrice);
+            ProgressBar tvProgressBar = convertView.findViewById(R.id.myWalletProgerssBar);
+            View view = convertView.findViewById(R.id.myWalletColorView);
+
+
+            tvCategory.setText(myWalletData.get(position).getCategory());
+            tvTotalPrice.setText(myWalletData.get(position).getTotalPrice()+"");
+            view.setBackgroundColor(My_COLORS[position]);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    tvProgressBar.setProgress(0,true);
+                }else{
+                    tvProgressBar.setProgress(0);
+                }
+
+                ;
+                tvProgressBar.setProgressTintList(ColorStateList.valueOf(My_COLORS[position]));
+
+                if(!(myWalletData.get(position).getProgressBar() == 100)) {
+                    new Thread(() -> {
+                        final int max = myWalletData.get(position).getProgressBar();
+                        int progress;
+                        while ((progress = tvProgressBar.getProgress()) < max) {
+                            tvProgressBar.setProgress(progress + 6);
+                            try {
+                                long time = 100000 / myWalletData.get(position).getTotalPrice();
+                                Thread.sleep(time);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+                }else{
+                    new Thread(() -> {
+                        final int max = myWalletData.get(position).getProgressBar();
+                        int progress;
+                        while ((progress = tvProgressBar.getProgress()) < max) {
+                            tvProgressBar.setProgress(progress + 1);
+                            try {
+                                long time = 6;
+                                Thread.sleep(time);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+                }
+
+                //Navigation
+
+            convertView.setOnClickListener(v -> {
+
+                Gson gson = new Gson();
+
+                List<MyWallet> walletData = new ArrayList<>();
+                for(MyWallet data: dataForBundle){
+                    if(data.getCategory().equals(tvCategory.getText().toString())){
+                        walletData.add(data);
+                    }
+                }
+
+                if(walletData.size() != 0) {
+                    String json = gson.toJson(walletData);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("WalletData", json);
+                    bundle.putString("myWalletCategory", tvCategory.getText().toString());
+
+                    Navigation.findNavController(v).navigate(R.id.action_memberCenterMyWalletFragment_to_memberCenterMyWalletDetailsFragment, bundle);
+                }
+            });
+
+            return convertView;
+        }
+    }
+
+        private void showWalletList(List<MyWallet> myWallets) {
+        if (myWallets == null || myWallets.isEmpty()) {
+            Toast.makeText(activity, "", Toast.LENGTH_SHORT).show();
+        }
+            myListAdapter merchAdapter = (myListAdapter) listView.getAdapter();
+        if (merchAdapter == null) {
+            listView.setAdapter(new myListAdapter(activity,R.layout.my_wallet_adapter_view_layout,getMyWalletData(myWallets)));
+        } else {
+            merchAdapter.setMyWallets(getMyWalletData(myWallets));
+            merchAdapter.notifyDataSetChanged();
+        }
+    }
 
 //    private void showWalletList(List<MyWallet> myWallets) {
 //        if (myWallets == null || myWallets.isEmpty()) {
@@ -440,19 +507,53 @@ public class MemberCenterMyWalletFragment extends Fragment {
 //        }
 //    }
 
+    private void updateUI(List<MyWallet> myWallets) {
+        pieData = setPieData(getMyWalletEntries(myWallets));
+        pieChart.setData(pieData);
+        pieChart.invalidate();
+        pieData.setValueFormatter(new MyPercentFormatter(pieChart));
+        pieChart.animateY(1000, Easing.EaseInOutCubic);
+
+        //更新arrayList
+        showWalletList(myWallets);
+
+    }
+
+    private void handlePieChartConfig(View view) {
+        //處理pieChart
+        pieChart = view.findViewById(R.id.pieChart);
+        /* 設定可否旋轉 */
+        pieChart.setRotationEnabled(false);
+        /* 設定圓心文字 */
+        pieChart.setCenterText(getString(R.string.spending));
+        /* 設定圓心文字大小 */
+        pieChart.setCenterTextSize(25);
+
+        pieChart.getDescription().setEnabled(false);
+//        Description description = new Description();
+//        description.setText("");
+//        description.setTextSize(25);
+//        pieChart.setDescription(description);
+        pieChart.getLegend().setEnabled(false);
+        pieChart.animateY(1000, Easing.EaseInOutCubic);
+
+        pieChart.setUsePercentValues(true);
+
+    }
+
     private PieData setPieData(List<PieEntry> entries) {
         //從這裡給資料
         PieDataSet pieDataSet = new PieDataSet(entries, "");
 //        pieDataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
-        pieDataSet.setValueTextColor(Color.BLUE);
+        pieDataSet.setValueTextColor(Color.BLACK);
         pieDataSet.setValueTextSize(20);
         //間距
         pieDataSet.setSliceSpace(0);
         //自己建立
-
         /* 官定顏色範本只有5種顏色，不過可以將多個官定範本顏色疊加 */
         //
         pieDataSet.setColors(My_COLORS);
+
         return new PieData(pieDataSet);
     }
 
@@ -464,31 +565,89 @@ public class MemberCenterMyWalletFragment extends Fragment {
             String category = myWallets.get(i).getCategory();
 
             if(category.equals("美食")){
-                cA += myWallets.get(i).getTotoalPrice();
+                cA += myWallets.get(i).getTotalPrice();
             }else if(category.equals("生活用品")){
-                cB += myWallets.get(i).getTotoalPrice();
+                cB += myWallets.get(i).getTotalPrice();
             }else if(category.equals("3C")){
-                cC += myWallets.get(i).getTotoalPrice();
+                cC += myWallets.get(i).getTotalPrice();
             }else if(category.equals("其他")) {
-                cD += myWallets.get(i).getTotoalPrice();
+                cD += myWallets.get(i).getTotalPrice();
             }
         }
 
-        myWalletsEntries.add(new PieEntry(cA, "美食"));
-        myWalletsEntries.add(new PieEntry(cB, "生活用品"));
-        myWalletsEntries.add(new PieEntry(cC, "3C"));
-        myWalletsEntries.add(new PieEntry(cD, "其他"));
-
+        if(cA != 0) {
+            myWalletsEntries.add(new PieEntry(cA, "美食"));
+        }else{
+            myWalletsEntries.add(new PieEntry(cA, ""));
+        }
+        if(cB != 0) {
+            myWalletsEntries.add(new PieEntry(cB, "生活用品"));
+        }else{
+            myWalletsEntries.add(new PieEntry(cB, ""));
+        }
+        if(cC != 0) {
+            myWalletsEntries.add(new PieEntry(cC, "3C"));
+        }else{
+            myWalletsEntries.add(new PieEntry(cC, ""));
+        }
+        if(cD != 0) {
+            myWalletsEntries.add(new PieEntry(cD, "其他"));
+        }else{
+            myWalletsEntries.add(new PieEntry(cD, ""));
+        }
 
 //        for(int i = 0; i < myWallets.size(); i++) {
 //            myWalletsEntries.add(new PieEntry(myWallets.get(i).getTotoalPrice(), myWallets.get(i).getCategory()));
 //        }
         return myWalletsEntries;
+
     }
 
-    private class myWalletData {
+    private ArrayList<MyWalletData> getMyWalletData(List<MyWallet> myWallets){
+
+        ArrayList<MyWalletData> myWalletArrayList = new ArrayList<>();
+
+        int cA = 0, cB = 0, cC = 0, cD = 0, totalAmount = 0;
+        for(int i = 0; i < myWallets.size(); i++){
+
+            String category = myWallets.get(i).getCategory();
+
+            if(category.equals("美食")){
+                cA += myWallets.get(i).getTotalPrice();
+            }else if(category.equals("生活用品")){
+                cB += myWallets.get(i).getTotalPrice();
+            }else if(category.equals("3C")){
+                cC += myWallets.get(i).getTotalPrice();
+            }else if(category.equals("其他")) {
+                cD += myWallets.get(i).getTotalPrice();
+            }
+        }
+
+        totalAmount = cA + cB + cC + cD;
+
+        int percentA = (cA*100/totalAmount);
+        int percentB = (cB*100/totalAmount);
+        int percentC = (cC*100/totalAmount);
+        int percentD = (cD*100/totalAmount);
+
+        myWalletArrayList.add(new MyWalletData("美食", cA, percentA));
+        myWalletArrayList.add(new MyWalletData("生活用品", cB, percentB));
+        myWalletArrayList.add(new MyWalletData("3C", cC, percentC));
+        myWalletArrayList.add(new MyWalletData("其他", cD, percentD));
+
+        return myWalletArrayList;
+    }
+
+    private static class MyWalletData {
         private String category;
         private int totalPrice;
+        private int progressBar;
+
+        public MyWalletData(String category, int totalPrice, int progressBar) {
+            this.category = category;
+            this.totalPrice = totalPrice;
+            this.progressBar = progressBar;
+        }
 
         public String getCategory() {
             return category;
@@ -504,6 +663,14 @@ public class MemberCenterMyWalletFragment extends Fragment {
 
         public void setTotalPrice(int totalPrice) {
             this.totalPrice = totalPrice;
+        }
+
+        public int getProgressBar() {
+            return progressBar;
+        }
+
+        public void setProgressBar(int progressBar) {
+            this.progressBar = progressBar;
         }
     }
 

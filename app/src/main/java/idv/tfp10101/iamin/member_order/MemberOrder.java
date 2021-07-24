@@ -18,6 +18,8 @@ public class MemberOrder {
     // 關聯資料
     private String nickname; // 會員暱稱
     private String phone; // 會員電話
+    private String groupName; //團購名稱
+    private int groupStatus; //團購狀態
 
     public MemberOrder(int memberOrderId, int memberId, int groupId, int payentMethod, int total,
                        boolean receivePaymentStatus, boolean deliverStatus) {
@@ -43,7 +45,7 @@ public class MemberOrder {
         this.phone = phone;
     }
 
-    public MemberOrder(int memberOrderId, int memberId, int groupId, int payentMethod, int total, boolean receivePaymentStatus, boolean deliverStatus, List<MemberOrderDetails> memberOrderDetailsList) {
+    public MemberOrder(int memberOrderId, int memberId, int groupId, int payentMethod, int total, boolean receivePaymentStatus, boolean deliverStatus, String groupName,int groupStatus,List<MemberOrderDetails> memberOrderDetailsList) {
         this.memberOrderId = memberOrderId;
         this.memberId = memberId;
         this.groupId = groupId;
@@ -51,6 +53,8 @@ public class MemberOrder {
         this.total = total;
         this.receivePaymentStatus = receivePaymentStatus;
         this.deliverStatus = deliverStatus;
+        this.groupName = groupName;
+        this.groupStatus = groupStatus;
         this.memberOrderDetailsList = memberOrderDetailsList;
     }
 
@@ -132,4 +136,20 @@ public class MemberOrder {
         public void setPhone (String phone){
             this.phone = phone;
         }
+
+    public String getGroupName() {
+        return groupName;
     }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+    public int getGroupStatus() {
+        return groupStatus;
+    }
+
+    public void setGroupStatus(int groupStatus) {
+        this.groupStatus = groupStatus;
+    }
+
+}
