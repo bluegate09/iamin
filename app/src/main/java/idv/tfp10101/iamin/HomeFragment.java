@@ -195,6 +195,7 @@ public class HomeFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(() -> {
             //開啟動畫
             swipeRefreshLayout.setRefreshing(true);
+            coumputeDistancemin();
             showGroup(localHomeDatas);
             searchView.setQuery("", false);
             swipeRefreshLayout.setRefreshing(false);
@@ -237,6 +238,7 @@ public class HomeFragment extends Fragment {
                         swipeRefreshLayout.setOnRefreshListener(() -> {
                             //開啟動畫
                             swipeRefreshLayout.setRefreshing(true);
+                            coumputeDistancemin();
                             showGroup(localHomeDatas);
                             searchView.setQuery("", false);
                             swipeRefreshLayout.setRefreshing(false);
@@ -275,9 +277,16 @@ public class HomeFragment extends Fragment {
         // 4. 取得定位供應器物件
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity);
         // 5. 取得Task<Location>物件
-        //取得最後位置
-        fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
+        //取得最新位置
+        Task<android.location.Location> task = fusedLocationClient.getCurrentLocation(
+                LocationRequest.PRIORITY_HIGH_ACCURACY,
+                new CancellationTokenSource().getToken()
+        );
+        task.addOnSuccessListener(location -> {
             if (location != null) {
+
+//                intervalPositioning();
+
                 //取得緯度
                 userlat = location.getLatitude();
                 //取得經度
@@ -310,7 +319,7 @@ public class HomeFragment extends Fragment {
             Collections.sort(distance);
             BigDecimal b = new BigDecimal(distance.get(0));
             //四捨五入到小數第一位
-            float groupDismin = b.setScale(0,BigDecimal.ROUND_HALF_UP).floatValue();
+            float groupDismin = b.setScale(1,BigDecimal.ROUND_HALF_UP).floatValue();
             homeData = new HomeData(group,groupDismin);
             localHomeDatas.add(homeData);
         }
@@ -318,7 +327,12 @@ public class HomeFragment extends Fragment {
         Collections.sort(localHomeDatas, new Comparator<HomeData>() {
             @Override
             public int compare(HomeData o1, HomeData o2) {
-                return (int) (o1.getDistance()-o2.getDistance());
+                if (o1.getDistance() < o2.getDistance()){
+                    return -1;
+                }else if (o1.getDistance() > o2.getDistance()) {
+                    return 1;
+                }
+                return 0;
             }
         });
     }
@@ -362,6 +376,7 @@ public class HomeFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(() -> {
             swipeRefreshLayout.setRefreshing(true);
             searchView.setQuery("", false);
+            coumputeDistancemin();
             showGroup(selectHomeData);
             swipeRefreshLayout.setRefreshing(false);
         });
@@ -557,9 +572,11 @@ public class HomeFragment extends Fragment {
         // 7.2 設定更新週期
         locationRequest.setInterval(10000);
         // 7.3 設定最快更新週期
-        locationRequest.setFastestInterval(1000);
+        locationRequest.setFastestInterval(100);
         // 7.4 設定優先順序
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        locationRequest.setNumUpdates(2);
 
         // 8. 建立定位設定物件，並加入步驟7建立的定位請求物件
         return new LocationSettingsRequest.Builder()
