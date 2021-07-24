@@ -1,6 +1,8 @@
 package idv.tfp10101.iamin;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
@@ -9,6 +11,8 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,8 +34,10 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -40,12 +46,14 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
 import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.group.GroupControl;
 import idv.tfp10101.iamin.location.Location;
+import idv.tfp10101.iamin.member.CustomMapView;
 import idv.tfp10101.iamin.member_order.MemberOrder;
 import idv.tfp10101.iamin.member_order_details.MemberOrderDetails;
 import idv.tfp10101.iamin.merch.Merch;
@@ -53,14 +61,15 @@ import idv.tfp10101.iamin.merch.MerchControl;
 import idv.tfp10101.iamin.network.RemoteAccess;
 
 public class MemberCenterMemberOrderDetailsFragment extends Fragment {
+    private static final int REQ_POSITIONING = 1;
     private final String TAG = "TAG_orderDetails";
     private Activity activity;
     private List<MemberOrderDetails> memberOrderDetailsList;
     private RecyclerView recyclerView;
     private List<Location> locations;
-    private TextView deadLine;
-    private ListView listView;
+    private TextView deadLine,location1,location2,location3;
     private ImageButton btGooglePay;
+    private GoogleMap googleMap;
     private String paymentMethod;
     private SearchView searchView;
 
@@ -106,17 +115,22 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         deadLine = view.findViewById(R.id.MemberOrderDetailDeadLine);
-        listView = view.findViewById(R.id.memberCenterOrderDetailsListView);
+        location1 = view.findViewById(R.id.memberOrderLocation1);
+        location2 = view.findViewById(R.id.memberOrderLocation2);
+        location3 = view.findViewById(R.id.memberOrderLocation3);
 
         btGooglePay = view.findViewById(R.id.btGooglePay);
         btGooglePay.setVisibility(View.GONE);
 
         //mapView
-        MapView mapView = view.findViewById(R.id.memberOrdermapView);
+        CustomMapView mapView = view.findViewById(R.id.memberOrdermapView);
         mapView.onCreate(savedInstanceState);
         mapView.onStart();
 
         mapView.getMapAsync(googleMap -> {
+            this.googleMap = googleMap;
+            //處理在mapView旁的標籤
+            handlePickUpLocation();
             // 顯示當前位置(小藍點) googleMap.setMyLocationEnabled(true);
             CameraPosition cameraPosition = new CameraPosition.Builder() .target(new LatLng(locations.get(0).getLatitude(), locations.get(0).getLongtitude()))
                     .zoom(18)
@@ -135,15 +149,6 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         recyclerView.setAdapter(new MyAdapter(activity,memberOrderDetailsList));
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
 
-        //ArrayList handle
-        ArrayList<String> arrayList = new ArrayList<>();
-        for(Location loc: locations){
-            String str = findLocation(loc.getLatitude(),loc.getLongtitude());
-            arrayList.add(str);
-        }
-        ArrayAdapter arrayAdapter = new ArrayAdapter(activity, android.R.layout.simple_list_item_1,arrayList);
-        listView.setAdapter(arrayAdapter);
-
         handleSerchView();
 
         //截止日期
@@ -154,13 +159,46 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
             btGooglePay.setVisibility(View.VISIBLE);
             btGooglePay.setEnabled(true);
         }
-        findLocation(locations.get(0).getLatitude(),locations.get(0).getLongtitude());
+
         showMyOrder(memberOrderDetailsList);
 
     }
 
+    private void handlePickUpLocation() {
+        ArrayList<String> locList = new ArrayList<>();
+        HashSet<String> locSet = new HashSet<>();
 
-    public String findLocation(double latitude, double longitude){
+        double latitude,longtitude;
+        for(int i = 0; i < locations.size(); i++){
+            latitude = locations.get(i).getLatitude();
+            longtitude = locations.get(i).getLongtitude();
+
+            LatLng latLng = new LatLng(latitude, longtitude);
+            MarkerOptions markerOptions = new MarkerOptions() .position(latLng)
+                    .title("取貨點" + i)
+                    .snippet("")
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.mapview_pin))
+                    .draggable(false);
+            googleMap.addMarker(markerOptions);
+            String loc = transferLocation(latitude,longtitude);
+
+            if(!(loc.isEmpty())){
+                locSet.add(loc);
+            }
+        }
+        locList.addAll(locSet);
+        String[] loc = {"","",""};
+        for(int i = 0; i < locList.size(); i++){
+            loc[i] = locList.get(i);
+        }
+        location1.setText(loc[0]);
+        location2.setText(loc[1]);
+        location3.setText(loc[2]);
+
+    }
+
+
+    public String transferLocation(double latitude, double longitude){
         Geocoder geocoder;
         List<Address> addresses = null;
         geocoder = new Geocoder(activity, Locale.getDefault());
@@ -178,8 +216,12 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         String postalCode = addresses.get(0).getPostalCode();
         String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
 
+        String str = address.substring(postalCode.length());
+
+        String loc = str;
+
 //        Log.d(TAG, "address: " + address+ "\ncity: " + city + "\nstate: " + state + "\ncountry: " + country + "\npistalCode: " + postalCode + "\nknownName: " + knownName);
-        return address;
+        return loc;
     }
 
     private void handleSerchView() {

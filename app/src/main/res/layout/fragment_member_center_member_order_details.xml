@@ -38,20 +38,74 @@
 
             </androidx.recyclerview.widget.RecyclerView>
 
-            <ListView
-                android:id="@+id/memberCenterOrderDetailsListView"
-                android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:background="@color/colorBackground"
-                android:padding="8dp">
+<!--            <ListView-->
+<!--                android:id="@+id/memberCenterOrderDetailsListView"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="120dp"-->
+<!--                android:background="@color/colorBackground"-->
+<!--                android:padding="8dp">-->
+<!--            </ListView>-->
 
-            </ListView>
-
-            <com.google.android.gms.maps.MapView
-                android:id="@+id/memberOrdermapView"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
-                android:padding="8dp" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <idv.tfp10101.iamin.member.CustomMapView
+                    android:id="@+id/memberOrdermapView"
+                    android:layout_width="250dp"
+                    android:layout_height="200dp"
+                    android:padding="8dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:padding="8dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pick_up_location" />
+
+                    <TextView
+                        android:id="@+id/memberOrderLocation1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="location" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pick_up_location" />
+
+                    <TextView
+                        android:id="@+id/memberOrderLocation2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="location" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="20dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pick_up_location" />
+
+                    <TextView
+                        android:id="@+id/memberOrderLocation3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="location" />
+                </LinearLayout>
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/MemberOrderDetailDeadLine"
