@@ -5,12 +5,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,12 +34,34 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import static idv.tfp10101.iamin.Constants.FCM_Token;
 
 public class MainActivity extends AppCompatActivity {
+    /** FCMService 本地廣播 */
+    BroadcastReceiver broadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         handleBottomNavigationView();
+
+        /** FCMService 本地廣播 */
+        broadcastReceiver = new BroadcastReceiver()
+        {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                /** 建立AlertDialog */
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle(intent.getStringExtra("title"));
+                builder.setMessage(intent.getStringExtra("body"));
+                builder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                // 顯示
+                builder.show();
+            }
+        };
+        LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, new IntentFilter("FCMService"));
 
         /** FCM_Serller 相關設定 */
         // 設定app在背景時收到FCM，會自動顯示notification（前景時則不會自動顯示）
@@ -127,6 +156,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         handleBottomNavigationView();
+        /** FCMService 本地廣播 */
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
     }
 
     @Override

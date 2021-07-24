@@ -1,10 +1,13 @@
 package idv.tfp10101.iamin.service;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -20,16 +23,24 @@ public class FCMServiceSeller extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         // 取得notification資料，主要為title與body這2個保留字
         RemoteMessage.Notification notification = remoteMessage.getNotification();
-        String title = "付款通知";
-        String body = "ABC";
+        String title = "";
+        String body = "";
+        String data = "";
         if (notification != null) {
             title = notification.getTitle();
             body = notification.getBody();
         }
         // 取得自訂資料
         Map<String, String> map = remoteMessage.getData();
-        String data = map.get("data");
+        data = map.get("title");
+        data = map.get("body");
+        data = map.get("data");
         Log.d(Constants.TAG, "onMessageReceived():\ntitle: " + title + ", body: " + body + ", data: " + data);
+        //onMessageReceived時發出廣播
+        Intent intent = new Intent("FCMService");
+        intent.putExtra("title", title);
+        intent.putExtra("body", body);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     // 當registration token更新時呼叫，應該將新的token傳送至server
