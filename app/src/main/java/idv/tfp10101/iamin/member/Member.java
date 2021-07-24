@@ -27,21 +27,20 @@ public class Member implements Serializable {
 
     public Member() {
         this(
-            -1,
-            -1,
-            -1,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
-        );
+        -1,
+        -1,
+        -1,
+        null,
+        null,
+        null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null);
     }
 
     public Member(int id, String uUid){

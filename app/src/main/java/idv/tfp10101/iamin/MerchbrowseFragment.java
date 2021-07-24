@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,6 +24,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -38,6 +42,8 @@ import com.youth.banner.adapter.BannerImageAdapter;
 import com.youth.banner.holder.BannerImageHolder;
 import com.youth.banner.indicator.CircleIndicator;
 
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,6 +54,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.group.GroupControl;
+import idv.tfp10101.iamin.location.Location;
+import idv.tfp10101.iamin.location.LocationControl;
 import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.member_order.MemberOrder;
@@ -62,24 +70,30 @@ import idv.tfp10101.iamin.network.RemoteAccess;
 public class MerchbrowseFragment extends Fragment {
     private Activity activity;
     private View view;
-    private int groupID,sellerID,progress,goal,payment_method,group_status,condition_count;
+    private int groupID, sellerID, progress, goal, payment_method, group_status, condition_count;
     private int buyerChoose;//買家選擇的付款方式 1->面交,2->信用卡
     private String contact_number,caution;
     private Timestamp condition_Time;
     private List<Merch> localMerchs;
     private RecyclerView recyclerViewMerch;
-    private Button btn_buy,btn_back,btn_next;
+    private Button btn_buy, btn_back, btn_next;
     private Member member;
-    private TextView txv_merch_details;
-    private int total_quantity = 0,total_price = 0;
+    private TextView txv_Seller, txv_Email, txv_Seller_phone, txv_followed, txv_rating; //賣家資料
+    private ImageView imv_Seller, imv_followed; //賣家圖片與追隨與否圖片
+    private TextView txv_caution;
+    private int total_quantity = 0, total_price = 0;
+    private double userlat,userlng;//使用者的緯經度
+    private Group firstGroup;
+    private TextView txv_group_progress,txv_group_location; //團購進度與團購面交地點
+    private  List<Location> grouplocations; //團購的所有面交地點
+    private Bundle bundle; //從首頁包的團購id與使用者資訊(重整頁面時用到)
     //商品圖片
     private List<byte[]> images = new ArrayList<>();
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         member = MemberControl.getInstance();
-
-
     }
 
     @Override
@@ -115,21 +129,48 @@ public class MerchbrowseFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         findView(view);
-        HashMap<String,Object> GrouphashMap;
         //取得HomeData打包過來的資料
-        Bundle bundleMap = getArguments();
-        if (bundleMap != null){
-            GrouphashMap = (HashMap<String, Object>) bundleMap.getSerializable("Group");
-            groupID = (Integer) GrouphashMap.get("GroupID");//取得團購ID
-            sellerID = (Integer) GrouphashMap.get("SellerID");//取得賣家ID
-            progress = (Integer) GrouphashMap.get("Progress");//取得當前進度
-            goal = (Integer) GrouphashMap.get("Goal");//取得當前目標
-            contact_number = (String) GrouphashMap.get("Contact_Number");//取得團購聯絡電話
-            payment_method = (Integer) GrouphashMap.get("Payment_Method");//取得付款方法
-            group_status = (Integer) GrouphashMap.get("Group_status");//取得團購狀態
-            caution = (String) GrouphashMap.get("Caution");//取得注意事項
-            condition_count = (Integer) GrouphashMap.get("Condition_count");//取得停單份數
-            condition_Time = (Timestamp) GrouphashMap.get("Condition_Time");//取得停單時間
+        bundle = getArguments();
+        if (bundle != null){
+            groupID = (int) bundle.get("GroupID");
+            userlat = (Double) bundle.get("Userlat");
+            userlng = (Double) bundle.get("Userlng");
+        }
+        firstGroup = GroupControl.getGroupbyId(activity,groupID);
+        if (firstGroup != null){
+            sellerID = firstGroup.getMemberId();
+            progress = firstGroup.getProgress();
+            goal = firstGroup.getGoal();
+            payment_method = firstGroup.getPaymentMethod();
+            group_status = firstGroup.getGroupStatus();
+            condition_count = firstGroup.getConditionCount();
+            contact_number = firstGroup.getContactNumber();
+            caution = firstGroup.getCaution();
+            condition_Time = firstGroup.getConditionTime();
+        }
+        if (condition_count == -1){
+            txv_group_progress.setText("進度:" + progress + "份  " +"目標:" + goal + "份  ");
+        }else{
+            txv_group_progress.setText("進度:" + progress + "份  " + "目標:" + goal + "份  " + "購買上限:" + condition_count + "份  ");
+        }
+        //取得該團購的所有位置
+        grouplocations = new ArrayList<>();
+        StringBuilder groupLaction = new StringBuilder();
+        grouplocations = LocationControl.getLocationByGroupId(activity, groupID);
+        if (grouplocations != null){
+            for (Location location : grouplocations){
+                float[] results = new float[1];
+                Double groupLat = location.getLatitude();
+                Double groupLng = location.getLongtitude();
+                android.location.Location.distanceBetween(userlat,userlng,groupLat,groupLng,results);
+                String address = latLngToName(groupLat,groupLng);
+                Float km = results[0]/1000;
+                BigDecimal b = new BigDecimal(km);
+//            //四捨五入到小數第一位
+               float groupDismin = b.setScale(1,BigDecimal.ROUND_HALF_UP).floatValue();
+                groupLaction.append(address + "距離為:" + groupDismin +"公里"+ "\n\n");
+            }
+            txv_group_location.setText(groupLaction);
         }
 
         MerchControl.getAllMerchByGroupId(activity,groupID);
@@ -137,6 +178,61 @@ public class MerchbrowseFragment extends Fragment {
         if (localMerchs == null || localMerchs.isEmpty()) {
             Toast.makeText(activity, R.string.textNoGroupsFound, Toast.LENGTH_SHORT).show();
         }
+        //包請求,請求需要傳merber回去
+        Member SellerID = new Member();
+        SellerID.setId(sellerID);
+        //取得賣家資料
+        Member seller = MemberControl.getsellerByMemberId(activity,SellerID);
+        if (seller != null){
+            txv_Seller.setText(seller.getNickname());
+            txv_Email.setText(seller.getEmail());
+            txv_Seller_phone.setText(seller.getPhoneNumber());
+            txv_followed.setText(String.valueOf(seller.getFollow_count()));
+            txv_rating.setText(String.valueOf(seller.getRating()));
+        }
+        if (caution == null){
+            txv_caution.setVisibility(View.GONE);
+        }else {
+            txv_caution.setVisibility(View.VISIBLE);
+            txv_caution.setText("注意事項:" + "\n" + caution);
+        }
+        //判斷是否有追蹤過此賣家 如果有就填滿愛心
+        int result = MemberControl.chackfollowed(activity,member.getId(),SellerID.getId());
+        if (result == 1){
+            imv_followed.setImageResource(R.drawable.heart_red);
+        }
+        if (result == 0){
+            imv_followed.setImageResource(R.drawable.heart_white);
+        }
+        Drawable.ConstantState white = activity.getResources().getDrawable(R.drawable.heart_white).getConstantState();
+        Drawable.ConstantState red = activity.getResources().getDrawable(R.drawable.heart_red).getConstantState();
+//        實作點一下換圖並判斷是否有追隨 沒有就追 有就取消
+          imv_followed.setOnClickListener(v ->{
+            Drawable.ConstantState imageView = imv_followed.getDrawable().getCurrent().getConstantState();
+            int chackresult = MemberControl.chackfollowed(activity,member.getId(),SellerID.getId());
+            if (imageView.equals(red)) {
+                AlertDialog.Builder followed = new AlertDialog.Builder(activity);
+                followed.setTitle("您確定要取消追蹤此賣家嗎")
+                        .setPositiveButton("確定", (dialog, which) -> {
+                            MemberControl.followed(activity, member.getId(), SellerID.getId());
+                            imv_followed.setImageResource(R.drawable.heart_white);
+                            Toast.makeText(activity, "已取消追蹤", Toast.LENGTH_SHORT).show();
+                        })
+                        .setNegativeButton("哎呀手滑了", (dialog, which) -> {
+                            return;
+                        })
+                        .setCancelable(true)
+                        .show();
+            }else{
+                MemberControl.followed(activity, member.getId(), SellerID.getId());
+                Toast.makeText(activity, "已加入追蹤", Toast.LENGTH_SHORT).show();
+                imv_followed.setImageResource(R.drawable.heart_red);
+            }
+        });
+
+        //發送賣家圖片請求
+        Bitmap bitmap = MemberControl.getsellerimageByMemberId(activity,SellerID);
+        imv_Seller.setImageBitmap(bitmap);
 
         StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(1,RecyclerView.HORIZONTAL);
         recyclerViewMerch.setLayoutManager(staggeredGridLayoutManager);
@@ -176,7 +272,22 @@ public class MerchbrowseFragment extends Fragment {
             btn_next.setVisibility(View.VISIBLE);
         });
         //按下訂單前做判斷
+
         btn_buy.setOnClickListener(v ->{
+            NavController navController = Navigation.findNavController(view);
+            if ( member.getId() == -1){
+                AlertDialog.Builder signup = new AlertDialog.Builder(activity);
+                signup.setTitle("您好像沒有登入喔")
+                        .setPositiveButton("去登入", (dialog, which) -> {
+                            navController.navigate(R.id.logInFragment);
+                        })
+                        .setNegativeButton("去註冊", (dialog, which) -> {
+                            navController.navigate(R.id.signUpFragment);
+                        })
+                        .setCancelable(false)
+                        .show();
+                return;
+            }
             AlertDialog.Builder chackDialog = new AlertDialog.Builder(activity);
             Map<Merch,Integer> maps = ((MerchAdapter) recyclerViewMerch.getAdapter()).getMerchsMap();
             StringBuilder merchDetails = new StringBuilder();
@@ -228,6 +339,7 @@ public class MerchbrowseFragment extends Fragment {
             }
         //取得最新的團購資訊
         Group group = GroupControl.getGroupbyId(activity,groupID);
+        NavController navController = Navigation.findNavController(view);
         if(group != null) {
             int progress = group.getProgress();
             int status = group.getGroupStatus();
@@ -236,7 +348,7 @@ public class MerchbrowseFragment extends Fragment {
                     //判斷團購是否有設定最大購買上限 -1=沒設上限
                     if (condition_count != -1){
                         //判斷買家購買的數量加上當前進度是否過團購上限
-                        if((total_quantity + progress) < condition_count){
+                        if((total_quantity + progress) <= condition_count){
                             MemberOrder memberOrder = new MemberOrder(
                                     0,
                                     member.getId(),
@@ -271,7 +383,20 @@ public class MerchbrowseFragment extends Fragment {
                             updateGroup(updaategroup);
                             //Toast.makeText(activity, "沒有超過上限!!", Toast.LENGTH_SHORT).show();
                         }else{
-                            Toast.makeText(activity, "已超過能夠買得最大上限請重新選擇!!", Toast.LENGTH_SHORT).show();
+                            AlertDialog.Builder updataMerchdialog = new AlertDialog.Builder(activity);
+                            updataMerchdialog.setTitle("確認訂單明細")
+                                    .setMessage("已超過能夠買得最大上限請重新選擇!!")
+                                    .setPositiveButton("回到商品頁面", (dialog, which) -> {
+                                        if (group.getConditionCount() == -1){
+                                            txv_group_progress.setText("進度:" + group.getProgress() + "份  " +"目標:" + group.getGoal() + "份  ");
+                                        }else{
+                                            txv_group_progress.setText("進度:" + group.getProgress() + "份  " + "目標:" + group.getGoal() + "份  " + "購買上限:" + group.getConditionCount() + "份  ");
+                                        }
+                                        return;
+                                    })
+                                    .setCancelable(false)
+                                    .show();
+
                         }
                     }else{
                         //建立memberOrder資料
@@ -435,7 +560,16 @@ public class MerchbrowseFragment extends Fragment {
         btn_buy = view.findViewById(R.id.btn_buy);
         btn_back = view.findViewById(R.id.btn_back);
         btn_next = view.findViewById(R.id.btn_next);
-        txv_merch_details = view.findViewById(R.id.txv_merch_details);
+        txv_Seller = view.findViewById(R.id.txv_Seller);
+        txv_Email = view.findViewById(R.id.txv_Email);
+        txv_Seller_phone = view.findViewById(R.id.txv_Seller_phone);
+        txv_followed = view.findViewById(R.id.txv_followed);
+        txv_rating = view.findViewById(R.id.txv_rating);
+        txv_caution = view.findViewById(R.id.txv_caution);
+        imv_Seller = view.findViewById(R.id.imv_Seller);
+        imv_followed = view.findViewById(R.id.imv_followed);
+        txv_group_progress = view.findViewById(R.id.txv_group_progress);
+        txv_group_location = view.findViewById(R.id.txv_group_location);
 
     }
 
@@ -552,4 +686,38 @@ public class MerchbrowseFragment extends Fragment {
         public int getItemCount() { return rsMerchs == null ? 0 : rsMerchs.size();
         }
     }
+
+    /**
+     *  緯經度 轉 地名/地址
+     */
+    private String latLngToName(double lat, double lng) {
+        // 判斷Geocoder是否可用
+        boolean isPresent = Geocoder.isPresent();
+        if (!isPresent) {
+            return "";
+        }
+        // 實例化Geocoder物件
+        Geocoder geocoder = new Geocoder(activity);
+        // 地名
+        StringBuilder name = new StringBuilder();
+        try {
+            // 轉換
+            List<Address> addressList = geocoder.getFromLocation(lat, lng, 1);
+            // 取得 地名/地址
+            Address address = addressList.get(0);
+            if (address != null) {
+                for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
+                    name.append(address.getAddressLine(i))
+                            .append("\n");
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return name.toString();
+    }
+
+
+
 }

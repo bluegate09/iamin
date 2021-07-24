@@ -15,7 +15,7 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="10">
 
             <LinearLayout
@@ -62,36 +62,63 @@
                     android:background="@color/colorSecondaryLight"
                     android:orientation="vertical">
 
+
                     <TextView
-                        android:id="@+id/txv_merch_details"
+                        android:id="@+id/txv_group_progress"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="TextView" />
+                        android:layout_marginBottom="8dp"
+                        android:text="團購進度,目標,上限"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/txv_group_location"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:text="團購面交地點,距離"
+                        android:textSize="20sp" />
+
+
+                    <TextView
+                        android:id="@+id/txv_caution"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="注意事項"
+                        android:textSize="20sp" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/colorSecondaryLight"
                     android:layout_margin="8dp"
+                    android:background="@color/colorSecondaryLight"
                     android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:orientation="horizontal">
 
                         <ImageView
-                            android:id="@+id/imageView3"
+                            android:id="@+id/imv_followed"
                             android:layout_width="0dp"
-                            android:layout_height="50dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:layout_weight="0.5"
+                            android:src="@drawable/heart_white" />
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/imv_Seller"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:src="@drawable/avatar" />
 
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="5"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="3"
                             android:orientation="vertical">
 
                             <TextView
@@ -102,15 +129,85 @@
                                 android:textSize="20sp" />
 
                             <TextView
+                                android:id="@+id/txv_Email"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="賣家Email"
+                                android:textSize="20sp" />
+
+                            <TextView
                                 android:id="@+id/txv_Seller_phone"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="聯絡電話" />
+                                android:text="聯絡電話"
+                                android:textSize="20sp" />
                         </LinearLayout>
                     </LinearLayout>
 
-                </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal">
 
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/heartIcon2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_gravity="center"
+                                android:layout_weight="1"
+                                android:includeFontPadding="false"
+                                android:padding="8dp"
+                                android:text="♥被追蹤次數"
+                                android:textSize="25sp" />
+
+                            <TextView
+                                android:id="@+id/txv_followed"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="1"
+                                android:text="TextView"
+                                android:textSize="20sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/rating2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_gravity="center"
+                                android:layout_weight="1"
+                                android:includeFontPadding="false"
+                                android:padding="8dp"
+                                android:text="⭐評分分數"
+                                android:textSize="25sp" />
+
+                            <TextView
+                                android:id="@+id/txv_rating"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:layout_weight="1"
+                                android:text="TextView"
+                                android:textSize="20sp" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
 
 
             </LinearLayout>
@@ -119,6 +216,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -126,6 +224,7 @@
                 android:id="@+id/btn_buy"
                 android:layout_width="match_parent"
                 android:layout_height="77dp"
+                android:layout_gravity="bottom|end"
                 android:background="@color/colorSecondary"
                 android:text="去買單"
                 android:textSize="20sp" />
