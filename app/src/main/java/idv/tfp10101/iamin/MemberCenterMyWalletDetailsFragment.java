@@ -124,7 +124,7 @@ public class MemberCenterMyWalletDetailsFragment extends Fragment {
         public void onBindViewHolder(@NonNull MemberCenterMyWalletDetailsFragment.MyWalletDetailsAdapter.MyViewHolder myViewHolder, int position) {
             final MyWallet myWalletDetails = myWalletListDetails.get(position);
             myViewHolder.dateWallet.setText(myWalletDetails.getUpdateTime().toString());
-            myViewHolder.priceWallet.setText(String.valueOf(myWalletDetails.getTotoalPrice() + getString(R.string.text_money_ntd)));
+            myViewHolder.priceWallet.setText(String.valueOf(myWalletDetails.getTotalPrice() + getString(R.string.text_money_ntd)));
             myViewHolder.nameWallet.setText(myWalletDetails.getName());
             myViewHolder.groupTitleWallet.setText(myWalletDetails.getGroupName());
 

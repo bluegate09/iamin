@@ -42,7 +42,8 @@ public class MemberCenterFragment extends Fragment {
     private final static String TAG = "TAG_MemberCenter";
     private Activity activity;
     private FirebaseAuth auth;
-    private TextView nickname, email, rating, followCount,memberClass;
+    private TextView nickname, email, rating, followCount;
+    private ImageView memberClass;
     private ImageView ivPic;
     private Member member;
     private Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
@@ -75,10 +76,9 @@ public class MemberCenterFragment extends Fragment {
         Log.d(TAG,"phone_number: " + member.getPhoneNumber());
 
         if (member.getPhoneNumber() == null || String.valueOf(member.getPhoneNumber()).trim().isEmpty()) {
-            memberClass.setText(R.string.text_general_member);
+            memberClass.setImageResource(R.drawable.silver_member);
         }else{
-            memberClass.setText(R.string.text_senior_member);
-
+            memberClass.setImageResource(R.drawable.golden_member);
         }
 
         setTextView();
@@ -149,9 +149,9 @@ public class MemberCenterFragment extends Fragment {
             member = MemberControl.getInstance();
             setTextView();
         if (member.getPhoneNumber() == null || String.valueOf(member.getPhoneNumber()).trim().isEmpty()) {
-            memberClass.setText(R.string.text_general_member);
+            memberClass.setImageResource(R.drawable.silver_member);
         }else{
-            memberClass.setText(R.string.text_senior_member);
+            memberClass.setImageResource(R.drawable.golden_member);
         }
 //            Log.d(TAG, "OnCreate: " + member.isUpdate());
     }

@@ -12,7 +12,7 @@ public class MyWallet {
 	private String name;
 	private String groupName;
 	private int price;
-	private int totoalPrice;
+	private int totalPrice;
 	private int deliverStatus;
 	private Timestamp startTime;
 	private Timestamp updateTime;
@@ -29,7 +29,7 @@ public class MyWallet {
 					Timestamp updateTime, String category, List<MyWallet> groupDetail) {
 		this.group_id = group_id;
 		this.groupName = groupName;
-		this.totoalPrice = totoalPrice;
+		this.totalPrice = totalPrice;
 		this.deliverStatus = deliverStatus;
 		this.startTime = startTime;
 		this.updateTime = updateTime;
@@ -61,12 +61,12 @@ public class MyWallet {
 		this.price = price;
 	}
 
-	public int getTotoalPrice() {
-		return totoalPrice;
+	public int getTotalPrice() {
+		return totalPrice;
 	}
 
-	public void setTotoalPrice(int totoalPrice) {
-		this.totoalPrice = totoalPrice;
+	public void setTotalPrice(int totoalPrice) {
+		this.totalPrice = totalPrice;
 	}
 
 	public int getDeliverStatus() {

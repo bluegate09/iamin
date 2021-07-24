@@ -565,13 +565,13 @@ public class MemberCenterMyWalletFragment extends Fragment {
             String category = myWallets.get(i).getCategory();
 
             if(category.equals("美食")){
-                cA += myWallets.get(i).getTotoalPrice();
+                cA += myWallets.get(i).getTotalPrice();
             }else if(category.equals("生活用品")){
-                cB += myWallets.get(i).getTotoalPrice();
+                cB += myWallets.get(i).getTotalPrice();
             }else if(category.equals("3C")){
-                cC += myWallets.get(i).getTotoalPrice();
+                cC += myWallets.get(i).getTotalPrice();
             }else if(category.equals("其他")) {
-                cD += myWallets.get(i).getTotoalPrice();
+                cD += myWallets.get(i).getTotalPrice();
             }
         }
 
@@ -596,8 +596,6 @@ public class MemberCenterMyWalletFragment extends Fragment {
             myWalletsEntries.add(new PieEntry(cD, ""));
         }
 
-
-
 //        for(int i = 0; i < myWallets.size(); i++) {
 //            myWalletsEntries.add(new PieEntry(myWallets.get(i).getTotoalPrice(), myWallets.get(i).getCategory()));
 //        }
@@ -615,13 +613,13 @@ public class MemberCenterMyWalletFragment extends Fragment {
             String category = myWallets.get(i).getCategory();
 
             if(category.equals("美食")){
-                cA += myWallets.get(i).getTotoalPrice();
+                cA += myWallets.get(i).getTotalPrice();
             }else if(category.equals("生活用品")){
-                cB += myWallets.get(i).getTotoalPrice();
+                cB += myWallets.get(i).getTotalPrice();
             }else if(category.equals("3C")){
-                cC += myWallets.get(i).getTotoalPrice();
+                cC += myWallets.get(i).getTotalPrice();
             }else if(category.equals("其他")) {
-                cD += myWallets.get(i).getTotoalPrice();
+                cD += myWallets.get(i).getTotalPrice();
             }
         }
 

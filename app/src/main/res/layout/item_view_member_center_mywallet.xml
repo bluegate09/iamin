@@ -35,20 +35,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="merchName"
-        android:textSize="16sp"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="@+id/groupTitleWallet"
         app:layout_constraintTop_toBottomOf="@+id/groupTitleWallet" />
 
     <TextView
+        android:id="@+id/numberWallet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Perchase number"
+        app:layout_constraintStart_toStartOf="@+id/nameWallet"
+        app:layout_constraintTop_toBottomOf="@+id/nameWallet" />
+
+    <TextView
         android:id="@+id/priceWallet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Price"
-        android:textSize="16sp"
         android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="@+id/nameWallet"
-        app:layout_constraintTop_toBottomOf="@+id/nameWallet" />
+        android:text="Price"
+        app:layout_constraintStart_toStartOf="@+id/numberWallet"
+        app:layout_constraintTop_toBottomOf="@+id/numberWallet" />
 
     <TextView
         android:id="@+id/dateWallet"

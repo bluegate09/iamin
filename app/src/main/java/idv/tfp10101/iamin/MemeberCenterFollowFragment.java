@@ -1,6 +1,7 @@
 package idv.tfp10101.iamin;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -43,7 +44,7 @@ public class MemeberCenterFollowFragment extends Fragment {
     private final static String TAG = "TAG_MC_Follow";
     private ExecutorService executor;
     private Activity activity;
-    private Member member2;
+    private Member myMember;
     private RecyclerView rvMember;
     private List<Member> members;
     private Gson gson2 = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
@@ -52,7 +53,7 @@ public class MemeberCenterFollowFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
-        member2 = MemberControl.getInstance();
+        myMember = MemberControl.getInstance();
         int numProcs = Runtime.getRuntime().availableProcessors();
         executor = Executors.newFixedThreadPool(numProcs);
     }
@@ -118,7 +119,7 @@ public class MemeberCenterFollowFragment extends Fragment {
             String url = RemoteAccess.URL_SERVER + "memberController";
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("action", "getFollowMember");
-            jsonObject.addProperty("member", new Gson().toJson(member2));
+            jsonObject.addProperty("member", new Gson().toJson(myMember));
             String jsonIn = RemoteAccess.getRemoteData(url, jsonObject.toString());
 
 //            Log.d(TAG,"jsonIn: " + jsonIn);
@@ -146,8 +147,8 @@ public class MemeberCenterFollowFragment extends Fragment {
         }
 
         class MyViewHolder extends RecyclerView.ViewHolder {
-            ImageView imageView;
-            TextView tvNickname, tvRating, tvFollowCount, tvFollowBt, tvStatus;
+            ImageView imageView,tvFollowBt;
+            TextView tvNickname, tvRating, tvFollowCount, tvStatus;
 
             MyViewHolder(View itemView) {
                 super(itemView);
@@ -155,7 +156,7 @@ public class MemeberCenterFollowFragment extends Fragment {
                 tvNickname = itemView.findViewById(R.id.tvFollowNickname);
                 tvRating = itemView.findViewById(R.id.tvFollowRating);
                 tvFollowCount = itemView.findViewById(R.id.tvFollowCount);
-                tvFollowBt = itemView.findViewById(R.id.tvFollowbt);
+                tvFollowBt = itemView.findViewById(R.id.btMemberUnfollow);
                 tvStatus = itemView.findViewById(R.id.tvFollowStatus);
             }
         }
@@ -183,18 +184,32 @@ public class MemeberCenterFollowFragment extends Fragment {
             myViewHolder.tvRating.setText(ratingText);
             myViewHolder.tvFollowCount.setText(followCountText);
             myViewHolder.tvStatus.setText("");
+            myViewHolder.tvFollowBt.setImageResource(R.drawable.heart_red);
             myViewHolder.tvFollowBt.setOnClickListener(v -> {
 
-                String url = RemoteAccess.URL_SERVER + "memberController";
-                JsonObject jsonObject = new JsonObject();
-                jsonObject.addProperty("action", "follow");
-                //追蹤的member_id
-                jsonObject.addProperty("follwer_id",member.getId());
-                //登入的id
-                jsonObject.addProperty("member", new Gson().toJson(member2));
-                RemoteAccess.getRemoteData(url, jsonObject.toString());
-                members = getMembers();
-                showFollowMember(members);
+                AlertDialog.Builder followed = new AlertDialog.Builder(activity);
+                followed.setTitle("您確定要取消追蹤此賣家嗎")
+                        .setPositiveButton("確定", (dialog, which) -> {
+
+
+                            Toast.makeText(activity, "ekf,esnj", Toast.LENGTH_SHORT).show();
+                            String url = RemoteAccess.URL_SERVER + "memberController";
+                            JsonObject jsonObject = new JsonObject();
+                            jsonObject.addProperty("action", "unFollowMember");
+                            jsonObject.addProperty("otherMember",new Gson().toJson(member));
+                            jsonObject.addProperty("member", new Gson().toJson(myMember));
+                            RemoteAccess.getRemoteData(url, jsonObject.toString());
+
+                            members = getMembers();
+                            showFollowMember(members);
+
+                        })
+                        .setNegativeButton("哎呀手滑了", (dialog, which) -> {
+                            return;
+                        })
+                        .setCancelable(true)
+                        .show();
+
 
             });
             myViewHolder.itemView.setOnClickListener(view -> {
@@ -209,7 +224,7 @@ public class MemeberCenterFollowFragment extends Fragment {
             if (bitmap != null) {
                 myViewHolder.imageView.setImageBitmap(bitmap);
             } else {
-                myViewHolder.imageView.setImageResource(R.drawable.silhouettes);
+                myViewHolder.imageView.setImageResource(R.drawable.avatar);
             }
         }
     }
@@ -221,4 +236,6 @@ public class MemeberCenterFollowFragment extends Fragment {
             executor.shutdownNow();
         }
     }
+
+
 }

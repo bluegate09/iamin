@@ -144,4 +144,7 @@
     <string name="pick_up_location">取貨地點: </string>
     <string name="text_money_ntd">" 元"</string>
     <string name="pickup_time">取貨時間:</string>
+    <string name="text_group_name">團購名稱</string>
+    <string name="text_details_all">全部</string>
+    <string name="text_order_details">訂單細項</string>
 </resources>

@@ -14,7 +14,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:padding="8dp"
         android:text="index"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -25,20 +24,20 @@
         android:id="@+id/memberOrderDetailMerchName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:text="Merch Name : XXXX"
         android:textColor="#000"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/memberOrderDetailsId" />
 
     <TextView
         android:id="@+id/memberOrderDetailTotalPrice"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="8dp"
         android:text="Total Price : 200"
         android:textColor="#000"
         android:textSize="15sp"
@@ -78,7 +77,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="Description"
+        android:text=""
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/memberOrderDetailsMerchDesc"
         app:layout_constraintTop_toTopOf="@+id/memberOrderDetailsMerchDesc" />
@@ -87,11 +86,10 @@
         android:id="@+id/memberOrderDetailImageView"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="64dp"
-        android:padding="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/memberOrderDetailsId"
+        app:layout_constraintTop_toBottomOf="@+id/memberOrderDetailMerchName"
         tools:srcCompat="@tools:sample/avatars" />
 
 

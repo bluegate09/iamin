@@ -26,7 +26,7 @@ public class RemoteAccess {
     //實機測試
     public static String URL_SERVER = "http://192.168.0.79:8080/iamin_JavaServlet/";
 
-     public static String URL_SERVER = "http://192.168.1.102:8080/iamin_JavaServlet/";
+//     public static String URL_SERVER = "http://192.168.1.102:8080/iamin_JavaServlet/";
 
     //public static String URL_SERVER = "http://219.68.160.213:8080/iamin_JavaServlet/";
     /**
