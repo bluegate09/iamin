@@ -149,9 +149,9 @@ public class MerchbrowseFragment extends Fragment {
             condition_Time = firstGroup.getConditionTime();
         }
         if (condition_count == -1){
-            txv_group_progress.setText("進度:" + progress + "份" +"目標:" + goal + "份");
+            txv_group_progress.setText("進度:" + progress + "份  " +"目標:" + goal + "份  ");
         }else{
-            txv_group_progress.setText("進度:" + progress +"目標:" + goal + "購買上限:" + condition_count);
+            txv_group_progress.setText("進度:" + progress + "份  " + "目標:" + goal + "份  " + "購買上限:" + condition_count + "份  ");
         }
         //取得該團購的所有位置
         grouplocations = new ArrayList<>();
@@ -388,9 +388,9 @@ public class MerchbrowseFragment extends Fragment {
                                     .setMessage("已超過能夠買得最大上限請重新選擇!!")
                                     .setPositiveButton("回到商品頁面", (dialog, which) -> {
                                         if (group.getConditionCount() == -1){
-                                            txv_group_progress.setText("進度:" + group.getProgress() + "份" +"目標:" + group.getGoal() + "份");
+                                            txv_group_progress.setText("進度:" + group.getProgress() + "份  " +"目標:" + group.getGoal() + "份  ");
                                         }else{
-                                            txv_group_progress.setText("進度:" + group.getProgress() +"目標:" + group.getGoal() + "購買上限:" + group.getConditionCount());
+                                            txv_group_progress.setText("進度:" + group.getProgress() + "份  " + "目標:" + group.getGoal() + "份  " + "購買上限:" + group.getConditionCount() + "份  ");
                                         }
                                         return;
                                     })
