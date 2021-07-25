@@ -97,14 +97,8 @@
             android:id="@+id/action_memberCenterFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
         <action
-            android:id="@+id/action_memberCenterFragment_to_memberCenterFollowTestGround"
-            app:destination="@id/memberCenterFollowTestGround" />
-        <action
             android:id="@+id/action_memberCenterFragment_to_memberCenterMemberOrderFragment"
             app:destination="@id/memberCenterMemberOrderFragment" />
-        <action
-            android:id="@+id/action_memberCenterFragment_to_memberCenterMyGroupListFragment"
-            app:destination="@id/memberCenterMyGroupListFragment" />
         <action
             android:id="@+id/action_memberCenterFragment_to_sellerFragment"
             app:destination="@id/sellerFragment" />
@@ -113,7 +107,11 @@
         android:id="@+id/memeberCenterFollowFragment"
         android:name="idv.tfp10101.iamin.MemeberCenterFollowFragment"
         android:label="fragment_memeber_center_follow"
-        tools:layout="@layout/fragment_memeber_center_follow" />
+        tools:layout="@layout/fragment_memeber_center_follow" >
+        <action
+            android:id="@+id/action_memeberCenterFollowFragment_to_memberCenterFollowersGroupFragment"
+            app:destination="@id/memberCenterFollowersGroupFragment" />
+    </fragment>
     <fragment
         android:id="@+id/memberCenterMyWalletFragment"
         android:name="idv.tfp10101.iamin.MemberCenterMyWalletFragment"
@@ -280,11 +278,6 @@
         android:label="fragment_member_forget_password"
         tools:layout="@layout/fragment_member_forget_password" />
     <fragment
-        android:id="@+id/memberCenterFollowTestGround"
-        android:name="idv.tfp10101.iamin.MemberCenterFollowTestGround"
-        android:label="fragment_member_center_follow_test_ground"
-        tools:layout="@layout/fragment_member_center_follow_test_ground" />
-    <fragment
         android:id="@+id/memberCenterMemberOrderFragment"
         android:name="idv.tfp10101.iamin.MemberCenterMemberOrderFragment"
         android:label="fragment_member_center_member_order"
@@ -303,10 +296,10 @@
             app:destination="@id/QRCodeGenFragment" />
     </fragment>
     <fragment
-        android:id="@+id/memberCenterMyGroupListFragment"
-        android:name="idv.tfp10101.iamin.MemberCenterMyGroupListFragment"
-        android:label="fragment_member_center_my_group_list"
-        tools:layout="@layout/fragment_member_center_my_group_list" />
+        android:id="@+id/memberCenterFollowersGroupFragment"
+        android:name="idv.tfp10101.iamin.MemberCenterFollowersGroupFragment"
+        android:label="fragment_member_center_followers_group"
+        tools:layout="@layout/fragment_member_center_followers_group" />
     <fragment
         android:id="@+id/QRCodeGenFragment"
         android:name="idv.tfp10101.iamin.QRCodeGenFragment"

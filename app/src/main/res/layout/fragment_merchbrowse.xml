@@ -228,7 +228,7 @@
                 android:layout_height="77dp"
                 android:layout_gravity="bottom|end"
                 android:background="@color/colorSecondary"
-                android:text="檢查明細"
+                android:text="購物車"
                 android:textSize="20sp" />
         </LinearLayout>
     </LinearLayout>

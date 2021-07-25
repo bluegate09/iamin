@@ -508,8 +508,9 @@ public class PaymentInformationFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        Log.d(Constants.TAG, "QR Code Result: " + intentResult.getContents());
         if (intentResult != null && intentResult.getContents() != null) {
-            Log.d(Constants.TAG, "QR Code Result: " + intentResult.getContents());
+            Log.d(Constants.TAG, "QR Code Result OK ");
             // Str -> int
             int memberOderId = Integer.parseInt(intentResult.getContents());
             // 如果此會員訂單非當下的團購，不給更新
@@ -519,6 +520,7 @@ public class PaymentInformationFragment extends Fragment {
                     isMemberOrder = true;
                 }
             }
+            Log.d(Constants.TAG, "QR Code isMemberOrder: " + isMemberOrder);
             if (!isMemberOrder) {
                 Toast.makeText(activity, "QRcode並非本次團購", Toast.LENGTH_SHORT).show();
                 return;
@@ -539,6 +541,7 @@ public class PaymentInformationFragment extends Fragment {
                     }
                 }
             }else {
+                Log.d(Constants.TAG, "QR Code Update Error");
                 Toast.makeText(activity, "DB更新失敗", Toast.LENGTH_SHORT).show();
             }
         } else {
