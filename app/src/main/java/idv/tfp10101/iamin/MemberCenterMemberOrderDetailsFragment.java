@@ -71,7 +71,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
     private RecyclerView recyclerView;
     private List<Location> locations;
     private List<Marker> markers;
-    private TextView deadLine,location1,location2,location3,tloc2,tloc3;
+    private TextView deadLine1,deadLine2,deadLine3,location1,location2,location3,tloc2,tloc3;
     private ImageButton btGooglePay;
     private GoogleMap googleMap;
     private String paymentMethod;
@@ -121,7 +121,9 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        deadLine = view.findViewById(R.id.MemberOrderDetailDeadLine);
+        deadLine1 = view.findViewById(R.id.memberOrderDetailDeadLine1);
+        deadLine2 = view.findViewById(R.id.memberOrderDetailDeadLine2);
+        deadLine3 = view.findViewById(R.id.memberOrderDetailDeadLine3);
         location1 = view.findViewById(R.id.memberOrderLocation1);
         location2 = view.findViewById(R.id.memberOrderLocation2);
         location3 = view.findViewById(R.id.memberOrderLocation3);
@@ -162,9 +164,25 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
 
         handleSerchView();
-
+        String[] time = {"","",""};
+        for(int i = 0; i < locations.size(); i++){
+            if(locations.get(i).getPickup_time() != null)
+            time[i] = locations.get(i).getPickup_time().toString().substring(0,16);
+        }
+        Log.d(TAG,time[0]);
         //截止日期
-        deadLine.setText(getString(R.string.pickup_time) + locations.get(0).getPickup_time());
+        deadLine1.setText(time[0]);
+        if(!(time[1].isEmpty())){
+            deadLine2.setText(time[1]);
+        }else{
+            deadLine2.setText("");
+        }
+        if(!(time[2]).isEmpty()){
+            deadLine3.setText(time[2]);
+        }else{
+            deadLine3.setText("");
+        }
+
 
         //googlePay imageButton
         if(!(paymentMethod.equals("1"))){

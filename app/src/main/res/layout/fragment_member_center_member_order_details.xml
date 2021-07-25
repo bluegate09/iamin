@@ -116,11 +116,47 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/MemberOrderDetailDeadLine"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
                 android:text="@string/pickup_time"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/memberOrderDetailDeadLine1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pickup_time"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/memberOrderDetailDeadLine2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pickup_time"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/memberOrderDetailDeadLine3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
@@ -138,6 +174,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"
                 android:src="@drawable/gen_qrcode" />
+
         </LinearLayout>
     </ScrollView>
 
