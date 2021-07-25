@@ -184,7 +184,7 @@ public class HomeFragment extends Fragment {
                 } else {
                     // 搜尋原始資料內有無包含關鍵字(不區別大小寫)
                     for (HomeData group : localHomeDatas) {
-                        if ((group.getGroup().getName().toUpperCase().contains(newText.toUpperCase())) && (group.getGroup().getProgress() != group.getGroup().getConditionCount())) {
+                        if (group.getGroup().getName().toUpperCase().contains(newText.toUpperCase())) {
                             searchHomeData.add(group);
                         }
                     }
@@ -227,7 +227,7 @@ public class HomeFragment extends Fragment {
                                     // 搜尋原始資料內有無包含關鍵字(不區別大小寫)
                                     for (HomeData group : localHomeDatas) {
                                         //只顯示團購狀態是1的(1-> 揪團中)
-                                        if ((group.getGroup().getProgress() != group.getGroup().getConditionCount()) && (group.getGroup().getProgress() != group.getGroup().getConditionCount())) {
+                                        if (group.getGroup().getProgress() != group.getGroup().getConditionCount()) {
                                             searchHomeData.add(group);
                                         }
                                     }
@@ -325,7 +325,9 @@ public class HomeFragment extends Fragment {
             //四捨五入到小數第一位
             float groupDismin = b.setScale(1,BigDecimal.ROUND_HALF_UP).floatValue();
             homeData = new HomeData(group,groupDismin);
-            localHomeDatas.add(homeData);
+            if (group.getProgress() != group.getConditionCount()) {
+                localHomeDatas.add(homeData);
+            }
         }
         //將Homedata用使用者與團購的最短距離排序
         Collections.sort(localHomeDatas, new Comparator<HomeData>() {
@@ -347,7 +349,7 @@ public class HomeFragment extends Fragment {
         List<HomeData> selectHomeData = new ArrayList<>();
         for (HomeData category : categoryHomeData) {
             //類別ID與為達到團購最大上限
-            if ((category.getGroup().getCategoryId() == category_Id) && (category.getGroup().getProgress() != category.getGroup().getConditionCount())) {
+            if (category.getGroup().getCategoryId() == category_Id) {
                 selectHomeData.add(category);
             }
         }
