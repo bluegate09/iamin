@@ -17,7 +17,26 @@ import idv.tfp10101.iamin.network.RemoteAccess;
 
 public class MemberControl {
 
-    private final static String TAG = "TAG_MemberControl";
+
+    /**
+     *當前使用者座標
+     */
+
+    private static MemberCoordinate coordinateInstance;
+    public static MemberCoordinate getCoordinateInstance(){
+        if(coordinateInstance == null){
+            coordinateInstance = new MemberCoordinate(0.0,0.0);
+        }
+        return coordinateInstance;
+    }
+
+    public static void setMemberCoordinate(MemberCoordinate memberCoordinate){
+        if(coordinateInstance == null){
+            coordinateInstance = new MemberCoordinate(0.0,0.0);
+        }
+        coordinateInstance = memberCoordinate;
+    }
+
 
     private static Member memberInstance;
     public static Member getInstance(){
@@ -142,5 +161,31 @@ public class MemberControl {
             Toast.makeText(context, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
         }
         return -1;
+    }
+
+    public static class MemberCoordinate{
+        private double latitude; // 緯度
+        private double longtitude; // 經度
+
+        public MemberCoordinate(double latitude, double longtitude) {
+            this.latitude = latitude;
+            this.longtitude = longtitude;
+        }
+
+        public double getLatitude() {
+            return latitude;
+        }
+
+        public void setLatitude(double latitude) {
+            this.latitude = latitude;
+        }
+
+        public double getLongtitude() {
+            return longtitude;
+        }
+
+        public void setLongtitude(double longtitude) {
+            this.longtitude = longtitude;
+        }
     }
 }
