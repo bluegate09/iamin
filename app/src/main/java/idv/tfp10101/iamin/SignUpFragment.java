@@ -16,6 +16,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -42,6 +45,7 @@ public class SignUpFragment extends Fragment {
     private FirebaseAuth auth;
     private TextInputLayout emailTil,passwordTil,passwordTil2,phoneTil,nameTil;
     private EditText etEmail,etPassword,etPassword2,etNickname,etPhoneNumber;
+    private CheckBox checkBox;
     private Member member;
     private Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
 
@@ -75,6 +79,10 @@ public class SignUpFragment extends Fragment {
         passwordTil2 = view.findViewById(R.id.signupPasswordTil2);
         phoneTil = view.findViewById(R.id.signupPhoneTil);
         nameTil = view.findViewById(R.id.signupNickNameTil);
+
+        checkBox = view.findViewById(R.id.signUPcheckBox);
+
+        handleCheckBox();
 
 
         //前往註冊頁面
@@ -155,6 +163,19 @@ public class SignUpFragment extends Fragment {
             }else{
                 passwordTil2.setErrorEnabled(true);
                 passwordTil2.setError(getString(R.string.text_confirm_error));
+            }
+        });
+    }
+
+    //顯示或隱藏密碼
+    private void handleCheckBox() {
+        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked){
+                etPassword.setTransformationMethod(null);
+                etPassword2.setTransformationMethod(null);
+            }else{
+                etPassword.setTransformationMethod(new PasswordTransformationMethod());
+                etPassword2.setTransformationMethod(new PasswordTransformationMethod());
             }
         });
     }

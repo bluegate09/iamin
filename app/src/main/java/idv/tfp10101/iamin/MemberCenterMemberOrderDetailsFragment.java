@@ -37,6 +37,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -67,12 +69,12 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
     private List<MemberOrderDetails> memberOrderDetailsList;
     private RecyclerView recyclerView;
     private List<Location> locations;
-    private TextView deadLine,location1,location2,location3;
+    private List<Marker> markers;
+    private TextView deadLine,location1,location2,location3,tloc2,tloc3;
     private ImageButton btGooglePay;
     private GoogleMap googleMap;
     private String paymentMethod;
     private SearchView searchView;
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -119,8 +121,13 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         location2 = view.findViewById(R.id.memberOrderLocation2);
         location3 = view.findViewById(R.id.memberOrderLocation3);
 
+        tloc2 = view.findViewById(R.id.tPickupDetails2);
+        tloc3 = view.findViewById(R.id.tPickupDetails3);
+
         btGooglePay = view.findViewById(R.id.btGooglePay);
         btGooglePay.setVisibility(View.GONE);
+
+        markers = new ArrayList<>();
 
         //mapView
         CustomMapView mapView = view.findViewById(R.id.memberOrdermapView);
@@ -132,14 +139,14 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
             //處理在mapView旁的標籤
             handlePickUpLocation();
             // 顯示當前位置(小藍點) googleMap.setMyLocationEnabled(true);
-            CameraPosition cameraPosition = new CameraPosition.Builder() .target(new LatLng(locations.get(0).getLatitude(), locations.get(0).getLongtitude()))
-                    .zoom(18)
-                    .tilt(45) // 設定縮放倍數
-                    .bearing(90) // 設定傾斜角度
-                    .build(); // 設定旋轉角度
-            CameraUpdate cameraUpdate =
-                    CameraUpdateFactory.newCameraPosition(cameraPosition);
-            googleMap.animateCamera(cameraUpdate);
+//            CameraPosition cameraPosition = new CameraPosition.Builder() .target(new LatLng(locations.get(0).getLatitude(), locations.get(0).getLongtitude()))
+//                    .zoom(18)
+//                    .tilt(45) // 設定縮放倍數
+//                    .bearing(90) // 設定傾斜角度
+//                    .build(); // 設定旋轉角度
+//            CameraUpdate cameraUpdate =
+//                    CameraUpdateFactory.newCameraPosition(cameraPosition);
+//            googleMap.animateCamera(cameraUpdate);
 
         });
 
@@ -164,6 +171,8 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
 
     }
 
+
+
     private void handlePickUpLocation() {
         ArrayList<String> locList = new ArrayList<>();
         HashSet<String> locSet = new HashSet<>();
@@ -175,29 +184,68 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
 
             LatLng latLng = new LatLng(latitude, longtitude);
             MarkerOptions markerOptions = new MarkerOptions() .position(latLng)
-                    .title("取貨點" + i)
+                    .title("取貨地點" + i)
                     .snippet("")
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.mapview_pin))
                     .draggable(false);
-            googleMap.addMarker(markerOptions);
+
+            Marker marker = googleMap.addMarker(markerOptions);
+            markers.add(marker);
+
             String loc = transferLocation(latitude,longtitude);
 
             if(!(loc.isEmpty())){
                 locSet.add(loc);
             }
         }
+
+        handleMarkersInView();
+
         locList.addAll(locSet);
         String[] loc = {"","",""};
         for(int i = 0; i < locList.size(); i++){
             loc[i] = locList.get(i);
         }
+
         location1.setText(loc[0]);
-        location2.setText(loc[1]);
-        location3.setText(loc[2]);
+
+        if(loc[1].isEmpty()){
+            tloc2.setVisibility(View.GONE);
+            location2.setText("");
+        }else{
+            location2.setText(loc[1]);
+        }
+        if(loc[2].isEmpty()) {
+            tloc3.setVisibility(View.GONE);
+            location3.setText("");
+        }else{
+            location3.setText(loc[2]);
+        }
 
     }
 
+    /**
+     * 讓所有標記都能顯示在畫面上
+     */
+    private void handleMarkersInView() {
+        if (markers.isEmpty()) {
+            return;
+        }
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (Marker marker : markers) {
+            builder.include(marker.getPosition());
+        }
+        LatLngBounds bounds = builder.build();
 
+        int padding = 100; // 以像素為單位從地圖邊緣偏移
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+
+        googleMap.animateCamera(cu);
+    }
+
+    /**
+     * 經緯轉地址
+     */
     public String transferLocation(double latitude, double longitude){
         Geocoder geocoder;
         List<Address> addresses = null;
@@ -334,4 +382,6 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         }
 
     }
+
+
 }
