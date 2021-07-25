@@ -449,17 +449,19 @@ public class PaymentInformationFragment extends Fragment {
              * 掃瞄完畢時，Fragment.onActivityResult()才會被呼叫 */
             // IntentIntegrator integrator = new IntentIntegrator(this);
             // 設定現在是哪一頁 (之後要跳轉回來)
-            IntentIntegrator integrator = new IntentIntegrator(activity);
-            // 設定要啟動 BarcodeImageEnabled，並且掃瞄完可以result Intent
+            IntentIntegrator integrator = IntentIntegrator.forSupportFragment(PaymentInformationFragment.this);
+            // 設定要啟動 BarcodeImageEnabled
             integrator.setBarcodeImageEnabled(true);
             // 如果有掃描到是否要發出聲響
             integrator.setBeepEnabled(true);
             // 0:主鏡頭 1:後鏡頭
             integrator.setCameraId(0);
             // 畫面是否鎖定 (目前失效 強制鎖定)
-            integrator.setOrientationLocked(false);
+            integrator.setOrientationLocked(true);
             // 進入掃描畫面加入提示文字
             integrator.setPrompt("Scan a QR Code");
+            //
+
             // Initiates a scan (啟動掃描)
             integrator.initiateScan();
         });
@@ -498,6 +500,7 @@ public class PaymentInformationFragment extends Fragment {
                     if (memberOrder.getMemberOrderId() == memberOderId) {
                         memberOrder.setDeliverStatus(true);
                         showMemberOrderDetails(memberOrders);
+                        Toast.makeText(activity, "掃描成功！", Toast.LENGTH_SHORT).show();
                         break;
                     }
                 }
