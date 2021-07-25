@@ -35,7 +35,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="5"
                 android:background="@drawable/searchview_background"
-                android:iconifiedByDefault="false"
                 android:queryBackground="@android:color/transparent"
                 android:visibility="visible">
 
