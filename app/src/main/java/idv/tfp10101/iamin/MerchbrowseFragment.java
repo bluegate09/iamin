@@ -156,6 +156,8 @@ public class MerchbrowseFragment extends Fragment {
         //取得該團購的所有位置
         grouplocations = new ArrayList<>();
         StringBuilder groupLaction = new StringBuilder();
+        String loaction = "面交地址與距離:\n\n";
+        groupLaction.append(loaction);
         grouplocations = LocationControl.getLocationByGroupId(activity, groupID);
         if (grouplocations != null){
             for (Location location : grouplocations){
@@ -168,7 +170,7 @@ public class MerchbrowseFragment extends Fragment {
                 BigDecimal b = new BigDecimal(km);
 //            //四捨五入到小數第一位
                float groupDismin = b.setScale(1,BigDecimal.ROUND_HALF_UP).floatValue();
-                groupLaction.append(address + "距離為:" + groupDismin +"公里"+ "\n\n");
+                groupLaction.append(address + "距離為:" + groupDismin +"公里\n\n");
             }
             txv_group_location.setText(groupLaction);
         }
