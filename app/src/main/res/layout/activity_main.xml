@@ -30,7 +30,9 @@
         android:layout_gravity="bottom"
         android:background="@color/colorBottomNavigationView"
         app:itemIconTint="@drawable/color_bottom_navigation_icon"
-        app:layout_constraintBottom_toBottomOf="@+id/content"
+        app:itemTextColor="@drawable/color_bottom_navigation_icon"
+
         app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="@+id/content"
         app:menu="@menu/tab_menu" />
 </LinearLayout>

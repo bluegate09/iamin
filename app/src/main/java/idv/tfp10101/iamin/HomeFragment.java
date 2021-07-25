@@ -13,6 +13,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -64,6 +65,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -107,6 +109,8 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).show();
 
         // 需要開啟多個執行緒取得圖片，使用執行緒池功能
         int numProcs = Runtime.getRuntime().availableProcessors();
@@ -273,6 +277,7 @@ public class HomeFragment extends Fragment {
         ProgressDialog Loading = new ProgressDialog(activity);
         Loading.setTitle("載入中");
         Loading.setMessage("Loading...");
+        Loading.setCancelable(false);
         Loading.show();
 
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

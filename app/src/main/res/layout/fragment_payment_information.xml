@@ -109,12 +109,10 @@
         android:id="@+id/linearLayout9"
         android:layout_width="wrap_content"
         android:layout_height="60dp"
-        android:layout_marginStart="8dp"
         android:layout_marginEnd="16dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="@+id/buttonSubmit"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/buttonSubmit"
         app:layout_constraintTop_toTopOf="@+id/buttonSubmit">
 
         <ImageView
@@ -145,16 +143,18 @@
 
     <Button
         android:id="@+id/buttonSubmit"
-        android:layout_width="304dp"
+        android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:background="@drawable/bg_black_border_button"
         android:text="確認更改"
         android:textAllCaps="false"
         android:textColor="@color/black"
         android:textSize="30dp"
         app:backgroundTint="@null"
+        app:layout_constraintEnd_toStartOf="@+id/linearLayout9"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recyclerViewMember" />
 </androidx.constraintlayout.widget.ConstraintLayout>
