@@ -2,6 +2,7 @@ package idv.tfp10101.iamin;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
@@ -226,7 +227,7 @@ public class HomeFragment extends Fragment {
                                     // 搜尋原始資料內有無包含關鍵字(不區別大小寫)
                                     for (HomeData group : localHomeDatas) {
                                         //只顯示團購狀態是1的(1-> 揪團中)
-                                        if ((group.getGroup().getProgress() != group.getGroup().getConditionCount())) {
+                                        if (group.getGroup().getProgress() != group.getGroup().getConditionCount()) {
                                             searchHomeData.add(group);
                                         }
                                     }
@@ -269,6 +270,10 @@ public class HomeFragment extends Fragment {
     //取得User的當前位置
     private void getUserloaction() {
         checkPositioning();
+        ProgressDialog Loading = new ProgressDialog(activity);
+        Loading.setTitle("載入中");
+        Loading.setMessage("Loading...");
+        Loading.show();
 
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -290,6 +295,7 @@ public class HomeFragment extends Fragment {
                 userlng = location.getLongitude();
                 coumputeDistancemin();
                 showGroup(localHomeDatas);
+                Loading.dismiss();
             }
         });
     }
@@ -319,7 +325,9 @@ public class HomeFragment extends Fragment {
             //四捨五入到小數第一位
             float groupDismin = b.setScale(1,BigDecimal.ROUND_HALF_UP).floatValue();
             homeData = new HomeData(group,groupDismin);
-            localHomeDatas.add(homeData);
+            if (group.getProgress() != group.getConditionCount()) {
+                localHomeDatas.add(homeData);
+            }
         }
         //將Homedata用使用者與團購的最短距離排序
         Collections.sort(localHomeDatas, new Comparator<HomeData>() {
@@ -341,7 +349,7 @@ public class HomeFragment extends Fragment {
         List<HomeData> selectHomeData = new ArrayList<>();
         for (HomeData category : categoryHomeData) {
             //類別ID與為達到團購最大上限
-            if ((category.getGroup().getCategoryId() == category_Id) && (category.getGroup().getProgress() != category.getGroup().getConditionCount())) {
+            if (category.getGroup().getCategoryId() == category_Id) {
                 selectHomeData.add(category);
             }
         }
@@ -419,7 +427,6 @@ public class HomeFragment extends Fragment {
         public class MyHomeDataViewHolder extends RecyclerView.ViewHolder {
             TextView txv_group_name, txv_group_conditionTime, txv_progress,txv_distanceMin;
             ImageView imv_group;
-            ProgressBar pr_bar;
 
             public MyHomeDataViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -428,7 +435,6 @@ public class HomeFragment extends Fragment {
                 txv_progress = itemView.findViewById(R.id.txv_progress);
                 txv_distanceMin = itemView.findViewById(R.id.txv_distanceMin);
                 imv_group = itemView.findViewById(R.id.imv_group);
-                pr_bar = itemView.findViewById(R.id.pr_bar);
             }
         }
 
@@ -459,9 +465,11 @@ public class HomeFragment extends Fragment {
             Timestamp ts = rsHomeData.getGroup().getConditionTime();
             DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
             holder.txv_group_conditionTime.setText("結單日期:" + "\n" + sdf.format(ts));
-            holder.pr_bar.setMax(rsHomeData.getGroup().getGoal());
-            holder.pr_bar.setProgress(rsHomeData.getGroup().getProgress());
-            holder.txv_progress.setText("(" + String.valueOf(rsHomeData.getGroup().getProgress()) + "/" + String.valueOf(rsHomeData.getGroup().getGoal()) + ")");
+            if (rsHomeData.getGroup().getConditionCount() == -1){
+                holder.txv_progress.setText("進度:" + rsHomeData.getGroup().getProgress() + "份\n" +"目標:" + rsHomeData.getGroup().getGoal() + "份");
+            }else{
+                holder.txv_progress.setText("進度:" + rsHomeData.getGroup().getProgress() + "份\n" + "目標:" + rsHomeData.getGroup().getGoal() + "份\n" + "購買上限:" + rsHomeData.getGroup().getConditionCount() + "份");
+            }
 
             //取的團購的所有地點
 //            grouplocations = LocationControl.getLocationByGroupId(activity, GroupID);

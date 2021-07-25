@@ -1,5 +1,6 @@
 package idv.tfp10101.iamin.member_order;
 
+import android.app.Activity;
 import android.content.Context;
 import android.widget.Toast;
 
@@ -89,6 +90,28 @@ public class MemberOrderControl {
                 jsonArray.add(jsonObjectMO);
             }
             jsonObject.add("memberOrders", jsonArray);
+
+            // requst
+            String result = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
+            return Integer.parseInt(result);
+        }else {
+            Toast.makeText(context, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
+            return -1;
+        }
+    }
+
+    /**
+     * 更新指定會員訂單ID的發貨狀態
+     */
+    public static int updateDeliverStatus(Context context, int memberOderId, String purpose) {
+        // 如果有網路，就進行 request
+        if (RemoteAccess.networkConnected(context)) {
+            // 網址 ＆ Action
+            String url = RemoteAccess.URL_SERVER + purpose;
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("action", "updateDeliverStatus");
+            jsonObject.addProperty("memberOderId", memberOderId);
+            jsonObject.addProperty("status", true);
 
             // requst
             String result = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));

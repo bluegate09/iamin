@@ -569,6 +569,20 @@ public class GroupInsertFragment extends Fragment {
             // 顯示
             builder.show();
         });
+
+        // 長按自動建立資料
+        buttonGroupInsert.setOnLongClickListener(view -> {
+            editTextName.setText("紅龍冷凍組"); // 標題
+            editTextGoal.setText("10"); // 目標份數
+            spinnerCategory.setSelection(0); // 類別 ID
+            editTextItem.setText("冷凍食品"); // 團購項目
+            editTextContactNumber.setText("0955337573"); // 聯絡電話
+            isCC = true; isFF = true; // 收款方式
+            editTextCaution.setText("冷凍商品請準時取貨，若未及時取貨貨品主購自行處理"); // 注意事項
+            isPrivacy = false; // 隱私設定
+
+            return true;
+        });
     }
 
     /**

@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -75,6 +76,9 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
     private GoogleMap googleMap;
     private String paymentMethod;
     private SearchView searchView;
+    private ImageView imageViewQRcode;
+    // 物件
+    private int memberOderId = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,6 +94,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
             orderDetailsJson = bundle.getString("OrderDetails");
             locationJson = bundle.getString("Locations");
             paymentMethod = bundle.getString("GroupStatus");
+            memberOderId = bundle.getInt("MemberOrderID");
         }else{
             Log.d(TAG,"bundle is null");
         }
@@ -169,6 +174,9 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
 
         showMyOrder(memberOrderDetailsList);
 
+        // QRcode
+        imageViewQRcode = view.findViewById(R.id.imageViewQRcode);
+        handleQRcode();
     }
 
 
@@ -383,5 +391,21 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
 
     }
 
-
+    /**
+     * 用 MemberOrderID 產生 QRcode
+     */
+    private void handleQRcode() {
+        imageViewQRcode.setOnClickListener(view -> {
+            if (memberOderId < 0) {
+                Toast.makeText(activity, "會員訂單ID錯誤", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // Bundle -> 打包資料傳遞 putXYZ(key, value)
+            Bundle bundle = new Bundle();
+            bundle.putInt("memberOderId", memberOderId);
+            //
+            Navigation.findNavController(view)
+                    .navigate(R.id.action_memberCenterOrderDetailsFragment_to_QRCodeGenFragment, bundle);
+        });
+    }
 }
