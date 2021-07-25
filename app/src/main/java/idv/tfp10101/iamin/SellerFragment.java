@@ -349,7 +349,16 @@ public class SellerFragment extends Fragment {
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             final Group rsGroup = rsGroups.get(position); // 第幾個group
             //
-            holder.textViewName.setText(rsGroup.getName());
+            StringBuffer stringBuffer = new StringBuffer();
+            if (rsGroup.getName().length() > 7) {
+                stringBuffer.append(rsGroup.getName().substring(0, 6));
+                stringBuffer.append("\n");
+                stringBuffer.append(rsGroup.getName().substring(7, rsGroup.getName().length()));
+                holder.textViewName.setText(stringBuffer);
+            }else {
+                holder.textViewName.setText(rsGroup.getName());
+            }
+
             // 參加人數-抓取會員訂單
             holder.textViewNumber.setText("0"); // 預設
             List<MemberOrder> memberOrders =

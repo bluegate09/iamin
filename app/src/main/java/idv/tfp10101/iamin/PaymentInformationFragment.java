@@ -2,6 +2,7 @@ package idv.tfp10101.iamin;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
@@ -135,21 +137,15 @@ public class PaymentInformationFragment extends Fragment {
             return;
         }
 
+
         // 已達標團購選擇
         handleReachGroup();
 
-        // 付款方式選擇
-        handlePaymentMethod();
-
-        // 已付款狀態選擇
-        handlePaymentStatus();
+        // 預設顯示第一筆成團的資訊
+        handleSetNewData(reachGroups.get(0));
 
         // spinner監聽
         handleSpinnerListener();
-
-        // 預設顯示第一筆成團的資訊
-        Group groupOne = reachGroups.get(0);
-        handleDefaultData(groupOne);
 
         // 送交
         handleSumbit();
@@ -159,18 +155,29 @@ public class PaymentInformationFragment extends Fragment {
     }
 
     /**
-     * 預設顯示第一筆成團的資訊
+     * 抓新資料後，選項重置+刷新RecyclerView
      */
-    private void handleDefaultData(Group group) {
-        // 抓取會員訂單
+    private void handleSetNewData(Group group) {
+        /** 抓取會員訂單 */
         memberOrders = MemberOrderControl.getMemberOrderByGroupId
                 (activity, group.getGroupId(), "PaymentInformation");
         // 紀錄-此團購所有的買家訂單
         allMemberOrders = memberOrders;
-        // 抓取會員訂單明細
+        /** 抓取會員訂單明細 */
         memberOrderDetails = MemberOrderDetailsControl.getMemberOrderDetailsByMemberOrders
                 (activity, memberOrders, "PaymentInformation");
 
+        handleRefresh();
+    }
+    /**
+     * 選項重置+刷新RecyclerView
+     */
+    private void handleRefresh() {
+        // 付款方式選擇
+        handlePaymentMethod();
+        // 已付款狀態選擇
+        handlePaymentStatus();
+        //
         showMemberOrderDetails(memberOrders);
     }
 
@@ -434,8 +441,32 @@ public class PaymentInformationFragment extends Fragment {
      */
     private void handleSumbit() {
         buttonUpdate.setOnClickListener(view -> {
-            MemberOrderControl.updateMemberOrders(activity, memberOrders, "PaymentInformation");
-            Toast.makeText(activity, "更新成功", Toast.LENGTH_SHORT).show();
+            /** AlertDialog */
+            AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+            dialog.setTitle("準備更新訂單");
+            dialog.setMessage("更新訂單後就不可以修改了喔！");
+            dialog.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    MemberOrderControl.updateMemberOrders(activity, memberOrders, "PaymentInformation");
+                    // 在本地更新ReceivePaymentStatus
+                    for (MemberOrder memberOrder : memberOrders) {
+                        if (memberOrder.isDeliverStatus()) {
+                            memberOrder.setReceivePaymentStatus(true);
+                        }
+                    }
+                    // 選項重置+刷新
+                    handleRefresh();
+                    Toast.makeText(activity, "更新成功", Toast.LENGTH_SHORT).show();
+                }
+            });
+            dialog.setNeutralButton("取消",new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface arg0, int arg1) {
+
+                }
+            });
+            dialog.show();
         });
     }
 
@@ -499,7 +530,10 @@ public class PaymentInformationFragment extends Fragment {
                 for (MemberOrder memberOrder : memberOrders) {
                     if (memberOrder.getMemberOrderId() == memberOderId) {
                         memberOrder.setDeliverStatus(true);
-                        showMemberOrderDetails(memberOrders);
+                        // 在本地更新ReceivePaymentStatu
+                        memberOrder.setReceivePaymentStatus(true);
+                        // 選項重置+刷新
+                        handleRefresh();
                         Toast.makeText(activity, "掃描成功！", Toast.LENGTH_SHORT).show();
                         break;
                     }
@@ -524,18 +558,29 @@ public class PaymentInformationFragment extends Fragment {
         private LayoutInflater layoutInflater;
         boolean[] PStatus; // 收款狀態
         boolean[] DStatus; // 發貨狀態
+        boolean[] DStatusOriginal; // DB的發貨狀態
 
         public MODAdapter(Context context, List<MemberOrder> memberOrders) {
             layoutInflater = LayoutInflater.from(context);
             rsMemberOrders = memberOrders;
             DStatus = new boolean[memberOrders.size()];
             PStatus = new boolean[memberOrders.size()];
+            DStatusOriginal = new boolean[memberOrders.size()];
+            // 保存DB的發貨狀態
+            for (int i = 0; i < memberOrders.size(); i++) {
+                DStatusOriginal[i] = memberOrders.get(i).isDeliverStatus();
+            }
         }
 
         public void setMemberOrders(List<MemberOrder> memberOrders) {
             rsMemberOrders = memberOrders;
             DStatus = new boolean[memberOrders.size()];
             PStatus = new boolean[memberOrders.size()];
+            DStatusOriginal = new boolean[memberOrders.size()];
+            // 保存DB的發貨狀態
+            for (int i = 0; i < memberOrders.size(); i++) {
+                DStatusOriginal[i] = memberOrders.get(i).isDeliverStatus();
+            }
         }
 
         /** ViewHolder */
@@ -619,12 +664,17 @@ public class PaymentInformationFragment extends Fragment {
             holder.imageViewConfirm.setOnClickListener(view -> {
                 // 更改圖示
                 int pos = holder.getBindingAdapterPosition();
-                DStatus[pos] = !DStatus[pos];
-                // 紀錄
-                rsMemberOrder.setDeliverStatus(DStatus[pos]);
-                memberOrders.get(position).setDeliverStatus(DStatus[pos]);
-                //  Adapter 呼叫 notifyDataSetChanged()，會全部重刷新 (重建一次RecyclerView)
-                notifyDataSetChanged();
+                // 如果還沒勾選
+                if (!DStatusOriginal[pos]) {
+                    DStatus[pos] = !DStatus[pos]; // 更新發貨狀態
+                    // 紀錄
+                    rsMemberOrder.setDeliverStatus(DStatus[pos]);
+                    memberOrders.get(position).setDeliverStatus(DStatus[pos]);
+                    //  Adapter 呼叫 notifyDataSetChanged()，會全部重刷新 (重建一次RecyclerView)
+                    notifyDataSetChanged();
+                }else {
+                    Toast.makeText(activity, "此訂單已經完成囉，不可再更改！", Toast.LENGTH_SHORT).show();
+                }
             });
         }
 
