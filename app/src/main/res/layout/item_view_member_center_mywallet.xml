@@ -40,27 +40,38 @@
         app:layout_constraintTop_toBottomOf="@+id/groupTitleWallet" />
 
     <TextView
-        android:id="@+id/numberWallet"
+        android:id="@+id/textView8"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Perchase number"
+        android:text="@string/text_perchase_number"
         app:layout_constraintStart_toStartOf="@+id/nameWallet"
+        app:layout_constraintTop_toBottomOf="@+id/nameWallet" />
+
+    <TextView
+        android:id="@+id/numberWallet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView8"
+        app:layout_constraintStart_toEndOf="@+id/textView8"
         app:layout_constraintTop_toBottomOf="@+id/nameWallet" />
 
     <TextView
         android:id="@+id/priceWallet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:text="Price"
-        app:layout_constraintStart_toStartOf="@+id/numberWallet"
-        app:layout_constraintTop_toBottomOf="@+id/numberWallet" />
-
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@+id/textView8"
+        app:layout_constraintTop_toBottomOf="@+id/textView8" />
     <TextView
         android:id="@+id/dateWallet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:text="date"
         android:textSize="12sp"
         android:layout_marginEnd="8dp"
