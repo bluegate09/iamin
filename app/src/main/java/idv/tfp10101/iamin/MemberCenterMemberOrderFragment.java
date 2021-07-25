@@ -249,6 +249,7 @@ public class MemberCenterMemberOrderFragment extends Fragment {
                 bundle.putString("OrderDetails", orderDetailsJson);
                 bundle.putString("Locations",locationsJson);
                 bundle.putString("GroupStatus",String.valueOf(memberOrder.getPayentMethod()));
+                bundle.putInt("MemberOrderID", memberOrder.getMemberOrderId());
 
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterMemberOrderFragment_to_memberCenterOrderDetailsFragment,bundle);
             });

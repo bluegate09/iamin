@@ -2,8 +2,10 @@ package idv.tfp10101.iamin;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +40,9 @@ import idv.tfp10101.iamin.member_order.MemberOrderControl;
 import idv.tfp10101.iamin.member_order_details.MemberOrderDetails;
 import idv.tfp10101.iamin.member_order_details.MemberOrderDetailsControl;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+
 public class PaymentInformationFragment extends Fragment {
     private Activity activity;
     private Resources resources;
@@ -51,14 +56,15 @@ public class PaymentInformationFragment extends Fragment {
     private Spinner spinnerReachGroup;
     private Spinner spinnerPaymentMethod;
     private Spinner spinnerPaymentStatus;
+    private ImageView imageViewQRcode;
     // 物件
     private Member member;
     private Group reachGroup;
-    private List<MemberOrder> memberOrders = new ArrayList<>();
+    private List<MemberOrder> allMemberOrders = new ArrayList<>(); // 此團購所有的買家訂單
+    private List<MemberOrder> memberOrders = new ArrayList<>(); // 目前過濾的買家訂單
     private List<MemberOrderDetails> memberOrderDetails = new ArrayList<>();
     private List<Member> buyers = new ArrayList<>(); // 目前選擇團購的買家
     private List<Group> reachGroups = new ArrayList<>(); // 取得目前已達標的團購
-    private List<Group> filterGroups = new ArrayList<>(); // 取得已篩選達標的團購
     private Map<Integer, String> mapPaymentMethod = new HashMap<>();
     private Map<Integer, String> mapPaymentStatus = new HashMap<>();
     private int payentMethod = 0; // 顯示目前的收款方式
@@ -77,6 +83,7 @@ public class PaymentInformationFragment extends Fragment {
         spinnerReachGroup = view.findViewById(R.id.spinnerReachGroup);
         spinnerPaymentMethod = view.findViewById(R.id.spinnerPaymentMethod);
         spinnerPaymentStatus = view.findViewById(R.id.spinnerPaymentStatus);
+        imageViewQRcode = view.findViewById(R.id.imageViewQRcode);
         // 先載入RecyclerView元件，但是還沒有掛上Adapter
         recyclerViewMember = view.findViewById(R.id.recyclerViewMember);
         recyclerViewMember.setLayoutManager(new LinearLayoutManager(activity));
@@ -146,6 +153,9 @@ public class PaymentInformationFragment extends Fragment {
 
         // 送交
         handleSumbit();
+
+        // QRcode掃描
+        handleQRcode();
     }
 
     /**
@@ -155,6 +165,8 @@ public class PaymentInformationFragment extends Fragment {
         // 抓取會員訂單
         memberOrders = MemberOrderControl.getMemberOrderByGroupId
                 (activity, group.getGroupId(), "PaymentInformation");
+        // 紀錄-此團購所有的買家訂單
+        allMemberOrders = memberOrders;
         // 抓取會員訂單明細
         memberOrderDetails = MemberOrderDetailsControl.getMemberOrderDetailsByMemberOrders
                 (activity, memberOrders, "PaymentInformation");
@@ -274,6 +286,8 @@ public class PaymentInformationFragment extends Fragment {
                 // 抓取會員訂單
                 memberOrders = MemberOrderControl.getMemberOrderByGroupId
                         (activity, reachGroup.getGroupId(), "PaymentInformation");
+                // 紀錄-此團購所有的買家訂單
+                allMemberOrders = memberOrders;
                 // 抓取會員訂單明細
                 memberOrderDetails = MemberOrderDetailsControl.getMemberOrderDetailsByMemberOrders
                         (activity, memberOrders, "PaymentInformation");
@@ -290,9 +304,8 @@ public class PaymentInformationFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String string = "";
-                // 重新抓取會員訂單
-                memberOrders = MemberOrderControl.getMemberOrderByGroupId
-                        (activity, reachGroup.getGroupId(), "PaymentInformation");
+                // 重新載入-此團購所有的買家訂單
+                memberOrders = allMemberOrders;
                 // 抓取現在的收款方式
                 string = parent.getItemAtPosition(position).toString();
                 for (Map.Entry<Integer, String> entry : mapPaymentMethod.entrySet()) {
@@ -355,9 +368,8 @@ public class PaymentInformationFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String string = "";
-                // 重新抓取會員訂單
-                memberOrders = MemberOrderControl.getMemberOrderByGroupId
-                        (activity, reachGroup.getGroupId(), "PaymentInformation");
+                // 重新載入-此團購所有的買家訂單
+                memberOrders = allMemberOrders;
                 // 抓取現在的收款狀態
                 string = parent.getItemAtPosition(position).toString();
                 for (Map.Entry<Integer, String> entry : mapPaymentStatus.entrySet()) {
@@ -425,6 +437,76 @@ public class PaymentInformationFragment extends Fragment {
             MemberOrderControl.updateMemberOrders(activity, memberOrders, "PaymentInformation");
             Toast.makeText(activity, "更新成功", Toast.LENGTH_SHORT).show();
         });
+    }
+
+    /**
+     * QRcode掃描
+     */
+    private void handleQRcode() {
+        imageViewQRcode.setOnClickListener(view -> {
+            /* 若在Activity內需要呼叫IntentIntegrator(Activity)建構式建立IntentIntegrator物件；
+             * 而在Fragment內需要呼叫IntentIntegrator.forSupportFragment(Fragment)建立物件，
+             * 掃瞄完畢時，Fragment.onActivityResult()才會被呼叫 */
+            // IntentIntegrator integrator = new IntentIntegrator(this);
+            // 設定現在是哪一頁 (之後要跳轉回來)
+            IntentIntegrator integrator = new IntentIntegrator(activity);
+            // 設定要啟動 BarcodeImageEnabled，並且掃瞄完可以result Intent
+            integrator.setBarcodeImageEnabled(true);
+            // 如果有掃描到是否要發出聲響
+            integrator.setBeepEnabled(true);
+            // 0:主鏡頭 1:後鏡頭
+            integrator.setCameraId(0);
+            // 畫面是否鎖定 (目前失效 強制鎖定)
+            integrator.setOrientationLocked(false);
+            // 進入掃描畫面加入提示文字
+            integrator.setPrompt("Scan a QR Code");
+            // Initiates a scan (啟動掃描)
+            integrator.initiateScan();
+        });
+    }
+
+    /**
+     * QRcode掃描 - 回傳
+     */
+    @Override
+    /* 目前IntentIntegrator.initiateScan()內容仍是呼叫startActivityForResult()，
+       所以仍須覆寫onActivityResult()，即使onActivityResult()已經被列為deprecated
+     */
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if (intentResult != null && intentResult.getContents() != null) {
+            Log.d(Constants.TAG, "QR Code Result: " + intentResult.getContents());
+            // Str -> int
+            int memberOderId = Integer.parseInt(intentResult.getContents());
+            // 如果此會員訂單非當下的團購，不給更新
+            boolean isMemberOrder = false;
+            for (MemberOrder memberOrder : allMemberOrders) {
+                if (memberOrder.getMemberOrderId() == memberOderId) {
+                    isMemberOrder = true;
+                }
+            }
+            if (!isMemberOrder) {
+                Toast.makeText(activity, "QRcode並非本次團購", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // 更新發貨狀態
+            int result = MemberOrderControl.updateDeliverStatus(activity, memberOderId, "PaymentInformation");
+            // 重新刷新
+            if (result > 0) {
+                for (MemberOrder memberOrder : memberOrders) {
+                    if (memberOrder.getMemberOrderId() == memberOderId) {
+                        memberOrder.setDeliverStatus(true);
+                        showMemberOrderDetails(memberOrders);
+                        break;
+                    }
+                }
+            }else {
+                Toast.makeText(activity, "DB更新失敗", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Log.d(Constants.TAG, "ResultNotFound");
+        }
     }
 
     /**

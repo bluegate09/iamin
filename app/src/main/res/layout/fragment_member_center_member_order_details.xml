@@ -122,6 +122,14 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
                 android:src="@drawable/bt_google_pay" />
+
+            <ImageView
+                android:id="@+id/imageViewQRcode"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/gen_qrcode" />
         </LinearLayout>
     </ScrollView>
 

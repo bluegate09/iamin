@@ -297,10 +297,19 @@
         android:id="@+id/memberCenterOrderDetailsFragment"
         android:name="idv.tfp10101.iamin.MemberCenterMemberOrderDetailsFragment"
         android:label="fragment_member_center_order_details"
-        tools:layout="@layout/fragment_member_center_member_order_details" />
+        tools:layout="@layout/fragment_member_center_member_order_details" >
+        <action
+            android:id="@+id/action_memberCenterOrderDetailsFragment_to_QRCodeGenFragment"
+            app:destination="@id/QRCodeGenFragment" />
+    </fragment>
     <fragment
         android:id="@+id/memberCenterMyGroupListFragment"
         android:name="idv.tfp10101.iamin.MemberCenterMyGroupListFragment"
         android:label="fragment_member_center_my_group_list"
         tools:layout="@layout/fragment_member_center_my_group_list" />
+    <fragment
+        android:id="@+id/QRCodeGenFragment"
+        android:name="idv.tfp10101.iamin.QRCodeGenFragment"
+        android:label="fragment_q_r_code_gen"
+        tools:layout="@layout/fragment_q_r_code_gen" />
 </navigation>
