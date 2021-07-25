@@ -31,5 +31,6 @@
         android:background="@color/colorBottomNavigationView"
         app:itemIconTint="@drawable/color_bottom_navigation_icon"
         app:layout_constraintBottom_toBottomOf="@+id/content"
+        app:labelVisibilityMode="labeled"
         app:menu="@menu/tab_menu" />
 </LinearLayout>

@@ -34,6 +34,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="5"
+                android:background="@drawable/searchview_background"
+                android:iconifiedByDefault="false"
+                android:queryBackground="@android:color/transparent"
                 android:visibility="visible">
 
             </SearchView>
@@ -49,7 +52,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_groups"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
 
             <ProgressBar
                 android:id="@+id/progressBar2"

@@ -45,6 +45,8 @@ import com.youth.banner.indicator.CircleIndicator;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -156,6 +158,8 @@ public class MerchbrowseFragment extends Fragment {
         //取得該團購的所有位置
         grouplocations = new ArrayList<>();
         StringBuilder groupLaction = new StringBuilder();
+        String loactionanddistance = "面交地址與距離:\n\n";
+        groupLaction.append(loactionanddistance);
         grouplocations = LocationControl.getLocationByGroupId(activity, groupID);
         if (grouplocations != null){
             for (Location location : grouplocations){
@@ -165,10 +169,18 @@ public class MerchbrowseFragment extends Fragment {
                 android.location.Location.distanceBetween(userlat,userlng,groupLat,groupLng,results);
                 String address = latLngToName(groupLat,groupLng);
                 Float km = results[0]/1000;
+
+                Timestamp ts = location.getPickup_time();
+                DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+
                 BigDecimal b = new BigDecimal(km);
 //            //四捨五入到小數第一位
                float groupDismin = b.setScale(1,BigDecimal.ROUND_HALF_UP).floatValue();
-                groupLaction.append(address + "距離為:" + groupDismin +"公里"+ "\n\n");
+               if (location.getPickup_time()  == null){
+                   groupLaction.append(address + "距離為:" + groupDismin +"公里\n\n");
+               }else {
+                   groupLaction.append(address + "距離為:" + groupDismin + "公里\n" + "取貨時間:" + sdf.format(ts) + "\n\n");
+               }
             }
             txv_group_location.setText(groupLaction);
         }
