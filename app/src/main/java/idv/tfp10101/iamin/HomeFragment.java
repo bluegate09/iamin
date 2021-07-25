@@ -277,6 +277,7 @@ public class HomeFragment extends Fragment {
         ProgressDialog Loading = new ProgressDialog(activity);
         Loading.setTitle("載入中");
         Loading.setMessage("Loading...");
+        Loading.setCancelable(false);
         Loading.show();
 
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
