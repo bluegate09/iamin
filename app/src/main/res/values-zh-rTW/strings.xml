@@ -58,7 +58,7 @@
     <string name="passwordandemailcannotbeempty">密碼或Email需填寫</string>
     <string name="authfailed">驗證失敗.</string>
     <string name="signinwithemailsuccess">Email登入成功</string>
-    <string name="welcome_back">歡迎到來</string>
+    <string name="welcome_back">歡迎來到</string>
     <string name="forget_password">忘記密碼</string>
     <string name="login">登入</string>
     <string name="don_t_have_an_account_yet_register_now">現在註冊</string>
@@ -150,4 +150,6 @@
     <string name="text_details_all">全部</string>
     <string name="text_order_details">訂單細項</string>
     <string name="text_perchase_number">購買數量: </string>
+    <string name="text_show_password">顯示密碼</string>
+    <string name="text_sign_in_with_google">使用Google登入</string>
 </resources>
