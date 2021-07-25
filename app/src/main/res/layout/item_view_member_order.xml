@@ -80,6 +80,16 @@
         app:layout_constraintTop_toBottomOf="@+id/memberOrderPaymentMethod" />
 
 
+    <TextView
+        android:id="@+id/memberOrderToRating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:textSize="20dp"
+        android:text="@string/text_sumbit_rating"
+        app:layout_constraintBottom_toTopOf="@+id/memberOrdertoDetails"
+        app:layout_constraintEnd_toEndOf="@+id/memberOrdertoDetails" />
+
     <ImageView
         android:id="@+id/memberOrderstatus"
         android:layout_marginTop="16dp"

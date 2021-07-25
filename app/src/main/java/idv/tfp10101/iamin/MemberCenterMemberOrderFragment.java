@@ -1,6 +1,8 @@
 package idv.tfp10101.iamin;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.media.Rating;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,7 +18,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -62,7 +67,6 @@ public class MemberCenterMemberOrderFragment extends Fragment {
         Type listType = new TypeToken<List<MemberOrder>>() {}.getType();
         memberOrderList = new Gson().fromJson(jsonIn, listType);
 
-//        Log.d(TAG, memberOrderList.toString());
     }
 
     @Override
@@ -78,10 +82,11 @@ public class MemberCenterMemberOrderFragment extends Fragment {
         SearchView searchView = view.findViewById(R.id.svOrderSearch);
         memberOrderSpinner = view.findViewById(R.id.memberOrderSpinner);
 
+
+
         recyclerView = view.findViewById(R.id.rvMemberCenterOrder);
         recyclerView.setAdapter(new MyAdapter(activity,memberOrderList));
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
-
 
         //spinner
         mapGroupStatus.put(0, "團購狀態");
@@ -92,8 +97,10 @@ public class MemberCenterMemberOrderFragment extends Fragment {
         for (Map.Entry<Integer, String> entry : mapGroupStatus.entrySet()) {
             strings.add(entry.getValue());
         }
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(activity,R.layout.spinner_seller,strings);
         adapter.setDropDownViewResource(R.layout.spinner_seller);
+
         memberOrderSpinner.setAdapter(adapter);
         memberOrderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -115,14 +122,11 @@ public class MemberCenterMemberOrderFragment extends Fragment {
                     }
                 }
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
-
-
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -253,6 +257,28 @@ public class MemberCenterMemberOrderFragment extends Fragment {
 
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterMemberOrderFragment_to_memberCenterOrderDetailsFragment,bundle);
             });
+
+            holder.btRatingButton.setOnClickListener(v -> {
+
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(activity);
+                View buttonView = getLayoutInflater().inflate(R.layout.dialog_rating,null);
+                EditText message = v.findViewById(R.id.edt_rating_message);
+                Button btButton = v.findViewById(R.id.dialog_rating_button);
+                RatingBar ratingBar = v.findViewById(R.id.dialogRatingBar);
+
+                ratingBar.setOnRatingBarChangeListener((ratingBar1, rating, fromUser) -> {
+                    double dialogRating = rating;
+                });
+
+
+                mBuilder.setView(buttonView);
+                AlertDialog dialog = mBuilder.create();
+                dialog.show();
+                dialog.getWindow().setLayout(800,1200);
+
+                
+
+            });
         }
 
         @Override
@@ -262,7 +288,7 @@ public class MemberCenterMemberOrderFragment extends Fragment {
     }
 
     private static class MyViewHolder extends RecyclerView.ViewHolder{
-        TextView groupName,memberOrderId,totalPrice,status,paymentMethod,toDetails;
+        TextView groupName,memberOrderId,totalPrice,status,paymentMethod,toDetails,btRatingButton;
         ImageView groupStatus;
 
         public MyViewHolder(@NonNull View itemView) {
@@ -274,6 +300,7 @@ public class MemberCenterMemberOrderFragment extends Fragment {
             paymentMethod = itemView.findViewById(R.id.memberOrderPaymentMethod);
             groupStatus = itemView.findViewById(R.id.memberOrderstatus);
             toDetails = itemView.findViewById(R.id.memberOrdertoDetails);
+            btRatingButton = itemView.findViewById(R.id.memberOrderToRating);
 
         }
     }

@@ -152,4 +152,6 @@
     <string name="text_perchase_number">購買數量: </string>
     <string name="text_show_password">顯示密碼</string>
     <string name="text_sign_in_with_google">使用Google登入</string>
+    <string name="text_sumbit_rating">⭐️我要評價</string>
+    <string name="text_sumbit">提交</string>
 </resources>
