@@ -59,7 +59,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
-                    android:background="@color/colorSecondaryLight"
                     android:orientation="vertical">
 
 
@@ -68,6 +67,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
+                        android:background="@color/colorSecondaryLight"
                         android:text="團購進度,目標,上限"
                         android:textSize="20sp" />
 
@@ -76,6 +76,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
+                        android:background="@color/colorSecondaryLight"
                         android:text="團購面交地點,距離"
                         android:textSize="20sp" />
 
@@ -84,6 +85,7 @@
                         android:id="@+id/txv_caution"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="@color/colorSecondaryLight"
                         android:text="注意事項"
                         android:textSize="20sp" />
                 </LinearLayout>
@@ -226,7 +228,7 @@
                 android:layout_height="77dp"
                 android:layout_gravity="bottom|end"
                 android:background="@color/colorSecondary"
-                android:text="去買單"
+                android:text="檢查明細"
                 android:textSize="20sp" />
         </LinearLayout>
     </LinearLayout>

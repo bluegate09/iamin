@@ -57,54 +57,62 @@
                     android:layout_height="200dp"
                     android:padding="8dp" />
 
-                <LinearLayout
+                <androidx.core.widget.NestedScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:padding="8dp"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/pick_up_location" />
-
-                    <TextView
-                        android:id="@+id/memberOrderLocation1"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="location" />
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:padding="8dp">
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="20dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/pick_up_location1" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/pick_up_location" />
+                        <TextView
+                            android:id="@+id/memberOrderLocation1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="location" />
 
-                    <TextView
-                        android:id="@+id/memberOrderLocation2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="location" />
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="20dp" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="20dp"/>
+                        <TextView
+                            android:id="@+id/tPickupDetails2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/pick_up_location2" />
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/pick_up_location" />
+                        <TextView
+                            android:id="@+id/memberOrderLocation2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="location" />
 
-                    <TextView
-                        android:id="@+id/memberOrderLocation3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="location" />
-                </LinearLayout>
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="20dp" />
+
+                        <TextView
+                            android:id="@+id/tPickupDetails3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/pick_up_location3" />
+
+                        <TextView
+                            android:id="@+id/memberOrderLocation3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="location" />
+                    </LinearLayout>
+                </androidx.core.widget.NestedScrollView>
+
             </LinearLayout>
 
             <TextView

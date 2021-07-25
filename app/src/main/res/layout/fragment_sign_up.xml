@@ -90,7 +90,6 @@
                 android:hint="@string/password"
                 app:helperText="@string/text_helper_required"
                 app:helperTextTextColor="#80FF0000"
-                app:passwordToggleEnabled="true"
                 app:startIconDrawable="@drawable/lock">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -117,7 +116,6 @@
                 android:hint="@string/text_confirm_password"
                 app:helperText="@string/text_helper_required"
                 app:helperTextTextColor="#80FF0000"
-                app:passwordToggleEnabled="true"
                 app:startIconDrawable="@drawable/lock">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -127,6 +125,13 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:inputType="textPassword" />
+
+                <CheckBox
+                    android:id="@+id/signUPcheckBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/black"
+                    android:text="@string/text_show_password" />
 
 
             </com.google.android.material.textfield.TextInputLayout>

@@ -68,7 +68,7 @@
     <string name="passwordandemailcannotbeempty">Email/Password can\'t not be empty</string>
     <string name="authfailed">Authentication failed.</string>
     <string name="signinwithemailsuccess">signInWithEmail:success</string>
-    <string name="welcome_back">welcome back</string>
+    <string name="welcome_back">Welcome Back</string>
     <string name="forget_password">Forget Password</string>
     <string name="login">Login</string>
     <string name="don_t_have_an_account_yet_register_now">Don\'t have an account yet? Register Now!</string>
@@ -146,10 +146,15 @@
     <string name="text_total_price">TotalPrice: </string>
     <string name="text_member_order_id">MemberOrderId: </string>
     <string name="deadline">DeadLine</string>
-    <string name="pick_up_location">Pick Up Location:</string>
+    <string name="pick_up_location1">Pick Up Location 1:</string>
+    <string name="pick_up_location2">Pick Up Location 2:</string>
+    <string name="pick_up_location3">Pick Up Location 3:</string>
     <string name="text_money_ntd">" NTD"</string>
     <string name="pickup_time">Pickup Time:</string>
     <string name="text_group_name">Group Name</string>
     <string name="text_details_all">All</string>
     <string name="text_order_details">Order details</string>
+    <string name="text_perchase_number">Perchase number:</string>
+    <string name="text_show_password">Show Password</string>
+    <string name="text_sign_in_with_google">Sign in with google</string>
 </resources>

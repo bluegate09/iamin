@@ -58,7 +58,7 @@
     <string name="passwordandemailcannotbeempty">密碼或Email需填寫</string>
     <string name="authfailed">驗證失敗.</string>
     <string name="signinwithemailsuccess">Email登入成功</string>
-    <string name="welcome_back">歡迎到來</string>
+    <string name="welcome_back">歡迎來到</string>
     <string name="forget_password">忘記密碼</string>
     <string name="login">登入</string>
     <string name="don_t_have_an_account_yet_register_now">現在註冊</string>
@@ -141,10 +141,15 @@
     <string name="text_total_price">總價:</string>
     <string name="text_member_order_id">訂單編號:</string>
     <string name="deadline">截止日期</string>
-    <string name="pick_up_location">取貨地點: </string>
+    <string name="pick_up_location1">取貨地點 1: </string>
+    <string name="pick_up_location2">取貨地點 2: </string>
+    <string name="pick_up_location3">取貨地點 3: </string>
     <string name="text_money_ntd">" 元"</string>
     <string name="pickup_time">取貨時間:</string>
     <string name="text_group_name">團購名稱</string>
     <string name="text_details_all">全部</string>
     <string name="text_order_details">訂單細項</string>
+    <string name="text_perchase_number">購買數量: </string>
+    <string name="text_show_password">顯示密碼</string>
+    <string name="text_sign_in_with_google">使用Google登入</string>
 </resources>
