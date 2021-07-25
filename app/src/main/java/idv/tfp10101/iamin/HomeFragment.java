@@ -296,6 +296,9 @@ public class HomeFragment extends Fragment {
                 coumputeDistancemin();
                 showGroup(localHomeDatas);
                 Loading.dismiss();
+
+                //我得member追隨頁面要用的 by:渝
+                MemberControl.setMemberCoordinate(new MemberControl.MemberCoordinate(userlat,userlng));
             }
         });
     }
