@@ -10,6 +10,7 @@ public class Location {
     private double longtitude; // 經度
     private Timestamp pickup_time; // 取貨時間
 
+
     public Location(int groupId, double latitude, double longtitude) {
         this(0, groupId, null, latitude, longtitude, null);
     }

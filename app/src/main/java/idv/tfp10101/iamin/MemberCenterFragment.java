@@ -46,7 +46,6 @@ public class MemberCenterFragment extends Fragment {
     private ImageView memberClass;
     private ImageView ivPic;
     private Member member;
-    private Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,6 +53,7 @@ public class MemberCenterFragment extends Fragment {
         activity = getActivity();
         auth = FirebaseAuth.getInstance();
         member = MemberControl.getInstance();
+
     }
 
     @Override
@@ -72,8 +72,6 @@ public class MemberCenterFragment extends Fragment {
         rating = view.findViewById(R.id.tvRating);
         followCount = view.findViewById(R.id.tvMCFollowCount);
         memberClass = view.findViewById(R.id.memberClass);
-
-        Log.d(TAG,"phone_number: " + member.getPhoneNumber());
 
         if (member.getPhoneNumber() == null || String.valueOf(member.getPhoneNumber()).trim().isEmpty()) {
             memberClass.setImageResource(R.drawable.silver_member);
@@ -96,28 +94,22 @@ public class MemberCenterFragment extends Fragment {
         //前往錢包
         view.findViewById(R.id.btMCMyWallet).setOnClickListener(v ->{
 
-                String jsonIn = memberRemoteAccess(activity,member,"getMyWallet");
-//                Type listType = new TypeToken<List<MyWallet>>() {}.getType();
-//                MyWallet myWallets = gson.fromJson(jsonIn,listType);
-                  Log.d(TAG,"json: " + jsonIn);
-                if(jsonIn.equals("[]")){
-                    Toast.makeText(activity, "No Data Yet", Toast.LENGTH_SHORT).show();
-
-                }else {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("JsonWallet",jsonIn);
-                    Navigation.findNavController(v).
-                            navigate(R.id.action_memberCenterFragment_to_memberCenterMyWalletFragment,bundle);
-                }
+            Navigation.findNavController(v).
+                    navigate(R.id.action_memberCenterFragment_to_memberCenterMyWalletFragment);
         });
 
         //前往我的團購
         view.findViewById(R.id.btMCSellerCenter).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_sellerFragment));
 
-        //回到賣家
+        view.findViewById(R.id.btMyRating).setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memberCenterRatingDialogFragment));
+
+        //回到首頁
         view.findViewById(R.id.btBacktoHomepage).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_homeFragment));
+
+
 
         //登出
         view.findViewById(R.id.btMCLogout).setOnClickListener(v -> {
@@ -159,8 +151,20 @@ public class MemberCenterFragment extends Fragment {
     private void setTextView() {
         email.setText(member.getEmail());
         nickname.setText(member.getNickname());
-        rating.setText(member.getRating() + "");
-        followCount.setText(member.getFollow_count() + "");
+
+        if(member.getRating() < 0 ){
+            rating.setText(0 + "");
+        }else{
+            rating.setText(member.getRating() + "");
+        }
+
+        if(member.getFollow_count() < 0){
+            followCount.setText(0 + "");
+        }else{
+            followCount.setText(member.getFollow_count() + "");
+        }
+
+
     }
 
     private void setImageView() {

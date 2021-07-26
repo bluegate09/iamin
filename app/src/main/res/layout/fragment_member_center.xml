@@ -13,17 +13,16 @@
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:padding="20dp"
-        android:background="#DFBDEC">
+        android:background="@drawable/member_center_background">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ivProfilePic"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_centerVertical="true"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:padding="8dp"
-            app:civ_border_width="2dp"
+            android:src="@drawable/com_facebook_profile_picture_blank_portrait"
             app:civ_border_color="#FF000000"
-            android:src="@drawable/com_facebook_profile_picture_blank_portrait" />
+            app:civ_border_width="2dp" />
 
         <TextView
             android:id="@+id/mcUsername"
@@ -31,10 +30,12 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginStart="15dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="25dp"
             android:layout_toEndOf="@id/ivProfilePic"
             android:text="@string/username"
-            android:textSize="16sp" />
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/mcEmail"
@@ -42,6 +43,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/mcUsername"
             android:layout_alignStart="@+id/mcUsername"
+            android:textColor="@color/black"
+            android:textStyle="bold"
             android:layout_marginStart="0dp"
             android:layout_marginTop="8dp"
             android:text="@string/account"
@@ -70,9 +73,12 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
-            app:cardBackgroundColor="#DFBDEC">
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/Transparent"
+            app:cardBackgroundColor="@color/Transparent">
 
             <RelativeLayout
+                android:background="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -104,9 +110,12 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:layout_margin="10dp"
-            app:cardBackgroundColor="#DFBDEC">
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/colorBackground"
+            app:cardBackgroundColor="@color/Transparent">
 
             <RelativeLayout
+                android:background="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -232,6 +241,22 @@
                 android:insetBottom="0dp"
                 android:text="@string/statistic_chart"
                 android:textAlignment="textStart" />
+
+            <Button
+                android:drawableEnd="@drawable/member_profile_arrow"
+                android:background="@drawable/bg_black_border_button"
+                app:backgroundTint="@null"
+                android:textColor="@color/black"
+                android:id="@+id/btMyRating"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:text="@string/my_rating"
+                android:textAlignment="textStart" />
+
             <Button
                 android:drawableEnd="@drawable/member_profile_arrow"
                 android:background="@drawable/bg_black_border_button"
@@ -245,20 +270,6 @@
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 android:text="@string/homepage"
-                android:textAlignment="textStart" />
-            <Button
-                android:drawableEnd="@drawable/member_profile_arrow"
-                android:background="@drawable/bg_black_border_button"
-                app:backgroundTint="@null"
-                android:textColor="@color/black"
-                android:id="@+id/btTestGround"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:text="追隨功能測試"
                 android:textAlignment="textStart" />
 
             <Button

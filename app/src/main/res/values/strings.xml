@@ -68,7 +68,7 @@
     <string name="passwordandemailcannotbeempty">Email/Password can\'t not be empty</string>
     <string name="authfailed">Authentication failed.</string>
     <string name="signinwithemailsuccess">signInWithEmail:success</string>
-    <string name="welcome_back">welcome back</string>
+    <string name="welcome_back">Welcome Back</string>
     <string name="forget_password">Forget Password</string>
     <string name="login">Login</string>
     <string name="don_t_have_an_account_yet_register_now">Don\'t have an account yet? Register Now!</string>
@@ -153,7 +153,9 @@
     <string name="text_total_price">TotalPrice: </string>
     <string name="text_member_order_id">MemberOrderId: </string>
     <string name="deadline">DeadLine</string>
-    <string name="pick_up_location">Pick Up Location:</string>
+    <string name="pick_up_location1">Pick Up Location 1:</string>
+    <string name="pick_up_location2">Pick Up Location 2:</string>
+    <string name="pick_up_location3">Pick Up Location 3:</string>
     <string name="text_money_ntd">" NTD"</string>
     <string name="pickup_time">Pickup Time:</string>
     <string name="text_group_name">Group Name</string>
@@ -174,4 +176,18 @@
     <string name="TapPay_MerchantName">TW_TAISHIN</string>
     <string name="TapPay_MerchantID">85147883_TAISHIN</string>
     <string name="textConfirmPay">Confirm Pay</string>
+    <string name="text_perchase_number">Perchase number:</string>
+    <string name="text_show_password">Show Password</string>
+    <string name="text_sign_in_with_google">Sign in with google</string>
+    <string name="text_sumbit_rating">⭐️Sumbit Rating</string>
+    <string name="text_sumbit">sumbit</string>
+    <string name="text_rating_submit">Message Sumbit, Thanks You!</string>
+    <string name="text_message">message: </string>
+    <string name="my_rating">My Rating</string>
+    <string-array name="report">
+        <item>類別錯誤</item>
+        <item>違反善良風俗</item>
+        <item>違法物品</item>
+        <item>其他</item>
+    </string-array>
 </resources>

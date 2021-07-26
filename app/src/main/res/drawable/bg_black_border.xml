@@ -3,7 +3,7 @@
 
     <solid android:color="@color/colorSecondaryLight" />
 
-    <stroke android:width="2dp" android:color="@color/black" />
+    <stroke android:width="2dp" android:color="@color/colorBottomNavigationView" />
 
     <corners android:radius="0dp" />
 

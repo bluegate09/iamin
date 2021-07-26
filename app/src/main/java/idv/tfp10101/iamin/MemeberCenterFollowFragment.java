@@ -9,6 +9,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -56,6 +57,7 @@ public class MemeberCenterFollowFragment extends Fragment {
         myMember = MemberControl.getInstance();
         int numProcs = Runtime.getRuntime().availableProcessors();
         executor = Executors.newFixedThreadPool(numProcs);
+
     }
 
     @Override
@@ -72,8 +74,13 @@ public class MemeberCenterFollowFragment extends Fragment {
         rvMember = view.findViewById(R.id.rvFollowRecyclerView);
         rvMember.setLayoutManager(new LinearLayoutManager(activity));
         members = getMembers();
-        showFollowMember(members);
+        if(members == null) {
+            Toast.makeText(activity, "沒有追蹤的人", Toast.LENGTH_SHORT).show();
+        }else{
+            showFollowMember(members);
+        }
 
+        //searchView;
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -101,7 +108,7 @@ public class MemeberCenterFollowFragment extends Fragment {
 
     private void showFollowMember(List<Member> members) {
         if (members == null || members.isEmpty()) {
-            Toast.makeText(activity,"no member found", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity,"沒有追蹤的人", Toast.LENGTH_SHORT).show();
         }
         MemberAdapter memberAdapter = (MemberAdapter) rvMember.getAdapter();
         if (memberAdapter == null) {
@@ -122,10 +129,8 @@ public class MemeberCenterFollowFragment extends Fragment {
             jsonObject.addProperty("member", new Gson().toJson(myMember));
             String jsonIn = RemoteAccess.getRemoteData(url, jsonObject.toString());
 
-//            Log.d(TAG,"jsonIn: " + jsonIn);
             Type listType = new TypeToken<List<Member>>() {}.getType();
             members = gson2.fromJson(jsonIn, listType);
-//            Log.d(TAG,"members: " + members);
 
         } else {
             Toast.makeText(activity,"No network", Toast.LENGTH_SHORT).show();
@@ -148,7 +153,7 @@ public class MemeberCenterFollowFragment extends Fragment {
 
         class MyViewHolder extends RecyclerView.ViewHolder {
             ImageView imageView,tvFollowBt;
-            TextView tvNickname, tvRating, tvFollowCount, tvStatus;
+            TextView tvNickname, tvRating, tvFollowCount, tvStatus, tvEmail, tvPhone;
 
             MyViewHolder(View itemView) {
                 super(itemView);
@@ -158,6 +163,9 @@ public class MemeberCenterFollowFragment extends Fragment {
                 tvFollowCount = itemView.findViewById(R.id.tvFollowCount);
                 tvFollowBt = itemView.findViewById(R.id.btMemberUnfollow);
                 tvStatus = itemView.findViewById(R.id.tvFollowStatus);
+                tvEmail = itemView.findViewById(R.id.tvFollowerEmail);
+                tvPhone = itemView.findViewById(R.id.tvFollowerPhone);
+
             }
         }
 
@@ -177,13 +185,15 @@ public class MemeberCenterFollowFragment extends Fragment {
         public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int position) {
             final Member member = members.get(position);
 
-            String ratingText = "RATING: " + member.getRating();
-            String followCountText = "Follower: "+member.getFollow_count();
+            String ratingText = "評價: " + member.getRating();
+            String followCountText = "粉絲數: "+member.getFollow_count();
 
             myViewHolder.tvNickname.setText(member.getNickname());
             myViewHolder.tvRating.setText(ratingText);
             myViewHolder.tvFollowCount.setText(followCountText);
             myViewHolder.tvStatus.setText("");
+            myViewHolder.tvPhone.setText(String.valueOf(member.getPhoneNumber()));
+            myViewHolder.tvEmail.setText(member.getEmail());
             myViewHolder.tvFollowBt.setImageResource(R.drawable.heart_red);
             myViewHolder.tvFollowBt.setOnClickListener(v -> {
 
@@ -191,8 +201,6 @@ public class MemeberCenterFollowFragment extends Fragment {
                 followed.setTitle("您確定要取消追蹤此賣家嗎")
                         .setPositiveButton("確定", (dialog, which) -> {
 
-
-                            Toast.makeText(activity, "ekf,esnj", Toast.LENGTH_SHORT).show();
                             String url = RemoteAccess.URL_SERVER + "memberController";
                             JsonObject jsonObject = new JsonObject();
                             jsonObject.addProperty("action", "unFollowMember");
@@ -213,7 +221,13 @@ public class MemeberCenterFollowFragment extends Fragment {
 
             });
             myViewHolder.itemView.setOnClickListener(view -> {
-                //連到賣家頁面
+
+                Bundle bundle = new Bundle();
+                bundle.putInt("followerId", member.getId());
+
+                //連追隨的賣家團購
+                Navigation.findNavController(view).navigate(R.id.action_memeberCenterFollowFragment_to_memberCenterFollowersGroupFragment,bundle);
+
             });
 
             String url = RemoteAccess.URL_SERVER + "memberController";

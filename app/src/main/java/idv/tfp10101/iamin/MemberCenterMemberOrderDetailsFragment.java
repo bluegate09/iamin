@@ -2,6 +2,7 @@ package idv.tfp10101.iamin;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -37,6 +39,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -67,12 +71,16 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
     private List<MemberOrderDetails> memberOrderDetailsList;
     private RecyclerView recyclerView;
     private List<Location> locations;
-    private TextView deadLine,location1,location2,location3;
+    private List<Marker> markers;
+    private TextView deadLine1,deadLine2,deadLine3,location1,location2,location3,tloc2,tloc3,tvTotalPrice;
     private ImageButton btGooglePay;
     private GoogleMap googleMap;
     private String paymentMethod;
     private SearchView searchView;
-
+    private int totalPrice = 0 ;
+    private ImageView imageViewQRcode;
+    // 物件
+    private int memberOderId = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -88,6 +96,8 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
             orderDetailsJson = bundle.getString("OrderDetails");
             locationJson = bundle.getString("Locations");
             paymentMethod = bundle.getString("GroupStatus");
+            memberOderId = bundle.getInt("MemberOrderID");
+            totalPrice = bundle.getInt("TotalPrice");
         }else{
             Log.d(TAG,"bundle is null");
         }
@@ -114,13 +124,23 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        deadLine = view.findViewById(R.id.MemberOrderDetailDeadLine);
+        deadLine1 = view.findViewById(R.id.memberOrderDetailDeadLine1);
+        deadLine2 = view.findViewById(R.id.memberOrderDetailDeadLine2);
+        deadLine3 = view.findViewById(R.id.memberOrderDetailDeadLine3);
         location1 = view.findViewById(R.id.memberOrderLocation1);
         location2 = view.findViewById(R.id.memberOrderLocation2);
         location3 = view.findViewById(R.id.memberOrderLocation3);
 
+        tloc2 = view.findViewById(R.id.tPickupDetails2);
+        tloc3 = view.findViewById(R.id.tPickupDetails3);
+
+        tvTotalPrice = view.findViewById(R.id.memberOrderDetailTotalPirce);
+        tvTotalPrice.setText(totalPrice+"");
+
         btGooglePay = view.findViewById(R.id.btGooglePay);
         btGooglePay.setVisibility(View.GONE);
+
+        markers = new ArrayList<>();
 
         //mapView
         CustomMapView mapView = view.findViewById(R.id.memberOrdermapView);
@@ -132,14 +152,14 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
             //處理在mapView旁的標籤
             handlePickUpLocation();
             // 顯示當前位置(小藍點) googleMap.setMyLocationEnabled(true);
-            CameraPosition cameraPosition = new CameraPosition.Builder() .target(new LatLng(locations.get(0).getLatitude(), locations.get(0).getLongtitude()))
-                    .zoom(18)
-                    .tilt(45) // 設定縮放倍數
-                    .bearing(90) // 設定傾斜角度
-                    .build(); // 設定旋轉角度
-            CameraUpdate cameraUpdate =
-                    CameraUpdateFactory.newCameraPosition(cameraPosition);
-            googleMap.animateCamera(cameraUpdate);
+//            CameraPosition cameraPosition = new CameraPosition.Builder() .target(new LatLng(locations.get(0).getLatitude(), locations.get(0).getLongtitude()))
+//                    .zoom(18)
+//                    .tilt(45) // 設定縮放倍數
+//                    .bearing(90) // 設定傾斜角度
+//                    .build(); // 設定旋轉角度
+//            CameraUpdate cameraUpdate =
+//                    CameraUpdateFactory.newCameraPosition(cameraPosition);
+//            googleMap.animateCamera(cameraUpdate);
 
         });
 
@@ -150,19 +170,46 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
 
         handleSerchView();
-
+        String[] time = {"","",""};
+        for(int i = 0; i < locations.size(); i++){
+            if(locations.get(i).getPickup_time() != null)
+            time[i] = locations.get(i).getPickup_time().toString().substring(0,16);
+        }
+        Log.d(TAG,time[0]);
         //截止日期
-        deadLine.setText(getString(R.string.pickup_time) + locations.get(0).getPickup_time());
+        deadLine1.setText(time[0]);
+        if(!(time[1].isEmpty())){
+            deadLine2.setText(time[1]);
+        }else{
+            deadLine2.setText("");
+        }
+        if(!(time[2]).isEmpty()){
+            deadLine3.setText(time[2]);
+        }else{
+            deadLine3.setText("");
+        }
+
 
         //googlePay imageButton
         if(!(paymentMethod.equals("1"))){
             btGooglePay.setVisibility(View.VISIBLE);
             btGooglePay.setEnabled(true);
+            Intent intent = new Intent(getActivity(), TappayActivity.class);
+            intent.putExtra("totalPrice", totalPrice);
+            startActivity(intent);
+//            Navigation.findNavController(view).popBackStack(R.id.m);
         }
+
+
 
         showMyOrder(memberOrderDetailsList);
 
+        // QRcode
+        imageViewQRcode = view.findViewById(R.id.imageViewQRcode);
+        handleQRcode();
     }
+
+
 
     private void handlePickUpLocation() {
         ArrayList<String> locList = new ArrayList<>();
@@ -175,29 +222,68 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
 
             LatLng latLng = new LatLng(latitude, longtitude);
             MarkerOptions markerOptions = new MarkerOptions() .position(latLng)
-                    .title("取貨點" + i)
+                    .title("取貨地點" + i)
                     .snippet("")
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.mapview_pin))
                     .draggable(false);
-            googleMap.addMarker(markerOptions);
+
+            Marker marker = googleMap.addMarker(markerOptions);
+            markers.add(marker);
+
             String loc = transferLocation(latitude,longtitude);
 
             if(!(loc.isEmpty())){
                 locSet.add(loc);
             }
         }
+
+        handleMarkersInView();
+
         locList.addAll(locSet);
         String[] loc = {"","",""};
         for(int i = 0; i < locList.size(); i++){
             loc[i] = locList.get(i);
         }
+
         location1.setText(loc[0]);
-        location2.setText(loc[1]);
-        location3.setText(loc[2]);
+
+        if(loc[1].isEmpty()){
+            tloc2.setVisibility(View.GONE);
+            location2.setText("");
+        }else{
+            location2.setText(loc[1]);
+        }
+        if(loc[2].isEmpty()) {
+            tloc3.setVisibility(View.GONE);
+            location3.setText("");
+        }else{
+            location3.setText(loc[2]);
+        }
 
     }
 
+    /**
+     * 讓所有標記都能顯示在畫面上
+     */
+    private void handleMarkersInView() {
+        if (markers.isEmpty()) {
+            return;
+        }
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (Marker marker : markers) {
+            builder.include(marker.getPosition());
+        }
+        LatLngBounds bounds = builder.build();
 
+        int padding = 150; // 以像素為單位從地圖邊緣偏移
+        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+
+        googleMap.animateCamera(cu);
+    }
+
+    /**
+     * 經緯轉地址
+     */
     public String transferLocation(double latitude, double longitude){
         Geocoder geocoder;
         List<Address> addresses = null;
@@ -333,5 +419,23 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
 
         }
 
+    }
+
+    /**
+     * 用 MemberOrderID 產生 QRcode
+     */
+    private void handleQRcode() {
+        imageViewQRcode.setOnClickListener(view -> {
+            if (memberOderId < 0) {
+                Toast.makeText(activity, "會員訂單ID錯誤", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // Bundle -> 打包資料傳遞 putXYZ(key, value)
+            Bundle bundle = new Bundle();
+            bundle.putInt("memberOderId", memberOderId);
+            //
+            Navigation.findNavController(view)
+                    .navigate(R.id.action_memberCenterOrderDetailsFragment_to_QRCodeGenFragment, bundle);
+        });
     }
 }

@@ -7,6 +7,8 @@
     android:background="@color/colorBackground"
     tools:context=".HomeFragment">
 
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,6 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorSecondaryLight"
+            app:itemIconTint="@drawable/color_bottom_navigation_icon"
+            app:itemTextColor="@drawable/color_bottom_navigation_icon"
             android:elevation="0dp"
             app:labelVisibilityMode="labeled"
             app:menu="@menu/nvbar_home" />
@@ -32,6 +36,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="5"
+                android:background="@drawable/searchview_background"
+                android:queryBackground="@android:color/transparent"
                 android:visibility="visible">
 
             </SearchView>
@@ -47,7 +53,13 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_groups"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
+
+            <ProgressBar
+                android:id="@+id/progressBar2"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </LinearLayout>

@@ -63,9 +63,11 @@
             android:name="com.google.android.gms.wallet.api.enabled"
             android:value="true" />
 
-        <activity
-            android:name=".MainActivity"
-            android:windowSoftInputMode="adjustPan">
+        <!--android:windowSoftInputMode="adjustPan"  防止bottom navigation跟鍵盤一起移往上動-->
+        <!--android:screenOrientation="portrait"  強制豎屏-->
+        <activity android:name=".MainActivity"
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -90,7 +92,16 @@
         </activity> <!-- 註冊Ucrop(裁切器)Activity -->
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" /> <!-- 當接收端開著app，有沒有接收到FCN訊息的監聽 (覆寫: onMessageReceived()) -->
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <!-- QRcode相關 - Activity -->
+        <activity
+            android:name="com.journeyapps.barcodescanner.CaptureActivity"
+            android:screenOrientation="portrait"
+            tools:replace="android:screenOrientation"
+            android:stateNotNeeded="true"/>
+
+        <!-- 當接收端開著app，有沒有接收到FCN訊息的監聽 (覆寫: onMessageReceived()) -->
         <service
             android:name=".service.FCMServiceSeller"
             android:exported="false">

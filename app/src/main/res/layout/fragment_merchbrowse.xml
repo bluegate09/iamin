@@ -59,7 +59,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
-                    android:background="@color/colorSecondaryLight"
                     android:orientation="vertical">
 
 
@@ -68,6 +67,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
+                        android:background="@color/colorSecondaryLight"
                         android:text="團購進度,目標,上限"
                         android:textSize="20sp" />
 
@@ -76,6 +76,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
+                        android:background="@color/colorSecondaryLight"
                         android:text="團購面交地點,距離"
                         android:textSize="20sp" />
 
@@ -84,6 +85,7 @@
                         android:id="@+id/txv_caution"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="@color/colorSecondaryLight"
                         android:text="注意事項"
                         android:textSize="20sp" />
                 </LinearLayout>
@@ -115,6 +117,7 @@
                             android:layout_weight="1"
                             android:src="@drawable/avatar" />
 
+
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -142,6 +145,13 @@
                                 android:text="聯絡電話"
                                 android:textSize="20sp" />
                         </LinearLayout>
+                        <ImageView
+                            android:id="@+id/imv_report"
+                            android:layout_width="0dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:layout_weight="0.5"
+                            android:src="@drawable/exclamation" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -226,7 +236,7 @@
                 android:layout_height="77dp"
                 android:layout_gravity="bottom|end"
                 android:background="@color/colorSecondary"
-                android:text="去買單"
+                android:text="購物車"
                 android:textSize="20sp" />
         </LinearLayout>
     </LinearLayout>

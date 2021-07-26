@@ -5,19 +5,22 @@ import android.graphics.Bitmap;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import idv.tfp10101.iamin.R;
+import idv.tfp10101.iamin.Rating.Rating;
 import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.network.RemoteAccess;
 
 public class MemberControl {
 
-    private final static String TAG = "TAG_MemberControl";
 
     private static Member memberInstance;
     public static Member getInstance(){
@@ -100,6 +103,22 @@ public class MemberControl {
         }
     }
 
+    public static Bitmap getMemberImageByMemberId(Context context, Member member, ExecutorService executor){
+        // 如果有網路，就進行 request
+        if (RemoteAccess.networkConnected(context)) {
+            // 網址 ＆ Action
+            String url = RemoteAccess.URL_SERVER + "memberController";
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("action", "getImage");
+            jsonObject.addProperty("member", new Gson().toJson(member));
+
+            return RemoteAccess.getRemoteImage(url, jsonObject.toString(), executor);
+        }else{
+            Toast.makeText(context, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
+            return null;
+        }
+    }
+
     /**
      * 使用賣家ID抓取賣家資料
      * @param context
@@ -142,5 +161,95 @@ public class MemberControl {
             Toast.makeText(context, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
         }
         return -1;
+    }
+
+    /**
+     * 給rating物件去更新db資料
+     * @param context
+     * @param rating
+     */
+    public static void submitRating(Context context, Rating rating){
+        if (RemoteAccess.networkConnected(context)) {
+            String url = RemoteAccess.URL_SERVER + "Rating";
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("action","insertRatingAndUpdateMember");
+            jsonObject.addProperty("rating",new Gson().toJson(rating));
+            RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
+        }else {
+        Toast.makeText(context, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * 輸入member_id取得rating
+     * @param context
+     * @param member_id
+     * @return
+     */
+
+    public static List<Rating> getRating(Context context, int member_id){
+        List<Rating> ratings = new ArrayList<>();
+        Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
+        if (RemoteAccess.networkConnected(context)) {
+            String url = RemoteAccess.URL_SERVER + "Rating";
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("action","getAllRatingByMemberId");
+            jsonObject.addProperty("member_id",new Gson().toJson(member_id));
+
+            String jsonIn = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
+            Type listType = new TypeToken<List<Rating>>() {}.getType();
+            ratings = gson.fromJson(jsonIn,listType);
+
+        }else {
+            Toast.makeText(context, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
+        }
+        return ratings;
+    }
+
+    /**
+     *當前使用者座標
+     */
+    private static MemberCoordinate coordinateInstance;
+    public static MemberCoordinate getCoordinateInstance(){
+        if(coordinateInstance == null){
+            coordinateInstance = new MemberCoordinate(0.0,0.0);
+        }
+        return coordinateInstance;
+    }
+
+    public static void setMemberCoordinate(MemberCoordinate memberCoordinate){
+        if(coordinateInstance == null){
+            coordinateInstance = new MemberCoordinate(0.0,0.0);
+        }
+        coordinateInstance = memberCoordinate;
+    }
+
+    /**
+     * 存座標的class
+     */
+    public static class MemberCoordinate{
+        private double latitude; // 緯度
+        private double longtitude; // 經度
+
+        public MemberCoordinate(double latitude, double longtitude) {
+            this.latitude = latitude;
+            this.longtitude = longtitude;
+        }
+
+        public double getLatitude() {
+            return latitude;
+        }
+
+        public void setLatitude(double latitude) {
+            this.latitude = latitude;
+        }
+
+        public double getLongtitude() {
+            return longtitude;
+        }
+
+        public void setLongtitude(double longtitude) {
+            this.longtitude = longtitude;
+        }
     }
 }
