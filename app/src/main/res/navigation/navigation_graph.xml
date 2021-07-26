@@ -102,6 +102,9 @@
         <action
             android:id="@+id/action_memberCenterFragment_to_sellerFragment"
             app:destination="@id/sellerFragment" />
+        <action
+            android:id="@+id/action_memberCenterFragment_to_memberCenterRatingDialogFragment"
+            app:destination="@id/memberCenterRatingDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/memeberCenterFollowFragment"
@@ -305,4 +308,9 @@
         android:name="idv.tfp10101.iamin.QRCodeGenFragment"
         android:label="fragment_q_r_code_gen"
         tools:layout="@layout/fragment_q_r_code_gen" />
+    <fragment
+        android:id="@+id/memberCenterRatingDialogFragment"
+        android:name="idv.tfp10101.iamin.MemberCenterRatingDialogFragment"
+        android:label="fragment_member_center_rating_dialog"
+        tools:layout="@layout/fragment_member_center_rating_dialog" />
 </navigation>

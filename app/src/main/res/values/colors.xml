@@ -18,6 +18,7 @@
     <color name="colorCounterText">#387C2C</color>
     <color name="Transparent">#00000000</color>
     <color name="helperTextTextColor">#80FF0000</color>
+    <color name="ratingBarColor">#FFEB3B</color>
 <!--facebook login要用到的顏色 正常來說gradle dependencies會導入 但是有時候就是不會有-->
     <color name="com_facebook_button_background_color_focused_disabled">#3C5A99</color>
     <color name="com_facebook_button_background_color_focused">#3C5A99</color>

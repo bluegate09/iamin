@@ -115,9 +115,11 @@
 
     <Button
         android:id="@+id/buttonSubmit"
-        android:layout_width="364dp"
+        android:layout_width="0dp"
         android:layout_height="110dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
         android:background="@drawable/bg_black_border_button"
         android:text="發送"
         android:textAllCaps="false"

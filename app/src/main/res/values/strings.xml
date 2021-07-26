@@ -157,4 +157,9 @@
     <string name="text_perchase_number">Perchase number:</string>
     <string name="text_show_password">Show Password</string>
     <string name="text_sign_in_with_google">Sign in with google</string>
+    <string name="text_sumbit_rating">⭐️Sumbit Rating</string>
+    <string name="text_sumbit">sumbit</string>
+    <string name="text_rating_submit">Message Sumbit, Thanks You!</string>
+    <string name="text_message">message: </string>
+    <string name="my_rating">My Rating</string>
 </resources>

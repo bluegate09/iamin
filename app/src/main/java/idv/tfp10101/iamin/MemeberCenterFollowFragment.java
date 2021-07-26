@@ -74,8 +74,13 @@ public class MemeberCenterFollowFragment extends Fragment {
         rvMember = view.findViewById(R.id.rvFollowRecyclerView);
         rvMember.setLayoutManager(new LinearLayoutManager(activity));
         members = getMembers();
-        showFollowMember(members);
+        if(members == null) {
+            Toast.makeText(activity, "沒有追蹤的人", Toast.LENGTH_SHORT).show();
+        }else{
+            showFollowMember(members);
+        }
 
+        //searchView;
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -103,7 +108,7 @@ public class MemeberCenterFollowFragment extends Fragment {
 
     private void showFollowMember(List<Member> members) {
         if (members == null || members.isEmpty()) {
-            Toast.makeText(activity,"no member found", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity,"沒有追蹤的人", Toast.LENGTH_SHORT).show();
         }
         MemberAdapter memberAdapter = (MemberAdapter) rvMember.getAdapter();
         if (memberAdapter == null) {
@@ -124,10 +129,8 @@ public class MemeberCenterFollowFragment extends Fragment {
             jsonObject.addProperty("member", new Gson().toJson(myMember));
             String jsonIn = RemoteAccess.getRemoteData(url, jsonObject.toString());
 
-//            Log.d(TAG,"jsonIn: " + jsonIn);
             Type listType = new TypeToken<List<Member>>() {}.getType();
             members = gson2.fromJson(jsonIn, listType);
-//            Log.d(TAG,"members: " + members);
 
         } else {
             Toast.makeText(activity,"No network", Toast.LENGTH_SHORT).show();
@@ -182,8 +185,8 @@ public class MemeberCenterFollowFragment extends Fragment {
         public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int position) {
             final Member member = members.get(position);
 
-            String ratingText = "RATING: " + member.getRating();
-            String followCountText = "Follower: "+member.getFollow_count();
+            String ratingText = "評價: " + member.getRating();
+            String followCountText = "粉絲數: "+member.getFollow_count();
 
             myViewHolder.tvNickname.setText(member.getNickname());
             myViewHolder.tvRating.setText(ratingText);

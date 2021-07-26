@@ -26,15 +26,13 @@
 
         <TextView
             android:id="@+id/textViewGroupGoal"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="220dp"
-            android:layout_marginEnd="5dp"
+            android:layout_marginEnd="8dp"
             android:text="@string/textGoal"
             android:textSize="18dp"
             app:layout_constraintBottom_toBottomOf="@+id/textViewGroupName"
             app:layout_constraintEnd_toStartOf="@+id/textViewGoal"
-            app:layout_constraintStart_toStartOf="@+id/textViewGroupName"
             app:layout_constraintTop_toTopOf="@+id/textViewGroupName" />
 
         <TextView
@@ -89,7 +87,7 @@
             android:id="@+id/textViewTotalAmount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:text="@string/textTotalAmount"
             android:textSize="14dp"
@@ -112,7 +110,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="5dp"
             android:text="@string/textDeadline"
             android:textSize="14dp"
             app:layout_constraintEnd_toStartOf="@+id/textViewDeadlineTime"
