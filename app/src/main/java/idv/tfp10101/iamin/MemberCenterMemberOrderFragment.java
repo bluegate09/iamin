@@ -256,6 +256,7 @@ public class MemberCenterMemberOrderFragment extends Fragment {
                 bundle.putString("OrderDetails", orderDetailsJson);
                 bundle.putString("Locations",locationsJson);
                 bundle.putString("GroupStatus",String.valueOf(memberOrder.getPayentMethod()));
+                bundle.putInt("TotalPrice",memberOrder.getTotal());
                 bundle.putInt("MemberOrderID", memberOrder.getMemberOrderId());
 
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterMemberOrderFragment_to_memberCenterOrderDetailsFragment,bundle);
@@ -294,8 +295,10 @@ public class MemberCenterMemberOrderFragment extends Fragment {
                                                    memberOrder.getMemberOrderDetailsList().get(0).getMerch().getMemberId(),//只是取seller_memberId 所以index = 0即可
                                                    (int) ratingBar.getRating(),
                                                    message.getText().toString(),
-                                                   new Timestamp(System.currentTimeMillis()));
+                                                   new Timestamp(System.currentTimeMillis()),
+                                                   memberOrder.getGroupName());
 
+                        Log.d(TAG,"GROUP_NAME: " + memberOrder.getGroupName());
                         MemberControl.submitRating(activity,rating);
                         alertDialog.cancel();
 

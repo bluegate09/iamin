@@ -9,17 +9,19 @@ public class Rating {
     private int order_rating;
     private String rating_message;
     private Timestamp start_time; // 建立時間
+    //關聯資料
+    private String group_name;
 
-    public Rating(int member_order_id, int buyer_Id, int seller_Id, int order_rating, String rating_message,
-                  Timestamp start_time) {
-        super();
+    public Rating(int member_order_id, int buyer_Id, int seller_Id, int order_rating, String rating_message, Timestamp start_time, String group_name) {
         this.member_order_id = member_order_id;
         this.buyer_Id = buyer_Id;
         this.seller_Id = seller_Id;
         this.order_rating = order_rating;
         this.rating_message = rating_message;
         this.start_time = start_time;
+        this.group_name = group_name;
     }
+
     public int getBuyer_Id() {
         return buyer_Id;
     }
@@ -57,6 +59,13 @@ public class Rating {
         this.member_order_id = member_order_id;
     }
 
+    public String getGroup_name() {
+        return group_name;
+    }
+
+    public void setGroup_name(String group_name) {
+        this.group_name = group_name;
+    }
 
 
 }

@@ -63,7 +63,6 @@ public class MemberCenterMyWalletDetailsFragment extends Fragment {
 
         title.setText(str);
 
-
         showWalletDetailsList(myWalletListDetails);
 
     }

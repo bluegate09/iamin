@@ -116,9 +116,28 @@
             android:numStars="5"
             android:stepSize="1"
             android:rating="3"
+            android:isIndicator="true"
             android:progressTint="@color/ratingBarColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/text_group_name" />
+
+            <TextView
+                android:id="@+id/tvRatingGroupName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="placeholder" />
+        </LinearLayout>
+
 
         <TextView
             android:layout_width="match_parent"
