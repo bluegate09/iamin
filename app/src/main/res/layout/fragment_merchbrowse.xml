@@ -146,7 +146,7 @@
                                 android:textSize="20sp" />
                         </LinearLayout>
                         <ImageView
-                            android:id="@+id/imv_feport"
+                            android:id="@+id/imv_report"
                             android:layout_width="0dp"
                             android:layout_height="30dp"
                             android:layout_gravity="center"

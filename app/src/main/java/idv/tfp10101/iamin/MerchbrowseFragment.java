@@ -27,9 +27,11 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +56,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import idv.tfp10101.iamin.Rating.ReportControl;
+import idv.tfp10101.iamin.Report.Report;
 import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.group.GroupControl;
 import idv.tfp10101.iamin.location.Location;
@@ -81,7 +85,7 @@ public class MerchbrowseFragment extends Fragment {
     private Button btn_buy, btn_back, btn_next;
     private Member member;
     private TextView txv_Seller, txv_Email, txv_Seller_phone, txv_followed, txv_rating; //賣家資料
-    private ImageView imv_Seller, imv_followed; //賣家圖片與追隨與否圖片
+    private ImageView imv_Seller, imv_followed, imv_report; //賣家圖片與追隨與否圖片
     private TextView txv_caution;
     private int total_quantity = 0, total_price = 0;
     private double userlat,userlng;//使用者的緯經度
@@ -258,6 +262,31 @@ public class MerchbrowseFragment extends Fragment {
             }
         });
         showMerchs(localMerchs);
+
+        imv_report.setOnClickListener(v ->{
+
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.dialog_report,null);
+            dialogBuilder.setView(dialogView);
+
+            EditText report_message = dialogView.findViewById(R.id.edt_report_message);
+            Button btButton = dialogView.findViewById(R.id.dialog_report_button);
+            Spinner spinner = dialogView.findViewById(R.id.sp_report);
+            spinner.setSelection(0,true);
+
+            AlertDialog alertDialog = dialogBuilder.create();
+            alertDialog.show();
+
+            btButton.setOnClickListener(dialog ->{
+                Report report1 = new Report(member.getId(),sellerID,spinner.getSelectedItem().toString(),report_message.getText().toString());
+                alertDialog.dismiss();
+                int insertresult = ReportControl.insertReport(activity,report1);
+                if (insertresult == 1){
+                    Toast.makeText(activity, "已收到您的檢舉", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
         //取得商品列表總數
         int total = staggeredGridLayoutManager.getItemCount();
         AtomicInteger count = new AtomicInteger();
@@ -582,6 +611,7 @@ public class MerchbrowseFragment extends Fragment {
         imv_followed = view.findViewById(R.id.imv_followed);
         txv_group_progress = view.findViewById(R.id.txv_group_progress);
         txv_group_location = view.findViewById(R.id.txv_group_location);
+        imv_report = view.findViewById(R.id.imv_report);
 
     }
 
