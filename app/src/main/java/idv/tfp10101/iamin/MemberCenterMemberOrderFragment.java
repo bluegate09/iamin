@@ -261,9 +261,9 @@ public class MemberCenterMemberOrderFragment extends Fragment {
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterMemberOrderFragment_to_memberCenterOrderDetailsFragment,bundle);
             });
 
-//            if(!(memberOrder.isDeliverStatus() && memberOrder.isReceivePaymentStatus())){
-//                holder.tvRatingButton.setVisibility(View.GONE);
-//            }
+            if(!(memberOrder.isDeliverStatus() && memberOrder.isReceivePaymentStatus())){
+                holder.tvRatingButton.setVisibility(View.GONE);
+            }
 
             holder.tvRatingButton.setOnClickListener(v -> {
 
