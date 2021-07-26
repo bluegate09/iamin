@@ -224,6 +224,11 @@ public class MerchbrowseFragment extends Fragment {
         Drawable.ConstantState red = activity.getResources().getDrawable(R.drawable.heart_red).getConstantState();
 //        實作點一下換圖並判斷是否有追隨 沒有就追 有就取消
           imv_followed.setOnClickListener(v ->{
+              //如果沒登入就不能操作
+              if (member.getId() == -1){
+                  Toast.makeText(activity, "您還沒登入喔", Toast.LENGTH_SHORT).show();
+                  return;
+              }
             Drawable.ConstantState imageView = imv_followed.getDrawable().getCurrent().getConstantState();
             int chackresult = MemberControl.chackfollowed(activity,member.getId(),SellerID.getId());
             if (imageView.equals(red)) {
@@ -262,9 +267,12 @@ public class MerchbrowseFragment extends Fragment {
             }
         });
         showMerchs(localMerchs);
-
+        //點擊檢舉icon會跳出檢舉對話筐
         imv_report.setOnClickListener(v ->{
-
+            if (member.getId() == -1){
+                Toast.makeText(activity, "您還沒登入喔", Toast.LENGTH_SHORT).show();
+                return;
+            }
             AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
             LayoutInflater inflater = activity.getLayoutInflater();
             View dialogView = inflater.inflate(R.layout.dialog_report,null);
@@ -287,6 +295,7 @@ public class MerchbrowseFragment extends Fragment {
                 }
             });
         });
+
         //取得商品列表總數
         int total = staggeredGridLayoutManager.getItemCount();
         AtomicInteger count = new AtomicInteger();
@@ -312,8 +321,8 @@ public class MerchbrowseFragment extends Fragment {
             }
             btn_next.setVisibility(View.VISIBLE);
         });
-        //按下訂單前做判斷
 
+        //按下訂單前做判斷
         btn_buy.setOnClickListener(v ->{
             NavController navController = Navigation.findNavController(view);
             if ( member.getId() == -1){
