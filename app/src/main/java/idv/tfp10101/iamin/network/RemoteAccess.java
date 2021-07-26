@@ -87,6 +87,19 @@ public class RemoteAccess {
         }
     }
 
+    public static String getRemotePayData(String url, String outStr, String apiKey) {
+        JCallable callable = new JCallable(url, outStr, apiKey);
+        FutureTask<String> task = new FutureTask<>(callable);
+        Thread thread = new Thread(task);
+        thread.start();
+        try {
+            return task.get();
+        } catch (Exception e) {
+            task.cancel(true);
+            return "";
+        }
+    }
+
     // 適用取得一張圖
     public static Bitmap getRemoteImage(String url, String outStr) {
         ImageCallable callable = new ImageCallable(url, outStr);

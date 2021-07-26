@@ -39,9 +39,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import idv.tfp10101.iamin.message.Message;
+
 import static idv.tfp10101.iamin.Constants.FCM_Token;
+import static idv.tfp10101.iamin.Constants.TAG;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "TAG_MainActivity";
     /**
      * FCMService 本地廣播
      */
@@ -51,7 +55,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        handleBottomNavigationView();
+
+
 
         /** FCMService 本地廣播 */
         broadcastReceiver = new BroadcastReceiver() {
@@ -101,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
             String data = bundle.getString("data");
 
             // 可以依據data來決定要去哪一Fragment頁面
-            Log.d(Constants.TAG, "data: " + data);
+            Log.d(TAG, "" + data);
 //            Toast.makeText(this, "data: " + data, Toast.LENGTH_SHORT).show();
             // 先取得NavController
             NavController navController = Navigation.findNavController(
@@ -113,6 +118,9 @@ public class MainActivity extends AppCompatActivity {
                 switch (data) {
                     case "Reach_Notification":
                         navController.navigate(R.id.memberCenterMemberOrderFragment);
+                        break;
+                    case "Message_Fragment":
+                        navController.navigate(R.id.messageFragment, bundle);
                         break;
                     default:
                         break;
@@ -142,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<String> task) {
 
-                Log.d("TAG_MAIN", "Token: " + task.getResult());
+                Log.d(TAG, "Token: " + task.getResult());
             }
         });
     }
@@ -170,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         handleBottomNavigationView();
         /** FCMService 本地廣播 */
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
+//        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
     }
 
     @Override
@@ -182,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        handleBottomNavigationView();
+//        handleBottomNavigationView();
     }
 
     private void handleBottomNavigationView() {
@@ -196,7 +204,6 @@ public class MainActivity extends AppCompatActivity {
                     destination.getId() == R.id.logInFragment ||
                     destination.getId() == R.id.signUpFragment ||
                     destination.getId() == R.id.phoneAuthFragment ||
-                    destination.getId() == R.id.memeberCenterProfileFragment ||
                     destination.getId() == R.id.messageFragment ||
                     destination.getId() == R.id.memeberCenterProfileFragment ||
                     destination.getId() == R.id.memberCenterFragment ||

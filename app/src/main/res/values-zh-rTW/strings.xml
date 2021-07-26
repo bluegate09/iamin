@@ -122,11 +122,11 @@
     <string name="text_verification_account">帳號驗證中</string>
     <string name="text_account_verification_message">請稍等…</string>
     <string name="text_welcome_back">歡迎回來</string>
-    <string name="textMessageIsInvalid">Message Is Invalid</string>
-    <string name="textSendMessage">Send Message</string>
-    <string name="textSendMessageFail">Send Message Fail</string>
-    <string name="textNoMessageFound">No Message Found</string>
-    <string name="textMessage">Message</string>
+    <string name="textMessageIsInvalid">訊息無效</string>
+    <string name="textSendMessage">傳送訊息</string>
+    <string name="textSendMessageFail">傳送訊息失敗</string>
+    <string name="textNoMessageFound">找不到訊息</string>
+    <string name="textMessage">訊息</string>
     <string name="default_notification_channel_id">default_channel_id</string>
     <string name="chat_notification_channel_id">chat_notification_channel_id</string>
     <string name="text_update_failed">更新失敗</string>
@@ -154,4 +154,7 @@
     <string name="text_group_name">團購名稱</string>
     <string name="text_details_all">全部</string>
     <string name="text_order_details">訂單細項</string>
+    <string name="textCannotUseGPay">無法使用Google Pay</string>
+    <string name="textCanceled">使用者取消服務</string>
+    <string name="textConfirmPay">確認付款</string>
 </resources>

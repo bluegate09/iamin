@@ -159,4 +159,19 @@
     <string name="text_group_name">Group Name</string>
     <string name="text_details_all">All</string>
     <string name="text_order_details">Order details</string>
+    <string name="textCannotUseGPay">Cannot use Google Pay</string>
+    <string name="textCanceled">Canceled by the user.</string>
+
+    <!-- 填上TapPay Portal上註冊的資料 -->
+    <!-- 開發者 / 應用程式 -->
+    <string name="TapPay_AppID">14130</string>
+    <string name="TapPay_AppKey">app_LfnLPvybt8PKvwwmxEjRxG2TEsAtm61JgrSCIK1HJwBgPE9VUsJ0veTN9zlA</string>
+
+    <!-- 帳戶資訊 -->
+    <string name="TapPay_PartnerKey">partner_o7gqvRS1LSD6jxazGAWczibPhXKXAcmx1g4LSl2WGRDsLsQGaOCBgpWe</string>
+
+    <!-- 商家管理 / 商家設置-->
+    <string name="TapPay_MerchantName">TW_TAISHIN</string>
+    <string name="TapPay_MerchantID">85147883_TAISHIN</string>
+    <string name="textConfirmPay">Confirm Pay</string>
 </resources>

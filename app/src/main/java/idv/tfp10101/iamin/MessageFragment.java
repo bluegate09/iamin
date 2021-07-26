@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -98,15 +100,13 @@ public class MessageFragment extends Fragment {
                         Date date = new Date();
                         long time = date.getTime();
                         String timeStr = sdf.format(time);
-                        Log.d(TAG, "id : " + member.getId() + "uid : " + member.getuUId() + "token看這裡FCM_TOKEN : " + member.getFCM_token());
-                        Log.d(TAG, "Firebase UId : " + FirebaseAuth.getInstance().getUid());
                         message.setMessage(lastMessage);
 
                         message.setSender(auth.getCurrentUser().getUid());
                         message.setToken(member.getFCM_token());
                         message.setReceiver(member.getuUId());
                         message.setTime(timeStr);
-                        sendFcm(member.getFCM_token());
+                        sendFcm(token);
                         db.collection("Messages").document(id).set(message).addOnCompleteListener(task1 -> {
                             if (task1.isSuccessful()) {
                                 String result = getString(R.string.textSendMessage);
@@ -137,7 +137,7 @@ public class MessageFragment extends Fragment {
             jsonObject.addProperty("action", action);
             jsonObject.addProperty("title", "+1團購");
             jsonObject.addProperty("body", "Someone sent a message to you!");
-            jsonObject.addProperty("data", token);
+            jsonObject.addProperty("data", "Message_Fragment");
             String result = RemoteAccess.getRemoteChatData(url, jsonObject.toString());
             Log.d(TAG, result);
         } else {
@@ -226,9 +226,9 @@ public class MessageFragment extends Fragment {
         @Override
         public int getItemViewType(int position) {
             Message message = messages.get(position);
-            Log.d(TAG, "VIEWTYPE member id : ======" + member.getId());
-            Log.d(TAG, "VIEWTYPE member uuid : ======" + member.getuUId());
-            Log.d(TAG, "FUser uuid" + auth.getCurrentUser().getUid());
+//            Log.d(TAG, "VIEWTYPE member id : ======" + member.getId());
+//            Log.d(TAG, "VIEWTYPE member uuid : ======" + member.getuUId());
+//            Log.d(TAG, "FUser uuid" + auth.getCurrentUser().getUid());
             if (message.getSender().equals(auth.getCurrentUser().getUid())) {
                 return VIEW_TYPE_MESSAGE_SENT;
             } else {
@@ -258,7 +258,6 @@ public class MessageFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            Log.d(TAG, "================onBindViewHolder");
             holder.itemView.setOnClickListener(v -> {
                 Log.d(TAG, "setOnClickListener");
                 InputMethodManager imm =(InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -328,7 +327,7 @@ public class MessageFragment extends Fragment {
 
     private void delete(final Message message) {
         // 刪除Firestore內的資料
-        db.collection("spots").document(id).delete()
+        db.collection("Messages").document().delete()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
 
