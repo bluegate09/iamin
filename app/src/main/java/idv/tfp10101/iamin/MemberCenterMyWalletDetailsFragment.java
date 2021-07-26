@@ -37,6 +37,7 @@ public class MemberCenterMyWalletDetailsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
+        activity.setTitle("統計明細");
     }
 
     @Override

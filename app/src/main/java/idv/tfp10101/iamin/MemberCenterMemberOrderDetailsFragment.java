@@ -86,6 +86,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         final String TAG = "TAG_MemberOrderDetail";
         super.onCreate(savedInstanceState);
         activity = getActivity();
+        activity.setTitle("訂單明細");
 
         Bundle bundle = getArguments();
         String orderDetailsJson = "";
