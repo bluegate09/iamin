@@ -163,8 +163,20 @@ public class MemberCenterFragment extends Fragment {
     private void setTextView() {
         email.setText(member.getEmail());
         nickname.setText(member.getNickname());
-        rating.setText(member.getRating() + "");
-        followCount.setText(member.getFollow_count() + "");
+
+        if(member.getRating() < 0 ){
+            rating.setText(0 + "");
+        }else{
+            rating.setText(member.getRating() + "");
+        }
+
+        if(member.getFollow_count() < 0){
+            followCount.setText(0 + "");
+        }else{
+            followCount.setText(member.getFollow_count() + "");
+        }
+
+
     }
 
     private void setImageView() {

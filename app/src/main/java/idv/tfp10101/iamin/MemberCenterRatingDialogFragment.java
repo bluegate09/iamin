@@ -116,7 +116,7 @@ public class MemberCenterRatingDialogFragment extends Fragment {
         }
 
         class MyViewHolder extends RecyclerView.ViewHolder{
-            TextView tvRatingNickname,tvRatingEmail,tvRatingPhone,tvMemberCenterRatingMessage,tvRatingTime;
+            TextView tvRatingNickname,tvRatingEmail,tvRatingPhone,tvMemberCenterRatingMessage,tvRatingTime,tvRatingGroupName;
             ImageView ivRatingPortrait;
             RatingBar ratingBar;
 
@@ -129,6 +129,8 @@ public class MemberCenterRatingDialogFragment extends Fragment {
                 ivRatingPortrait = itemView.findViewById(R.id.ivRatingPortrait);
                 ratingBar = itemView.findViewById(R.id.ratingRatingBar);
                 tvRatingTime = itemView.findViewById(R.id.tvRatingTime);
+                tvRatingGroupName =itemView.findViewById(R.id.tvRatingGroupName);
+
             }
         }
 
@@ -136,7 +138,10 @@ public class MemberCenterRatingDialogFragment extends Fragment {
         public void onBindViewHolder(@NonNull MemberCenterRatingDialogFragment.MyAdapter.MyViewHolder holder, int position) {
             final Rating rating = ratingList.get(position);
 
+
+
             //rating bean 相關
+            holder.tvRatingGroupName.setText(rating.getGroup_name());
             holder.tvMemberCenterRatingMessage.setText(rating.getRating_message());
             holder.ratingBar.setRating(rating.getOrder_rating());
             int length = rating.getStart_time().toString().length();

@@ -263,7 +263,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         }
         LatLngBounds bounds = builder.build();
 
-        int padding = 100; // 以像素為單位從地圖邊緣偏移
+        int padding = 150; // 以像素為單位從地圖邊緣偏移
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
 
         googleMap.animateCamera(cu);
