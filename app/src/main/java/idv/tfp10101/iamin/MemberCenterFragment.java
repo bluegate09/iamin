@@ -46,7 +46,6 @@ public class MemberCenterFragment extends Fragment {
     private ImageView memberClass;
     private ImageView ivPic;
     private Member member;
-    private Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -95,19 +94,8 @@ public class MemberCenterFragment extends Fragment {
         //前往錢包
         view.findViewById(R.id.btMCMyWallet).setOnClickListener(v ->{
 
-                String jsonIn = memberRemoteAccess(activity,member,"getMyWallet");
-//                Type listType = new TypeToken<List<MyWallet>>() {}.getType();
-//                MyWallet myWallets = gson.fromJson(jsonIn,listType);
-                  Log.d(TAG,"json: " + jsonIn);
-                if(jsonIn.equals("[]")){
-                    Toast.makeText(activity, "No Data Yet", Toast.LENGTH_SHORT).show();
-
-                }else {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("JsonWallet",jsonIn);
-                    Navigation.findNavController(v).
-                            navigate(R.id.action_memberCenterFragment_to_memberCenterMyWalletFragment,bundle);
-                }
+            Navigation.findNavController(v).
+                    navigate(R.id.action_memberCenterFragment_to_memberCenterMyWalletFragment);
         });
 
         //前往我的團購

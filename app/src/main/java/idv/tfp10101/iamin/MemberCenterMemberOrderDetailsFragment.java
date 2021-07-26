@@ -71,11 +71,12 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
     private RecyclerView recyclerView;
     private List<Location> locations;
     private List<Marker> markers;
-    private TextView deadLine1,deadLine2,deadLine3,location1,location2,location3,tloc2,tloc3;
+    private TextView deadLine1,deadLine2,deadLine3,location1,location2,location3,tloc2,tloc3,tvTotalPrice;
     private ImageButton btGooglePay;
     private GoogleMap googleMap;
     private String paymentMethod;
     private SearchView searchView;
+    private int totalPrice = 0 ;
     private ImageView imageViewQRcode;
     // 物件
     private int memberOderId = -1;
@@ -95,6 +96,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
             locationJson = bundle.getString("Locations");
             paymentMethod = bundle.getString("GroupStatus");
             memberOderId = bundle.getInt("MemberOrderID");
+            totalPrice = bundle.getInt("TotalPrice");
         }else{
             Log.d(TAG,"bundle is null");
         }
@@ -130,6 +132,9 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
 
         tloc2 = view.findViewById(R.id.tPickupDetails2);
         tloc3 = view.findViewById(R.id.tPickupDetails3);
+
+        tvTotalPrice = view.findViewById(R.id.memberOrderDetailTotalPirce);
+        tvTotalPrice.setText(totalPrice+"");
 
         btGooglePay = view.findViewById(R.id.btGooglePay);
         btGooglePay.setVisibility(View.GONE);

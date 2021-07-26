@@ -95,13 +95,13 @@ public class MemberCenterMyWalletFragment extends Fragment {
         Type listType = new TypeToken<List<MyWallet>>() {}.getType();
         myWallets = gson.fromJson(jsonIn,listType);
 
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        Log.d(TAG,"onCreateView");
         return inflater.inflate(R.layout.fragment_member_center_my_wallet, container, false);
     }
 
@@ -117,10 +117,11 @@ public class MemberCenterMyWalletFragment extends Fragment {
         leftArrow = view.findViewById(R.id.myWalletLeftArrow);
         rightArrow = view.findViewById(R.id.myWalletRightArrow);
 
-//        rvMyWallet = view.findViewById(R.id.rvMyWallet);
-//        rvMyWallet.setLayoutManager(new LinearLayoutManager(activity));
-
         listView = view.findViewById(R.id.myWalletListView);
+        if(myWallets == null || myWallets.isEmpty()){
+            Toast.makeText(activity, "您還沒有任何資料喔", Toast.LENGTH_SHORT).show();
+            return;
+        }
         myListAdapter adapter = new myListAdapter(activity,R.layout.my_wallet_adapter_view_layout,getMyWalletData(myWallets));
 
         listView.setAdapter(adapter);
@@ -128,7 +129,6 @@ public class MemberCenterMyWalletFragment extends Fragment {
         date_year = new ArrayList<>();
         date_month = new ArrayList<>();
 
-        Log.d(TAG,"myWallets: " + myWallets);
         //整裡資料的年份 這是列出所有年份
         sortYearForDropDown(myWallets);
         //最後的index 看拿到的有多長
@@ -153,7 +153,6 @@ public class MemberCenterMyWalletFragment extends Fragment {
         //更新pieChart 及 listView
         dataForBundle = myWalletsYear;
         updateUI(myWalletsYear);
-
 
         //月dropdown選單
         adapterMonth = new ArrayAdapter<>(activity, R.layout.mywallet_dropdown, date_month);
@@ -193,7 +192,7 @@ public class MemberCenterMyWalletFragment extends Fragment {
         });
 
         currentIndex = date_year.lastIndexOf(yearTitle.getText().toString());
-        Log.d(TAG,"currentIndex: " + currentIndex + " date_year.size: " + date_year.size());
+//        Log.d(TAG,"currentIndex: " + currentIndex + " date_year.size: " + date_year.size());
 
         if(currentIndex + 1 == date_year.size()){
             rightArrow.setVisibility(View.INVISIBLE);
@@ -202,9 +201,7 @@ public class MemberCenterMyWalletFragment extends Fragment {
 
         //右邊箭頭按鈕
         rightArrow.setOnClickListener(v -> {
-
 //                Log.d(TAG, "MyWallet_rightArrow: " + date_month);
-
             String currentYear = date_year.get(currentIndex + 1);
             yearTitle.setText(currentYear);
             //取出相對應年份的資料
@@ -264,14 +261,6 @@ public class MemberCenterMyWalletFragment extends Fragment {
             }
         });
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-//        Log.d(TAG,"date_year: " + date_year);
-//        Log.d(TAG,"date_month: " + date_month);
-    }
-
 
     //整理年份
     private void sortYearForDropDown(List<MyWallet> myWallets) {
@@ -333,8 +322,6 @@ public class MemberCenterMyWalletFragment extends Fragment {
         }
 
         public View getView(int position, View convertView, ViewGroup parent){
-
-
             LayoutInflater inflater = LayoutInflater.from(context);
             convertView = inflater.inflate(resource,parent,false);
 
@@ -427,85 +414,6 @@ public class MemberCenterMyWalletFragment extends Fragment {
         }
     }
 
-//    private void showWalletList(List<MyWallet> myWallets) {
-//        if (myWallets == null || myWallets.isEmpty()) {
-//            Toast.makeText(activity, "", Toast.LENGTH_SHORT).show();
-//        }
-//        MyWalletAdapter merchAdapter = (MyWalletAdapter) rvMyWallet.getAdapter();
-//        if (merchAdapter == null) {
-//            rvMyWallet.setAdapter(new MyWalletAdapter(activity, myWallets));
-//        } else {
-//            merchAdapter.setMyWallets(myWallets);
-//            merchAdapter.notifyDataSetChanged();
-//        }
-//    }
-
-
-
-//    private class MyWalletAdapter extends RecyclerView.Adapter<MyWalletAdapter.MyViewHolder> {
-//        private final LayoutInflater layoutInflater;
-//        private List<MyWallet> myWallets;
-//
-//        MyWalletAdapter(Context context, List<MyWallet> myWallets) {
-//            layoutInflater = LayoutInflater.from(context);
-//            this.myWallets = myWallets;
-//        }
-//
-//        void setMyWallets(List<MyWallet> myWallets) {
-//            this.myWallets = myWallets;
-//        }
-//
-//        class MyViewHolder extends RecyclerView.ViewHolder {
-//            TextView tvName, tvPrice;
-//            View background;
-//
-//            MyViewHolder(View itemView) {
-//                super(itemView);
-//                background = itemView.findViewById(R.id.walletViewBackgroundColor);
-//                tvName = itemView.findViewById(R.id.nameWallet);
-//                tvPrice = itemView.findViewById(R.id.priceWallet);
-//            }
-//        }
-//
-//        @Override
-//        public int getItemCount() {
-//            return myWallets == null ? 0 : myWallets.size();
-//        }
-//
-//        @NonNull
-//        @Override
-//        public MyWalletAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//            View itemView = layoutInflater.inflate(R.layout.item_view_member_center_mywallet, parent, false);
-//            return new MyViewHolder(itemView);
-//        }
-//
-//        @Override
-//        public void onBindViewHolder(@NonNull MyWalletAdapter.MyViewHolder myViewHolder, int position) {
-//            final MyWallet myWallet = myWallets.get(position);
-//            myViewHolder.tvName.setText(myWallet.getCategory());
-//            myViewHolder.tvPrice.setText(myWallet.getTotoalPrice()+"");
-//            myViewHolder.background.setBackgroundColor(My_COLORS[position]);
-//
-//            myViewHolder.tvPrice.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//
-//                    Gson gson = new Gson();
-//                    String json = gson.toJson(myWallet.getGroupDetail());
-//                    Bundle bundle = new Bundle();
-//                    bundle.putString("myWalletCategory",myWallet.getCategory());
-//                    bundle.putString("myWalletdetails",json);
-//
-////                    tmpStr = yearTitle.getText().toString();
-////                    tmpIndex = currentIndex;
-////                    Log.d(TAG,"tmpIndex: " + tmpIndex);
-//                    Navigation.findNavController(v).navigate(R.id.action_memberCenterMyWalletFragment_to_memberCenterMyWalletDetailsFragment,bundle);
-//
-//
-//                }
-//            });
-//        }
-//    }
 
     private void updateUI(List<MyWallet> myWallets) {
         pieData = setPieData(getMyWalletEntries(myWallets));
@@ -595,10 +503,6 @@ public class MemberCenterMyWalletFragment extends Fragment {
         }else{
             myWalletsEntries.add(new PieEntry(cD, ""));
         }
-
-//        for(int i = 0; i < myWallets.size(); i++) {
-//            myWalletsEntries.add(new PieEntry(myWallets.get(i).getTotoalPrice(), myWallets.get(i).getCategory()));
-//        }
         return myWalletsEntries;
 
     }
