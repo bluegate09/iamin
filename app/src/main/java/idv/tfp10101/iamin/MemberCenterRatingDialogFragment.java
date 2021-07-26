@@ -36,7 +36,7 @@ import idv.tfp10101.iamin.member.MemberControl;
 
 public class MemberCenterRatingDialogFragment extends Fragment {
     private Activity activity;
-    private Member member,buyer;
+    private Member buyer;
     private RecyclerView rvMemberRating;
     private ExecutorService executor;
     private List<Rating> ratingList = new ArrayList<>();
@@ -46,9 +46,13 @@ public class MemberCenterRatingDialogFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
-        member = MemberControl.getInstance();
+        activity.setTitle("會員評價");
         buyer = new Member();
-        ratingList = MemberControl.getRating(activity,member.getId());
+
+        Bundle bundle = getArguments();
+        int member_id =  bundle.getInt("member_id");
+
+        ratingList = MemberControl.getRating(activity,member_id);
 
         // 需要開啟多個執行緒取得圖片，使用執行緒池功能
         int numProcs = Runtime.getRuntime().availableProcessors();
@@ -137,8 +141,6 @@ public class MemberCenterRatingDialogFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull MemberCenterRatingDialogFragment.MyAdapter.MyViewHolder holder, int position) {
             final Rating rating = ratingList.get(position);
-
-
 
             //rating bean 相關
             holder.tvRatingGroupName.setText(rating.getGroup_name());

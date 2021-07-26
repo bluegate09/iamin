@@ -33,6 +33,7 @@ public class MemberForgetPassword extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
+        activity.setTitle("忘記密碼");
         auth = FirebaseAuth.getInstance();
     }
 

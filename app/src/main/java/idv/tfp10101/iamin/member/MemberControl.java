@@ -17,6 +17,7 @@ import java.util.concurrent.ExecutorService;
 import idv.tfp10101.iamin.R;
 import idv.tfp10101.iamin.Rating.Rating;
 import idv.tfp10101.iamin.group.Group;
+import idv.tfp10101.iamin.member_order.MemberOrder;
 import idv.tfp10101.iamin.network.RemoteAccess;
 
 public class MemberControl {
@@ -205,6 +206,31 @@ public class MemberControl {
         }
         return ratings;
     }
+
+
+    /**
+     * 取得所有團購
+     */
+     public static List<MemberOrder> getMyMemberOrder(Context context,Member member){
+         List<MemberOrder> memberOrders = new ArrayList<>();
+         Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
+         if (RemoteAccess.networkConnected(context)) {
+             // 網址 ＆ Action
+             String url = RemoteAccess.URL_SERVER + "memberController";
+             JsonObject jsonObject = new JsonObject();
+             jsonObject.addProperty("action", "getMyMemberOrder");
+             jsonObject.addProperty("member", new Gson().toJson(member));
+
+             String jsonIn = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
+             Type listType = new TypeToken<List<MemberOrder>>() {}.getType();
+             memberOrders = gson.fromJson(jsonIn,listType);
+
+         }else{
+             Toast.makeText(context, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
+         }
+         return memberOrders;
+     }
+
 
     /**
      *當前使用者座標

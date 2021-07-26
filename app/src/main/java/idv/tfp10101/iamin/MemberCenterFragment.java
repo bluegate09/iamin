@@ -51,6 +51,7 @@ public class MemberCenterFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
+        activity.setTitle("會員中心");
         auth = FirebaseAuth.getInstance();
         member = MemberControl.getInstance();
 
@@ -102,8 +103,12 @@ public class MemberCenterFragment extends Fragment {
         view.findViewById(R.id.btMCSellerCenter).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_sellerFragment));
 
-        view.findViewById(R.id.btMyRating).setOnClickListener(v ->
-                Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memberCenterRatingDialogFragment));
+        //前往我的評價
+        view.findViewById(R.id.btMyRating).setOnClickListener(v ->{
+                Bundle bundle = new Bundle();
+                bundle.putInt("member_id", member.getId());
+
+                Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memberCenterRatingDialogFragment,bundle);});
 
         //回到首頁
         view.findViewById(R.id.btBacktoHomepage).setOnClickListener(v ->
