@@ -398,7 +398,7 @@ public class MerchbrowseFragment extends Fragment {
             }
         //取得最新的團購資訊
         Group group = GroupControl.getGroupbyId(activity,groupID);
-        NavController navController = Navigation.findNavController(view);
+
         if(group != null) {
             int progress = group.getProgress();
             int status = group.getGroupStatus();
