@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/Transparent"
-    android:layout_width="wrap_content"
+    android:layout_width="300dp"
     android:layout_height="wrap_content">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:orientation="horizontal">
 
             <RatingBar
                 android:id="@+id/dialogRatingBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:progressTint="@color/ratingBarColor"
                 android:numStars="5"
                 android:stepSize="1"
-                android:rating="3"
-                android:layout_weight="1" />
+                android:rating="3"/>
         </LinearLayout>
 
         <LinearLayout
@@ -38,7 +38,7 @@
                 android:layout_height="300dp"
                 app:counterEnabled="true"
                 app:counterMaxLength="100"
-                android:maxLength="100"
+                android:textColor="@color/black"
                 android:layout_weight="1">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -48,8 +48,10 @@
                     android:gravity="top"
                     android:layout_weight="1"
                     android:ems="1"
+                    android:maxLength="100"
                     android:lines="10"
                     android:singleLine="false"
+                    android:textColor="@color/black"
                     android:inputType="textMultiLine"
                     android:hint="輸入評價留言" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -58,6 +60,7 @@
 
         <Button
             android:id="@+id/dialog_rating_button"
+            android:layout_gravity="center"
             android:background="@drawable/bg_black_border_button"
             android:textColor="@color/black"
             app:backgroundTint="@null"

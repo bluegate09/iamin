@@ -54,6 +54,7 @@ public class MemberCenterFragment extends Fragment {
         activity = getActivity();
         auth = FirebaseAuth.getInstance();
         member = MemberControl.getInstance();
+
     }
 
     @Override
@@ -72,8 +73,6 @@ public class MemberCenterFragment extends Fragment {
         rating = view.findViewById(R.id.tvRating);
         followCount = view.findViewById(R.id.tvMCFollowCount);
         memberClass = view.findViewById(R.id.memberClass);
-
-        Log.d(TAG,"phone_number: " + member.getPhoneNumber());
 
         if (member.getPhoneNumber() == null || String.valueOf(member.getPhoneNumber()).trim().isEmpty()) {
             memberClass.setImageResource(R.drawable.silver_member);
@@ -115,9 +114,14 @@ public class MemberCenterFragment extends Fragment {
         view.findViewById(R.id.btMCSellerCenter).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_sellerFragment));
 
-        //回到賣家
+        view.findViewById(R.id.btMyRating).setOnClickListener(v ->
+                Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memberCenterRatingDialogFragment));
+
+        //回到首頁
         view.findViewById(R.id.btBacktoHomepage).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_homeFragment));
+
+
 
         //登出
         view.findViewById(R.id.btMCLogout).setOnClickListener(v -> {
