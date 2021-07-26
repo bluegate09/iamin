@@ -373,7 +373,7 @@ public class MerchUpdateFragment extends Fragment {
         // 使用UCrop建立Intent
         Intent cropIntent = UCrop.of(sourceImageUri, destinationUri)
                 .withAspectRatio(1, 1) // 設定裁減比例
-                .withMaxResultSize(500, 500) // 設定結果尺寸不可超過指定寬高
+//                .withMaxResultSize(500, 500) // 設定結果尺寸不可超過指定寬高
                 .getIntent(activity);
         // Launcher() -> 進行跳轉 等待接收回傳結果 -> cropPictureResult()
         cropPictureLauncher.launch(cropIntent);
@@ -410,7 +410,7 @@ public class MerchUpdateFragment extends Fragment {
                 // 記憶體 的 OutputStream
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 // compress壓縮 (格式, 壓縮品質, 存放位置)
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 10, out);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 30, out);
                 // bitmap壓縮 -> out -> 轉成byte陣列 (準備requst)
                 images.add(out.toByteArray());
                 // 圖片計數
