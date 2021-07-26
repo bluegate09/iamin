@@ -19,6 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorSecondaryLight"
+            app:itemIconTint="@drawable/color_bottom_navigation_icon"
+            app:itemTextColor="@drawable/color_bottom_navigation_icon"
             android:elevation="0dp"
             app:labelVisibilityMode="labeled"
             app:menu="@menu/nvbar_home" />
