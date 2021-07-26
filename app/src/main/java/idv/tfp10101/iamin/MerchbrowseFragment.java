@@ -272,7 +272,7 @@ public class MerchbrowseFragment extends Fragment {
 
         seller_rating.setOnClickListener(v ->{
             Bundle sellerID_bundle = new Bundle();
-            bundle.putInt("member-id", sellerID);
+            sellerID_bundle.putInt("member_id", sellerID);
 
             Navigation.findNavController(v).navigate(R.id.memberCenterRatingDialogFragment, sellerID_bundle);
         });
