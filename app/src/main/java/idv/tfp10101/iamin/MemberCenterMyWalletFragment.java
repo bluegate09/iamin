@@ -49,6 +49,7 @@ import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.member.MyPercentFormatter;
 import idv.tfp10101.iamin.member.MyWallet;
+import idv.tfp10101.iamin.member_order.MemberOrder;
 
 import static idv.tfp10101.iamin.member.MemberControl.memberRemoteAccess;
 
@@ -57,6 +58,7 @@ public class MemberCenterMyWalletFragment extends Fragment {
     private Activity activity;
     private Member member;
     private List<MyWallet> myWallets,myWalletsYear,dataForBundle;
+    private List<MemberOrder> memberOrders;
     private PieData pieData;
     private PieChart pieChart;
     private Spinner monthDropDown;
@@ -89,12 +91,14 @@ public class MemberCenterMyWalletFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d(TAG,"onCreate");
         activity = getActivity();
+        activity.setTitle("統計圖表");
         member = MemberControl.getInstance();
         //從mysql拿資料
         String jsonIn = memberRemoteAccess(activity,member,"getMyWallet");
         Type listType = new TypeToken<List<MyWallet>>() {}.getType();
         myWallets = gson.fromJson(jsonIn,listType);
 
+        memberOrders = MemberControl.getMyMemberOrder(activity,member);
 
     }
 

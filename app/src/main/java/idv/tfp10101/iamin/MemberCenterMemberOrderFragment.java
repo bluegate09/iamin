@@ -64,6 +64,7 @@ public class MemberCenterMemberOrderFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
+        activity.setTitle("訂單頁面");
         member = MemberControl.getInstance();
 
         String jsonIn = memberRemoteAccess(activity,member,"getMyMemberOrder");

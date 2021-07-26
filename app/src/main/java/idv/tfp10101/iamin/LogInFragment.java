@@ -90,9 +90,10 @@ public class LogInFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         //hide action bar
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
+//        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
         super.onCreate(savedInstanceState);
         activity = getActivity();
+        activity.setTitle("登入");
         auth = FirebaseAuth.getInstance();
         member = MemberControl.getInstance();
         callbackManager = CallbackManager.Factory.create();
