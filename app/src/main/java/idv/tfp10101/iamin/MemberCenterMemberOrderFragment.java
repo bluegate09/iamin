@@ -3,6 +3,7 @@ package idv.tfp10101.iamin;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.media.tv.TvContentRating;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -260,6 +261,10 @@ public class MemberCenterMemberOrderFragment extends Fragment {
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterMemberOrderFragment_to_memberCenterOrderDetailsFragment,bundle);
             });
 
+            if(!(memberOrder.isDeliverStatus() && memberOrder.isReceivePaymentStatus())){
+                holder.tvRatingButton.setVisibility(View.GONE);
+            }
+
             holder.tvRatingButton.setOnClickListener(v -> {
 
                     AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
@@ -300,12 +305,6 @@ public class MemberCenterMemberOrderFragment extends Fragment {
                     }
                 });
 
-
-
-//
-
-//
-//                dialog.getWindow().setLayout(800,1200);
             });
 
 
