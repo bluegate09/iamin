@@ -196,7 +196,6 @@ public class ChatFragment extends Fragment {
 
 
             final User user = users.get(position);
-            Log.d(TAG, user.getImagePath());
             if (user.getImagePath() == null ) {
                 holder.ivSeller.setImageResource(R.drawable.avatar);
             } else {
