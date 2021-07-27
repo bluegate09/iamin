@@ -20,9 +20,9 @@
             <Spinner
                 android:id="@+id/sp_report"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:entries="@array/report"
-                android:layout_weight="1" />
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:entries="@array/report" />
         </LinearLayout>
 
         <LinearLayout
@@ -34,10 +34,10 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                app:counterEnabled="true"
-                app:counterMaxLength="100"
+                android:layout_weight="1"
                 android:textColor="@color/black"
-                android:layout_weight="1">
+                app:counterEnabled="true"
+                app:counterMaxLength="50">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edt_report_message"

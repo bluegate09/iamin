@@ -104,7 +104,7 @@ public class HomeFragment extends Fragment {
     private LocationCallback locationCallback;
     private double userlat,userlng;//使用者的緯經度
     private List<HomeData> localHomeDatas;  //把團購跟使用者最短距離裝成Homedata
-
+    private ProgressDialog Loading;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -168,9 +168,18 @@ public class HomeFragment extends Fragment {
         if (localGroups == null || localGroups.isEmpty()) {
             Toast.makeText(activity, "找不到團購", Toast.LENGTH_SHORT).show();
         }
+        //建立載入對話筐
+        Loading = new ProgressDialog(activity);
+        Loading.setTitle("載入中");
+        Loading.setMessage("Loading...");
+        Loading.setCancelable(false);
+        Loading.show();
 
         //實作取得買家緯精度方法
         getUserloaction();
+
+
+
         //將searchView清空
         searchView.setQuery("", false);
         //輸入監聽
@@ -274,11 +283,7 @@ public class HomeFragment extends Fragment {
     //取得User的當前位置
     private void getUserloaction() {
         checkPositioning();
-        ProgressDialog Loading = new ProgressDialog(activity);
-        Loading.setTitle("載入中");
-        Loading.setMessage("Loading...");
-        Loading.setCancelable(false);
-        Loading.show();
+
 
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -301,7 +306,6 @@ public class HomeFragment extends Fragment {
                 coumputeDistancemin();
                 showGroup(localHomeDatas);
                 Loading.dismiss();
-
                 //我得member追隨頁面要用的 by:渝
                 MemberControl.setMemberCoordinate(new MemberControl.MemberCoordinate(userlat,userlng));
             }
@@ -310,7 +314,7 @@ public class HomeFragment extends Fragment {
 
     //計算使用者與團購的最短距離打包成Homedata(group,distancemin)並排序
     private void coumputeDistancemin(){
-
+        Loading.dismiss();
         localHomeDatas =  new ArrayList<>();
 
         HomeData homeData;
@@ -478,25 +482,6 @@ public class HomeFragment extends Fragment {
             }else{
                 holder.txv_progress.setText("進度:" + rsHomeData.getGroup().getProgress() + "份\n" + "目標:" + rsHomeData.getGroup().getGoal() + "份\n" + "購買上限:" + rsHomeData.getGroup().getConditionCount() + "份");
             }
-
-            //取的團購的所有地點
-//            grouplocations = LocationControl.getLocationByGroupId(activity, GroupID);
-//            List<Float> distance = new ArrayList<>();
-//            for (Location location : grouplocations){
-//                float[] results = new float[1];
-//                //取得所有面交地點的緯經度
-//                Double groupLat = location.getLatitude();
-//                Double groupLng = location.getLongtitude();
-//                //取得買家與所有團購面交地點的距離
-//                android.location.Location.distanceBetween(userlat,userlng,groupLat,groupLng,results);
-//                //除以1000從公尺變成公里後加入list
-//                distance.add(results[0]/1000);
-//            }
-//            //由小到大排序(只取最近的距離)
-//            Collections.sort(distance);
-//            BigDecimal b = new BigDecimal(distance.get(0));
-//            //四捨五入到小數第一位
-//            float groupDismin = b.setScale(1,BigDecimal.ROUND_HALF_UP).floatValue();
             holder.txv_distanceMin.setText("距離您"+String.valueOf(rsHomeData.getDistance())+"公里");
 
             //設定點擊商品觸發
