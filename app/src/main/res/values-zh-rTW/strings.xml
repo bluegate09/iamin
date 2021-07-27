@@ -157,4 +157,5 @@
     <string name="text_rating_submit">評價已送出，感謝您的填寫。</string>
     <string name="text_message">留言: </string>
     <string name="my_rating">我的評價</string>
+    <string name="text_checkout">結帳</string>
 </resources>
