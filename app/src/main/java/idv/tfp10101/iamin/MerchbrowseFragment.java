@@ -371,7 +371,7 @@ public class MerchbrowseFragment extends Fragment {
                             //建立選擇付款方式對話匡
                             createdDialog();
                         })
-                        .setNegativeButton("我在想一下", (dialog, which) -> {
+                        .setNegativeButton("我再想一下", (dialog, which) -> {
                             return;
                         })
                         .setCancelable(false)
@@ -556,7 +556,7 @@ public class MerchbrowseFragment extends Fragment {
                             buyerChoose = 1;
                             getOrder();
                         })
-                        .setNegativeButton("我在想一下",(dialog, which) -> {return;})
+                        .setNegativeButton("我再想一下",(dialog, which) -> {return;})
                         .setCancelable(false)
                         .show();
                 break;
@@ -568,7 +568,7 @@ public class MerchbrowseFragment extends Fragment {
                             buyerChoose = 2;
                             getOrder();
                         })
-                        .setNegativeButton("我在想一下",(dialog, which) -> {return;})
+                        .setNegativeButton("我再想一下",(dialog, which) -> {return;})
                         .setCancelable(false)
                         .show();
                 break;
@@ -603,7 +603,7 @@ public class MerchbrowseFragment extends Fragment {
                             }
                             //預設第一個選項位置是0,寫進table要+1 1->面交 2->信用卡
                         })
-                        .setNegativeButton("我在想一下",(dialog, which) -> {return;})
+                        .setNegativeButton("我再想一下",(dialog, which) -> {return;})
                         .setCancelable(false)
                         .show();
                 break;
