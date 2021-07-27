@@ -202,16 +202,15 @@ public class MainActivity extends AppCompatActivity {
                 Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-            if (
-                    destination.getId() == R.id.memberCenterMyWalletFragment ||
-                    destination.getId() == R.id.logInFragment ||
-                    destination.getId() == R.id.signUpFragment ||
-                    destination.getId() == R.id.phoneAuthFragment ||
-                    destination.getId() == R.id.messageFragment ||
-                    destination.getId() == R.id.memeberCenterProfileFragment ||
-                    destination.getId() == R.id.memberCenterFragment ||
-                    destination.getId() == R.id.merchbrowseFragment
-            ) {
+            if(destination.getId() == R.id.memberCenterMyWalletFragment||
+               destination.getId() == R.id.logInFragment||
+               destination.getId() == R.id.signUpFragment||
+               destination.getId() == R.id.phoneAuthFragment||
+               destination.getId() == R.id.memeberCenterProfileFragment||
+               destination.getId() == R.id.memberCenterFragment||
+               destination.getId() == R.id.merchbrowseFragment ||
+                    destination.getId() == R.id.messageFragment
+            ){
                 bottomNavigationView.setVisibility(View.GONE);
             } else {
                 bottomNavigationView.setVisibility(View.VISIBLE);

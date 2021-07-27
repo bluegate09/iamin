@@ -31,6 +31,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -93,6 +94,7 @@ public class MerchbrowseFragment extends Fragment {
     private TextView txv_group_progress,txv_group_location; //團購進度與團購面交地點
     private  List<Location> grouplocations; //團購的所有面交地點
     private Bundle bundle; //從首頁包的團購id與使用者資訊(重整頁面時用到)
+    private LinearLayout seller_rating;
     //商品圖片
     private List<byte[]> images = new ArrayList<>();
 
@@ -267,6 +269,13 @@ public class MerchbrowseFragment extends Fragment {
             }
         });
         showMerchs(localMerchs);
+
+        seller_rating.setOnClickListener(v ->{
+            Bundle sellerID_bundle = new Bundle();
+            sellerID_bundle.putInt("member_id", sellerID);
+
+            Navigation.findNavController(v).navigate(R.id.memberCenterRatingDialogFragment, sellerID_bundle);
+        });
         //點擊檢舉icon會跳出檢舉對話筐
         imv_report.setOnClickListener(v ->{
             if (member.getId() == -1){
@@ -389,7 +398,7 @@ public class MerchbrowseFragment extends Fragment {
             }
         //取得最新的團購資訊
         Group group = GroupControl.getGroupbyId(activity,groupID);
-        NavController navController = Navigation.findNavController(view);
+
         if(group != null) {
             int progress = group.getProgress();
             int status = group.getGroupStatus();
@@ -621,6 +630,7 @@ public class MerchbrowseFragment extends Fragment {
         txv_group_progress = view.findViewById(R.id.txv_group_progress);
         txv_group_location = view.findViewById(R.id.txv_group_location);
         imv_report = view.findViewById(R.id.imv_report);
+        seller_rating = view.findViewById(R.id.seller_rating);
 
     }
 

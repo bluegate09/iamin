@@ -40,6 +40,7 @@ public class SocialLoginFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
+        activity.setTitle("註冊");
         member = MemberControl.getInstance();
     }
 

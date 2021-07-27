@@ -54,6 +54,7 @@ public class MemeberCenterFollowFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
+        activity.setTitle("追蹤");
         myMember = MemberControl.getInstance();
         int numProcs = Runtime.getRuntime().availableProcessors();
         executor = Executors.newFixedThreadPool(numProcs);

@@ -189,6 +189,7 @@ public class ChatFragment extends Fragment {
         public void onBindViewHolder(@NonNull SellerViewHolder holder, int position) {
             member = members.get(position);
             holder.tvName.setText(member.getNickname());
+
             holder.itemView.setOnClickListener(v -> {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("member", member);
