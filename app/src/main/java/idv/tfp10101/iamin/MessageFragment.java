@@ -90,37 +90,29 @@ public class MessageFragment extends Fragment {
                 Toast.makeText(activity, R.string.textMessageIsInvalid, Toast.LENGTH_SHORT).show();
                 return;
             }
-            FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    if (task.getResult() != null) {
-                        token = task.getResult();
-                        id = db.collection("Messages").document().getId();
+            id = db.collection("Messages").document().getId();
 
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                        Date date = new Date();
-                        long time = date.getTime();
-                        String timeStr = sdf.format(time);
-                        message.setMessage(lastMessage);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Date date = new Date();
+            long time = date.getTime();
+            String timeStr = sdf.format(time);
+            message.setMessage(lastMessage);
 
-                        message.setSender(auth.getCurrentUser().getUid());
-                        message.setToken(member.getFCM_token());
-                        message.setReceiver(member.getuUId());
-                        message.setTime(timeStr);
-                        sendFcm(token);
-                        db.collection("Messages").document(id).set(message).addOnCompleteListener(task1 -> {
-                            if (task1.isSuccessful()) {
-                                String result = getString(R.string.textSendMessage);
-                                Toast.makeText(activity, result, Toast.LENGTH_SHORT).show();
-                            } else {
-                                String result = task1.getException() == null ?
-                                        getString(R.string.textSendMessageFail) :
-                                        task1.getException().getMessage();
-                                Log.e(TAG, "message: " + result);
-                                Toast.makeText(activity, result, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-                    }
+            message.setSender(auth.getCurrentUser().getUid());
+            message.setToken(member.getFCM_token());
+            message.setReceiver(member.getuUId());
+            message.setTime(timeStr);
+            sendFcm();
+            db.collection("Messages").document(id).set(message).addOnCompleteListener(task1 -> {
+                if (task1.isSuccessful()) {
+                    String result = getString(R.string.textSendMessage);
+                    Toast.makeText(activity, result, Toast.LENGTH_SHORT).show();
+                } else {
+                    String result = task1.getException() == null ?
+                            getString(R.string.textSendMessageFail) :
+                            task1.getException().getMessage();
+                    Log.e(TAG, "message: " + result);
+                    Toast.makeText(activity, result, Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -128,7 +120,7 @@ public class MessageFragment extends Fragment {
         });
     }
 
-    private void sendFcm(String token) {
+    private void sendFcm() {
         // 發送單一FCM
         String action = "singleFcm";
         if (RemoteAccess.networkConnected(activity)) {

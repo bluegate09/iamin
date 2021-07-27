@@ -123,6 +123,8 @@ public class MainActivity extends AppCompatActivity {
                     case "Message_Fragment":
                         navController.navigate(R.id.messageFragment, bundle);
                         break;
+                    case "Chat_Fragment":
+                        navController.navigate(R.id.chatFragment, bundle);
                     default:
                         break;
                 }

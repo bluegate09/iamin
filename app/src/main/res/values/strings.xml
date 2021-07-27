@@ -184,6 +184,8 @@
     <string name="text_rating_submit">Message Sumbit, Thanks You!</string>
     <string name="text_message">message: </string>
     <string name="my_rating">My Rating</string>
+    <string name="Success" />
+    <string name="textBuySuccess">success</string>
     <string-array name="report">
         <item>類別錯誤</item>
         <item>違反善良風俗</item>

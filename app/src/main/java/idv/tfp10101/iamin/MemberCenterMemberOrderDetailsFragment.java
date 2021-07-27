@@ -27,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -135,7 +136,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         tloc3 = view.findViewById(R.id.tPickupDetails3);
 
         tvTotalPrice = view.findViewById(R.id.memberOrderDetailTotalPirce);
-        tvTotalPrice.setText(totalPrice+"");
+        tvTotalPrice.setText(String.valueOf(totalPrice));
 
         btGooglePay = view.findViewById(R.id.btGooglePay);
         btGooglePay.setVisibility(View.GONE);
@@ -194,10 +195,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         if(!(paymentMethod.equals("1"))){
             btGooglePay.setVisibility(View.VISIBLE);
             btGooglePay.setEnabled(true);
-            Intent intent = new Intent(getActivity(), TappayActivity.class);
-            intent.putExtra("totalPrice", totalPrice);
-            startActivity(intent);
-//            Navigation.findNavController(view).popBackStack(R.id.m);
+            toTapPay();
         }
 
 
@@ -209,7 +207,14 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         handleQRcode();
     }
 
-
+    private void toTapPay() {
+        btGooglePay.findViewById(R.id.btGooglePay).setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), TappayActivity.class);
+            intent.putExtra("totalPrice", totalPrice);
+            intent.putExtra("memberOderId", memberOderId);
+            startActivity(intent);
+        });
+    }
 
     private void handlePickUpLocation() {
         ArrayList<String> locList = new ArrayList<>();
