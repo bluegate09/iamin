@@ -1,4 +1,4 @@
-package idv.tfp10101.iamin.Rating;
+package idv.tfp10101.iamin.Report;
 
 import android.content.Context;
 import android.widget.Toast;
