@@ -181,13 +181,13 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             if(destination.getId() == R.id.memberCenterMyWalletFragment||
-               destination.getId() == R.id.logInFragment||
                destination.getId() == R.id.signUpFragment||
                destination.getId() == R.id.phoneAuthFragment||
                destination.getId() == R.id.memeberCenterProfileFragment||
                destination.getId() == R.id.memberCenterFragment||
+               destination.getId() == R.id.memberCenterMyIncome||
                destination.getId() == R.id.merchbrowseFragment ||
-                    destination.getId() == R.id.messageFragment
+               destination.getId() == R.id.messageFragment
             ){
                 bottomNavigationView.setVisibility(View.GONE);
             }else{

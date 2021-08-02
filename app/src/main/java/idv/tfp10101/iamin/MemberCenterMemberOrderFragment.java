@@ -263,8 +263,11 @@ public class MemberCenterMemberOrderFragment extends Fragment {
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterMemberOrderFragment_to_memberCenterOrderDetailsFragment,bundle);
             });
 
+            //判定是否可評價
             if(!(memberOrder.isDeliverStatus() && memberOrder.isReceivePaymentStatus())){
                 holder.tvRatingButton.setVisibility(View.GONE);
+            }else{
+                holder.tvRatingButton.setVisibility(View.VISIBLE);
             }
 
             holder.tvRatingButton.setOnClickListener(v -> {

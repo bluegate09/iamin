@@ -94,9 +94,8 @@ public class MemberCenterFragment extends Fragment {
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memeberCenterFollowFragment));
         //前往錢包
         view.findViewById(R.id.btMCMyWallet).setOnClickListener(v ->{
-
             Navigation.findNavController(v).
-                    navigate(R.id.action_memberCenterFragment_to_memberCenterMyWalletFragment);
+                    navigate(R.id.action_memberCenterFragment_to_memberCenterTansferFragment);
         });
 
         //前往我的團購
@@ -113,7 +112,6 @@ public class MemberCenterFragment extends Fragment {
         //回到首頁
         view.findViewById(R.id.btBacktoHomepage).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_homeFragment));
-
 
 
         //登出
@@ -150,7 +148,7 @@ public class MemberCenterFragment extends Fragment {
         }else{
             memberClass.setImageResource(R.drawable.golden_member);
         }
-//            Log.d(TAG, "OnCreate: " + member.isUpdate());
+        activity.setTitle("會員中心");
     }
 
     private void setTextView() {
@@ -160,16 +158,14 @@ public class MemberCenterFragment extends Fragment {
         if(member.getRating() < 0 ){
             rating.setText(0 + "");
         }else{
-            rating.setText(member.getRating() + "");
+            rating.setText("評分: " + member.getRating());
         }
 
         if(member.getFollow_count() < 0){
             followCount.setText(0 + "");
         }else{
-            followCount.setText(member.getFollow_count() + "");
+            followCount.setText("追隨者數: " + member.getFollow_count());
         }
-
-
     }
 
     private void setImageView() {

@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -154,7 +155,8 @@ public class MemeberCenterFollowFragment extends Fragment {
 
         class MyViewHolder extends RecyclerView.ViewHolder {
             ImageView imageView,tvFollowBt;
-            TextView tvNickname, tvRating, tvFollowCount, tvStatus, tvEmail, tvPhone;
+            TextView tvNickname, tvRating, tvFollowCount, tvEmail, tvPhone;
+            Button myFollowerButton;
 
             MyViewHolder(View itemView) {
                 super(itemView);
@@ -163,10 +165,9 @@ public class MemeberCenterFollowFragment extends Fragment {
                 tvRating = itemView.findViewById(R.id.tvFollowRating);
                 tvFollowCount = itemView.findViewById(R.id.tvFollowCount);
                 tvFollowBt = itemView.findViewById(R.id.btMemberUnfollow);
-                tvStatus = itemView.findViewById(R.id.tvFollowStatus);
+                myFollowerButton = itemView.findViewById(R.id.myFollowerButton);
                 tvEmail = itemView.findViewById(R.id.tvFollowerEmail);
                 tvPhone = itemView.findViewById(R.id.tvFollowerPhone);
-
             }
         }
 
@@ -192,7 +193,6 @@ public class MemeberCenterFollowFragment extends Fragment {
             myViewHolder.tvNickname.setText(member.getNickname());
             myViewHolder.tvRating.setText(ratingText);
             myViewHolder.tvFollowCount.setText(followCountText);
-            myViewHolder.tvStatus.setText("");
             myViewHolder.tvPhone.setText(String.valueOf(member.getPhoneNumber()));
             myViewHolder.tvEmail.setText(member.getEmail());
             myViewHolder.tvFollowBt.setImageResource(R.drawable.heart_red);
@@ -218,13 +218,12 @@ public class MemeberCenterFollowFragment extends Fragment {
                         })
                         .setCancelable(true)
                         .show();
-
-
             });
-            myViewHolder.itemView.setOnClickListener(view -> {
+            myViewHolder.myFollowerButton.setOnClickListener(view -> {
 
                 Bundle bundle = new Bundle();
                 bundle.putInt("followerId", member.getId());
+                bundle.putString("name",member.getNickname());
 
                 //連追隨的賣家團購
                 Navigation.findNavController(view).navigate(R.id.action_memeberCenterFollowFragment_to_memberCenterFollowersGroupFragment,bundle);

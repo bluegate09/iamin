@@ -127,11 +127,13 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvFollowStatus"
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/myFollowerButton"
+            android:layout_gravity="end"
+            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="最新團購: " />
+            android:text="前往賣家商場" />
 
     </LinearLayout>
 

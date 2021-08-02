@@ -88,9 +88,6 @@
             android:id="@+id/action_memberCenterFragment_to_memeberCenterFollowFragment"
             app:destination="@id/memeberCenterFollowFragment" />
         <action
-            android:id="@+id/action_memberCenterFragment_to_memberCenterMyWalletFragment"
-            app:destination="@id/memberCenterMyWalletFragment" />
-        <action
             android:id="@+id/action_memberCenterFragment_to_memeberCenterProfileFragment"
             app:destination="@id/memeberCenterProfileFragment" />
         <action
@@ -105,6 +102,9 @@
         <action
             android:id="@+id/action_memberCenterFragment_to_memberCenterRatingDialogFragment"
             app:destination="@id/memberCenterRatingDialogFragment" />
+        <action
+            android:id="@+id/action_memberCenterFragment_to_memberCenterTansferFragment"
+            app:destination="@id/memberCenterTansferFragment" />
     </fragment>
     <fragment
         android:id="@+id/memeberCenterFollowFragment"
@@ -313,4 +313,30 @@
         android:name="idv.tfp10101.iamin.MemberCenterRatingDialogFragment"
         android:label="fragment_member_center_rating_dialog"
         tools:layout="@layout/fragment_member_center_rating_dialog" />
+    <fragment
+        android:id="@+id/memberCenterMyIncome"
+        android:name="idv.tfp10101.iamin.MemberCenterMyIncomeFragment"
+        android:label="fragment_member_center_my_income"
+        tools:layout="@layout/fragment_member_center_my_income" >
+        <action
+            android:id="@+id/action_memberCenterMyIncome_to_memberCenterIncomeDeatilsFragment"
+            app:destination="@id/memberCenterIncomeDeatilsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/memberCenterIncomeDeatilsFragment"
+        android:name="idv.tfp10101.iamin.MemberCenterIncomeDeatilsFragment"
+        android:label="fragment_member_center_income_deatils"
+        tools:layout="@layout/fragment_member_center_income_deatils" />
+    <fragment
+        android:id="@+id/memberCenterTansferFragment"
+        android:name="idv.tfp10101.iamin.MemberCenterTansferFragment"
+        android:label="fragment_member_center_tansfer"
+        tools:layout="@layout/fragment_member_center_tansfer" >
+        <action
+            android:id="@+id/action_memberCenterTansferFragment_to_memberCenterMyIncome"
+            app:destination="@id/memberCenterMyIncome" />
+        <action
+            android:id="@+id/action_memberCenterTansferFragment_to_memberCenterMyWalletFragment"
+            app:destination="@id/memberCenterMyWalletFragment" />
+    </fragment>
 </navigation>
