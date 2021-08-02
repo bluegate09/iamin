@@ -17,17 +17,14 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -57,7 +54,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import idv.tfp10101.iamin.Rating.ReportControl;
+import idv.tfp10101.iamin.Report.ReportControl;
 import idv.tfp10101.iamin.Report.Report;
 import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.group.GroupControl;
@@ -256,6 +253,12 @@ public class MerchbrowseFragment extends Fragment {
         //發送賣家圖片請求
         Bitmap bitmap = MemberControl.getsellerimageByMemberId(activity,SellerID);
         imv_Seller.setImageBitmap(bitmap);
+        imv_Seller.setOnClickListener(v ->{
+            Bundle bundle = new Bundle();
+            bundle.putInt("followerId", sellerID);
+            bundle.putString("name", seller.getNickname());
+            Navigation.findNavController(v).navigate(R.id.memberCenterFollowersGroupFragment, bundle);
+        });
 
         StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(1,RecyclerView.HORIZONTAL);
         recyclerViewMerch.setLayoutManager(staggeredGridLayoutManager);

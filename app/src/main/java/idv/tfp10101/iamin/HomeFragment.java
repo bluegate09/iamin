@@ -8,7 +8,6 @@ import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.icu.number.Precision;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -27,9 +26,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,29 +41,22 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.CancellationTokenSource;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.protobuf.Empty;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -239,8 +229,8 @@ public class HomeFragment extends Fragment {
                                 } else {
                                     // 搜尋原始資料內有無包含關鍵字(不區別大小寫)
                                     for (HomeData group : localHomeDatas) {
-                                        //只顯示團購狀態是1的(1-> 揪團中)
-                                        if (group.getGroup().getProgress() != group.getGroup().getConditionCount()) {
+                                        //只顯示 團購名稱有包含輸入的字的團購 && 團購進度還沒到最大上限的團購 && 還未超過團購時間的團購
+                                        if (group.getGroup().getName().toUpperCase().contains(newText.toUpperCase())) {
                                             searchHomeData.add(group);
                                         }
                                     }
@@ -337,7 +327,8 @@ public class HomeFragment extends Fragment {
             //四捨五入到小數第一位
             float groupDismin = b.setScale(1,BigDecimal.ROUND_HALF_UP).floatValue();
             homeData = new HomeData(group,groupDismin);
-            if (group.getProgress() != group.getConditionCount()) {
+            //團購進度還沒到購買上限 && 還沒到結單時間的團購 才會加入本地團購
+            if (group.getProgress() != group.getConditionCount() && (new Date().before(group.getConditionTime()))) {
                 localHomeDatas.add(homeData);
             }
         }
@@ -360,7 +351,7 @@ public class HomeFragment extends Fragment {
         searchView.setQuery("", false);
         List<HomeData> selectHomeData = new ArrayList<>();
         for (HomeData category : categoryHomeData) {
-            //類別ID與為達到團購最大上限
+            //類別ID
             if (category.getGroup().getCategoryId() == category_Id) {
                 selectHomeData.add(category);
             }
