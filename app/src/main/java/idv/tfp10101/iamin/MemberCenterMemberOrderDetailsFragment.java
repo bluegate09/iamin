@@ -18,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SearchView;
@@ -57,7 +58,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
     private List<Location> locations;
     private List<Marker> markers;
     private TextView deadLine1,deadLine2,deadLine3,location1,location2,location3,tloc2,tloc3,tvTotalPrice,pt1,pt2,pt3;
-    private ImageButton btGooglePay;
+    private Button btGooglePay;
     private GoogleMap googleMap;
     private String paymentMethod;
     private SearchView searchView;
