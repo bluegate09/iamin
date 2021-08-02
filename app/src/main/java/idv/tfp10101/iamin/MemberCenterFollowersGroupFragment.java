@@ -34,6 +34,7 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -68,11 +69,18 @@ public class MemberCenterFollowersGroupFragment extends Fragment {
         int followerId = bundle.getInt("followerId");
         String nickname = bundle.getString("name");
 
-        activity.setTitle(nickname +"的賣場");
+        activity.setTitle(nickname +"的團購");
 
         GroupControl.getAllGroupByMemberId(activity,followerId);
         groups = GroupControl.getLocalGroup();
-
+        List<Group> selectGroups = new ArrayList<>();
+        for (Group group : groups) {
+            if (group.getProgress() != group.getConditionCount() && (new Date().before(group.getConditionTime()))) {
+                selectGroups.add(group);
+            }
+        }
+        groups.clear();
+        groups = selectGroups;
 
     }
 

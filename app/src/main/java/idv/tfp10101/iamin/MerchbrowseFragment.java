@@ -253,6 +253,12 @@ public class MerchbrowseFragment extends Fragment {
         //發送賣家圖片請求
         Bitmap bitmap = MemberControl.getsellerimageByMemberId(activity,SellerID);
         imv_Seller.setImageBitmap(bitmap);
+        imv_Seller.setOnClickListener(v ->{
+            Bundle bundle = new Bundle();
+            bundle.putInt("followerId", sellerID);
+            bundle.putString("name", seller.getNickname());
+            Navigation.findNavController(v).navigate(R.id.memberCenterFollowersGroupFragment, bundle);
+        });
 
         StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(1,RecyclerView.HORIZONTAL);
         recyclerViewMerch.setLayoutManager(staggeredGridLayoutManager);
