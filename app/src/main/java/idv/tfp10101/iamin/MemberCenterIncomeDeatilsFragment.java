@@ -124,9 +124,9 @@ public class MemberCenterIncomeDeatilsFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
             final MyIncome myIncome = incomeList.get(position);
-            holder.groupTitle.setText(myIncome.getGroupTitle());
-            holder.memberOrderId.setText(myIncome.getMemberOrderId()+"");
-            holder.price.setText(myIncome.getTotalPrice()+"");
+            holder.groupTitle.setText("團購標題: \n" + myIncome.getGroupTitle());
+            holder.memberOrderId.setText("訂單編號: "+myIncome.getMemberOrderId());
+            holder.price.setText(myIncome.getTotalPrice()+" 元");
             int num = myIncome.getUpdateTime().toString().length();
             holder.date.setText(myIncome.getUpdateTime().toString().substring(0,num-5));
 
