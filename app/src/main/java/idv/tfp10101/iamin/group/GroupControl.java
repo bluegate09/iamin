@@ -208,4 +208,32 @@ public class GroupControl {
             return -1;
         }
     }
+
+    /**
+     * 找到此賣家有被管理員封鎖的group
+     */
+    public static List<GroupBlockade> getBlockade(Context context, int memberId) {
+        List<GroupBlockade> groupBlockades;
+        // 如果有網路，就進行 request
+        if (RemoteAccess.networkConnected(context)) {
+            // 網址 ＆ Action
+            String url = RemoteAccess.URL_SERVER + "Group";
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("action", "checkbBlockadeByMemberId");
+            jsonObject.addProperty("memberId", memberId);
+
+            // requst
+            String jsonString = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
+            if (jsonString == null) {
+                return null;
+            }
+            /** 匿名內部類別實作TypeToken，抓取 泛型 在呼叫方法 */
+            Type listType = new TypeToken<List<GroupBlockade>>(){}.getType();
+            groupBlockades = new Gson().fromJson(jsonString, listType);
+        }else {
+            Toast.makeText(context, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        return groupBlockades;
+    }
 }
