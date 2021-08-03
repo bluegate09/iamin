@@ -116,20 +116,84 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/MemberOrderDetailDeadLine"
+                android:id="@+id/pt1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
                 android:text="@string/pickup_time"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
-            <ImageButton
+            <TextView
+                android:id="@+id/memberOrderDetailDeadLine1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/pt2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pickup_time"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/memberOrderDetailDeadLine2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/pt3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pickup_time"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/memberOrderDetailDeadLine3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="總價: "
+                    android:textColor="@color/black"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/memberOrderDetailTotalPirce"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text=""
+                    android:textColor="@color/black"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <Button
+                android:background="@drawable/bg_black_border_button"
+                android:textColor="@color/black"
+                app:backgroundTint="@null"
                 android:id="@+id/btGooglePay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:src="@drawable/bt_google_pay" />
+                android:text="@string/text_checkout"
+                android:layout_margin="8dp" />
 
             <ImageView
                 android:id="@+id/imageViewQRcode"
@@ -138,6 +202,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="8dp"
                 android:src="@drawable/gen_qrcode" />
+
         </LinearLayout>
     </ScrollView>
 

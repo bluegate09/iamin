@@ -56,31 +56,31 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/logInEmailTil"
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
-                    app:boxStrokeWidth="0dp"
-                    app:boxStrokeWidthFocused="0dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="8dp"
                     android:hint="@string/email"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="0dp"
                     app:startIconDrawable="@drawable/email">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etLoginEmail"
-                        android:background="@drawable/member_round_edit_text"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/member_round_edit_text" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/logInPasswordTil"
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
-                    app:boxStrokeWidth="0dp"
-                    app:boxStrokeWidthFocused="0dp"
-                    app:passwordToggleEnabled="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
                     android:hint="@string/password"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="0dp"
+                    app:passwordToggleEnabled="true"
                     app:startIconDrawable="@drawable/lock">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -105,22 +105,22 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:minHeight="0dp"
-                        android:textColor="@color/black"
                         android:text="@string/forget_password"
+                        android:textColor="@color/black"
                         android:textSize="12sp" />
 
                     <Button
-                        android:background="@drawable/bg_black_border_button"
-                        app:backgroundTint="@null"
-                        android:textColor="@color/black"
                         android:id="@+id/btLogIn"
                         android:layout_width="0dp"
                         android:layout_height="65dp"
-
                         android:layout_marginHorizontal="20dp"
                         android:layout_marginVertical="20dp"
                         android:layout_weight="1.5"
-                        android:text="@string/login" />
+
+                        android:background="@drawable/bg_black_border_button"
+                        android:text="@string/login"
+                        android:textColor="@color/black"
+                        app:backgroundTint="@null" />
                 </LinearLayout>
 
                 <Button
@@ -131,8 +131,8 @@
                     android:layout_gravity="end"
                     android:gravity="center"
                     android:minHeight="0dp"
-                    android:textColor="@color/black"
                     android:text="@string/don_t_have_an_account_yet_register_now"
+                    android:textColor="@color/black"
                     android:textSize="12sp" />
 
                 <Button
@@ -143,8 +143,8 @@
                     android:layout_gravity="end"
                     android:gravity="center"
                     android:minHeight="0dp"
-                    android:textColor="@color/black"
                     android:text="@string/authenticate_with_phone_number"
+                    android:textColor="@color/black"
                     android:textSize="12sp" />
 
                 <TextView
@@ -171,7 +171,7 @@
 
                 <com.developer.gbuttons.GoogleSignInButton
                     android:id="@+id/btSignInGoogle"
-                    android:layout_width="wrap_content"
+                    android:layout_width="205dp"
                     android:text="@string/text_sign_in_with_google"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"

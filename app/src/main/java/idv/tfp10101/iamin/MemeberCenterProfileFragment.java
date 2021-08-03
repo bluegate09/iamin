@@ -65,7 +65,6 @@ public class MemeberCenterProfileFragment extends Fragment {
     private FirebaseFirestore db;
     private FirebaseStorage storage;
     private User user;
-    private ProgressDialog loadingBar;
     private Uri contentUri; // 拍照需要的Uri
     private Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
 
@@ -73,11 +72,11 @@ public class MemeberCenterProfileFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
+        activity.setTitle("會員檔案");
         member = MemberControl.getInstance();
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
         user = User.getInstance();
-        loadingBar = new ProgressDialog(activity);
 //        Log.d(TAG,"MC_Profile_OnCreate member: " + member.getNickname());
 
     }

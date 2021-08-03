@@ -117,6 +117,7 @@
                             android:layout_weight="1"
                             android:src="@drawable/avatar" />
 
+
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -144,6 +145,13 @@
                                 android:text="聯絡電話"
                                 android:textSize="20sp" />
                         </LinearLayout>
+                        <ImageView
+                            android:id="@+id/imv_report"
+                            android:layout_width="0dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center"
+                            android:layout_weight="0.5"
+                            android:src="@drawable/exclamation" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -180,6 +188,7 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:id="@+id/seller_rating"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"

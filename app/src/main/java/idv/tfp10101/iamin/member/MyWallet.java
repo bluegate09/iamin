@@ -8,121 +8,92 @@ import java.util.List;
 
 public class MyWallet {
 
-	private int group_id;
-	private String name;
-	private String groupName;
-	private int price;
-	private int totalPrice;
-	private int deliverStatus;
-	private int quantity;
-	private Timestamp startTime;
-	private Timestamp updateTime;
-	private String category;
+	int memberOrderDetailsId;
+	int memberOrderId;
+	String groupTitle;
+	String category;
+	String merchTitle;
+	int merchPrice;
+	int quantity;
+	int totalPrice;
+	String merchDesc;
+	Timestamp updateTime;
 
-	private List<MyWallet> groupDetail;
-
-	public MyWallet(String name, int price) {
-		this.name = name;
-		this.price = price;
-	}
-
-	public MyWallet(int group_id, String groupName,int totoalPrice, int deliverStatus, Timestamp startTime,
-					Timestamp updateTime, String category, List<MyWallet> groupDetail) {
-		this.group_id = group_id;
-		this.groupName = groupName;
-		this.totalPrice = totalPrice;
-		this.deliverStatus = deliverStatus;
-		this.startTime = startTime;
-		this.updateTime = updateTime;
+	public MyWallet(int memberOrderDetailsId, int memberOrderId, String groupTitle, String category, String merchTitle,
+					int merchPrice, int quantity, int totalPrice, String merchDesc, Timestamp updateTime) {
+		super();
+		this.memberOrderDetailsId = memberOrderDetailsId;
+		this.memberOrderId = memberOrderId;
+		this.groupTitle = groupTitle;
 		this.category = category;
-		this.groupDetail = groupDetail;
+		this.merchTitle = merchTitle;
+		this.merchPrice = merchPrice;
+		this.quantity = quantity;
+		this.totalPrice = totalPrice;
+		this.merchDesc = merchDesc;
+		this.updateTime = updateTime;
 	}
-
-	public int getGroup_id() {
-		return group_id;
+	public int getMemberOrderDetailsId() {
+		return memberOrderDetailsId;
 	}
-
-	public void setGroup_id(int group_id) {
-		this.group_id = group_id;
+	public void setMemberOrderDetailsId(int memberOrderDetailsId) {
+		this.memberOrderDetailsId = memberOrderDetailsId;
 	}
-
-	public String getName() {
-		return name;
+	public int getMemberOrderId() {
+		return memberOrderId;
 	}
-
-	public void setName(String name) {
-		this.name = name;
+	public void setMemberOrderId(int memberOrderId) {
+		this.memberOrderId = memberOrderId;
 	}
-
-	public int getPrice() {
-		return price;
+	public String getGroupTitle() {
+		return groupTitle;
 	}
-
-	public void setPrice(int price) {
-		this.price = price;
+	public void setGroupTitle(String groupTitle) {
+		this.groupTitle = groupTitle;
 	}
-
+	public String getCategory() {
+		return category;
+	}
+	public void setCategory(String category) {
+		this.category = category;
+	}
+	public String getMerchTitle() {
+		return merchTitle;
+	}
+	public void setMerchTitle(String merchTitle) {
+		this.merchTitle = merchTitle;
+	}
+	public int getMerchPrice() {
+		return merchPrice;
+	}
+	public void setMerchPrice(int merchPrice) {
+		this.merchPrice = merchPrice;
+	}
+	public int getQuantity() {
+		return quantity;
+	}
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
 	public int getTotalPrice() {
 		return totalPrice;
 	}
-
-	public void setTotalPrice(int totoalPrice) {
+	public void setTotalPrice(int totalPrice) {
 		this.totalPrice = totalPrice;
 	}
-
-	public int getDeliverStatus() {
-		return deliverStatus;
+	public String getMerchDesc() {
+		return merchDesc;
 	}
-
-	public void setDeliverStatus(int deliverStatus) {
-		this.deliverStatus = deliverStatus;
+	public void setMerchDesc(String merchDesc) {
+		this.merchDesc = merchDesc;
 	}
-
-	public Timestamp getStartTime() {
-		return startTime;
-	}
-
-	public void setStartTime(Timestamp startTime) {
-		this.startTime = startTime;
-	}
-
 	public Timestamp getUpdateTime() {
 		return updateTime;
 	}
-
 	public void setUpdateTime(Timestamp updateTime) {
 		this.updateTime = updateTime;
 	}
 
-	public String getCategory() {
-		return category;
-	}
-
-	public void setCategory(String category) {
-		this.category = category;
-	}
-
-	public List<MyWallet> getGroupDetail() {
-		return groupDetail;
-	}
-
-	public void setGroupDetail(List<MyWallet> groupDetail) {
-		this.groupDetail = groupDetail;
-	}
-
-	public String getGroupName() {
-		return groupName;
-	}
-
-	public void setGroupName(String groupName) {
-		this.groupName = groupName;
-	}
-
-	public int getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
 }
+
+

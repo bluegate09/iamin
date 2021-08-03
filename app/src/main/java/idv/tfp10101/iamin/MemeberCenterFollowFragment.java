@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -54,6 +55,7 @@ public class MemeberCenterFollowFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
+        activity.setTitle("追蹤");
         myMember = MemberControl.getInstance();
         int numProcs = Runtime.getRuntime().availableProcessors();
         executor = Executors.newFixedThreadPool(numProcs);
@@ -74,8 +76,13 @@ public class MemeberCenterFollowFragment extends Fragment {
         rvMember = view.findViewById(R.id.rvFollowRecyclerView);
         rvMember.setLayoutManager(new LinearLayoutManager(activity));
         members = getMembers();
-        showFollowMember(members);
+        if(members == null) {
+            Toast.makeText(activity, "沒有追蹤的人", Toast.LENGTH_SHORT).show();
+        }else{
+            showFollowMember(members);
+        }
 
+        //searchView;
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -103,7 +110,7 @@ public class MemeberCenterFollowFragment extends Fragment {
 
     private void showFollowMember(List<Member> members) {
         if (members == null || members.isEmpty()) {
-            Toast.makeText(activity,"no member found", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity,"沒有追蹤的人", Toast.LENGTH_SHORT).show();
         }
         MemberAdapter memberAdapter = (MemberAdapter) rvMember.getAdapter();
         if (memberAdapter == null) {
@@ -124,10 +131,8 @@ public class MemeberCenterFollowFragment extends Fragment {
             jsonObject.addProperty("member", new Gson().toJson(myMember));
             String jsonIn = RemoteAccess.getRemoteData(url, jsonObject.toString());
 
-//            Log.d(TAG,"jsonIn: " + jsonIn);
             Type listType = new TypeToken<List<Member>>() {}.getType();
             members = gson2.fromJson(jsonIn, listType);
-//            Log.d(TAG,"members: " + members);
 
         } else {
             Toast.makeText(activity,"No network", Toast.LENGTH_SHORT).show();
@@ -150,7 +155,8 @@ public class MemeberCenterFollowFragment extends Fragment {
 
         class MyViewHolder extends RecyclerView.ViewHolder {
             ImageView imageView,tvFollowBt;
-            TextView tvNickname, tvRating, tvFollowCount, tvStatus, tvEmail, tvPhone;
+            TextView tvNickname, tvRating, tvFollowCount, tvEmail, tvPhone;
+            Button myFollowerButton;
 
             MyViewHolder(View itemView) {
                 super(itemView);
@@ -159,10 +165,9 @@ public class MemeberCenterFollowFragment extends Fragment {
                 tvRating = itemView.findViewById(R.id.tvFollowRating);
                 tvFollowCount = itemView.findViewById(R.id.tvFollowCount);
                 tvFollowBt = itemView.findViewById(R.id.btMemberUnfollow);
-                tvStatus = itemView.findViewById(R.id.tvFollowStatus);
+                myFollowerButton = itemView.findViewById(R.id.myFollowerButton);
                 tvEmail = itemView.findViewById(R.id.tvFollowerEmail);
                 tvPhone = itemView.findViewById(R.id.tvFollowerPhone);
-
             }
         }
 
@@ -182,13 +187,12 @@ public class MemeberCenterFollowFragment extends Fragment {
         public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int position) {
             final Member member = members.get(position);
 
-            String ratingText = "RATING: " + member.getRating();
-            String followCountText = "Follower: "+member.getFollow_count();
+            String ratingText = "評價: " + member.getRating();
+            String followCountText = "粉絲數: "+member.getFollow_count();
 
             myViewHolder.tvNickname.setText(member.getNickname());
             myViewHolder.tvRating.setText(ratingText);
             myViewHolder.tvFollowCount.setText(followCountText);
-            myViewHolder.tvStatus.setText("");
             myViewHolder.tvPhone.setText(String.valueOf(member.getPhoneNumber()));
             myViewHolder.tvEmail.setText(member.getEmail());
             myViewHolder.tvFollowBt.setImageResource(R.drawable.heart_red);
@@ -214,13 +218,12 @@ public class MemeberCenterFollowFragment extends Fragment {
                         })
                         .setCancelable(true)
                         .show();
-
-
             });
-            myViewHolder.itemView.setOnClickListener(view -> {
+            myViewHolder.myFollowerButton.setOnClickListener(view -> {
 
                 Bundle bundle = new Bundle();
                 bundle.putInt("followerId", member.getId());
+                bundle.putString("name",member.getNickname());
 
                 //連追隨的賣家團購
                 Navigation.findNavController(view).navigate(R.id.action_memeberCenterFollowFragment_to_memberCenterFollowersGroupFragment,bundle);

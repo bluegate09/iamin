@@ -44,23 +44,22 @@ import java.util.Set;
 
 import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
+import idv.tfp10101.iamin.member.MyIncome;
 import idv.tfp10101.iamin.member.MyPercentFormatter;
 import idv.tfp10101.iamin.member.MyWallet;
 import idv.tfp10101.iamin.member_order.MemberOrder;
 
 import static idv.tfp10101.iamin.member.MemberControl.memberRemoteAccess;
 
-public class MemberCenterMyWalletFragment extends Fragment {
-    private final static String TAG = "TAG_MyWallet";
+public class MemberCenterMyIncomeFragment extends Fragment {
+    private final static String TAG = "TAG_MyIncome";
     private Activity activity;
     private Member member;
-    private List<MyWallet> myWallets,myWalletsYear,dataForBundle;
+    private List<MyIncome> myIncomes,myIncomesYear,dataForBundle;
     private List<MemberOrder> memberOrders;
     private PieData pieData;
     private PieChart pieChart;
     private Spinner monthDropDown;
-    //    private AutoCompleteTextView monthDropDown;
-    private RecyclerView rvMyWallet;
     private String selectMonth, yearStr;
     private TextView yearTitle;
     private ImageButton leftArrow,rightArrow;
@@ -88,12 +87,12 @@ public class MemberCenterMyWalletFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d(TAG,"onCreate");
         activity = getActivity();
-        activity.setTitle("統計圖表：我的支出");
+        activity.setTitle("統計圖表：我的收入");
         member = MemberControl.getInstance();
         //從mysql拿資料
-        String jsonIn = memberRemoteAccess(activity,member,"getMyWallet");
-        Type listType = new TypeToken<List<MyWallet>>() {}.getType();
-        myWallets = gson.fromJson(jsonIn,listType);
+        String jsonIn = memberRemoteAccess(activity,member,"getMyIncome");
+        Type listType = new TypeToken<List<MyIncome>>() {}.getType();
+        myIncomes = gson.fromJson(jsonIn,listType);
 
 //        memberOrders = MemberControl.getMyMemberOrder(activity,member);
 
@@ -103,7 +102,7 @@ public class MemberCenterMyWalletFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_member_center_my_wallet, container, false);
+        return inflater.inflate(R.layout.fragment_member_center_my_income, container, false);
     }
 
     @Override
@@ -112,18 +111,18 @@ public class MemberCenterMyWalletFragment extends Fragment {
 
         Log.d(TAG,"onViewCreate");
 
-        monthDropDown = view.findViewById(R.id.spinnerWallet);
-        yearTitle = view.findViewById(R.id.myWalletTextTitle);
+        monthDropDown = view.findViewById(R.id.spinnerMyIncome);
+        yearTitle = view.findViewById(R.id.myIncomeTextTitle);
 
-        leftArrow = view.findViewById(R.id.myWalletLeftArrow);
-        rightArrow = view.findViewById(R.id.myWalletRightArrow);
+        leftArrow = view.findViewById(R.id.myIncomeLeftArrow);
+        rightArrow = view.findViewById(R.id.myIncomeRightArrow);
 
-        listView = view.findViewById(R.id.myWalletListView);
-        if(myWallets == null || myWallets.isEmpty()){
+        listView = view.findViewById(R.id.myIncomeListView);
+        if(myIncomes == null || myIncomes.isEmpty()){
             Toast.makeText(activity, "您還沒有任何資料喔", Toast.LENGTH_SHORT).show();
             return;
         }
-        myListAdapter adapter = new myListAdapter(activity,R.layout.my_wallet_adapter_view_layout,getMyWalletData(myWallets));
+        MyListAdapter adapter = new MyListAdapter(activity,R.layout.my_wallet_adapter_view_layout,getMyIncomeData(myIncomes));
 
         listView.setAdapter(adapter);
 
@@ -131,7 +130,7 @@ public class MemberCenterMyWalletFragment extends Fragment {
         date_month = new ArrayList<>();
 
         //整裡資料的年份 這是列出所有年份
-        sortYearForDropDown(myWallets);
+        sortYearForDropDown(myIncomes);
         //最後的index 看拿到的有多長
         int lastIndex = date_year.size();
         //取得最後一個
@@ -141,19 +140,19 @@ public class MemberCenterMyWalletFragment extends Fragment {
         yearTitle.setText(yearStr);
         //        Log.d(TAG,"yearTitile: " + yearTitle.toString());
         //以年份去判斷資料
-        myWalletsYear = new ArrayList<>();
-        for(MyWallet tmp : myWallets) {
+        myIncomesYear = new ArrayList<>();
+        for(MyIncome tmp : myIncomes) {
             if(yearStr.equals(tmp.getUpdateTime().toString().substring(0,4))) {
-                myWalletsYear.add(tmp);
+                myIncomesYear.add(tmp);
             }
         }
         //把抓到的資料裡的月份取出並排序
-        sortMonthForDropDown(myWalletsYear);
+        sortMonthForDropDown(myIncomesYear);
         //pieChart設定
         handlePieChartConfig(view);
         //更新pieChart 及 listView
-        dataForBundle = myWalletsYear;
-        updateUI(myWalletsYear);
+        dataForBundle = myIncomesYear;
+        updateUI(myIncomesYear);
 
         //月dropdown選單
         adapterMonth = new ArrayAdapter<>(activity, R.layout.mywallet_dropdown, date_month);
@@ -168,14 +167,14 @@ public class MemberCenterMyWalletFragment extends Fragment {
 //                Log.d(TAG,"monthDropDown: " + monthDropDown.getAdapter().getItem(0));
 
                 if(position == 0){
-                    updateUI(myWalletsYear);
+                    updateUI(myIncomesYear);
                 }else{
-                    List<MyWallet> tmpList = new ArrayList<>();
+                    List<MyIncome> tmpList = new ArrayList<>();
                     //選擇的月
                     selectMonth = monthDropDown.getAdapter().getItem(position) + "";
 
                     //根據月去抓取資料
-                    for(MyWallet tmp : myWalletsYear) {
+                    for(MyIncome tmp : myIncomesYear) {
                         if(selectMonth.equals(tmp.getUpdateTime().toString().substring(6,7))) {
                             tmpList.add(tmp);
                         }
@@ -206,14 +205,14 @@ public class MemberCenterMyWalletFragment extends Fragment {
             String currentYear = date_year.get(currentIndex + 1);
             yearTitle.setText(currentYear);
             //取出相對應年份的資料
-            myWalletsYear.clear();
-            for(MyWallet tmp : myWallets) {
+            myIncomesYear.clear();
+            for(MyIncome tmp : myIncomes) {
                 if(currentYear.equals(tmp.getUpdateTime().toString().substring(0,4))) {
-                    myWalletsYear.add(tmp);
+                    myIncomesYear.add(tmp);
                 }
             }
-            sortMonthForDropDown(myWalletsYear);
-            updateUI(myWalletsYear);
+            sortMonthForDropDown(myIncomesYear);
+            updateUI(myIncomesYear);
 
             currentIndex = date_year.lastIndexOf(yearTitle.getText().toString());
 //            Log.d(TAG,"currentIndex: " + currentIndex + " date_year.size: " + date_year.size());
@@ -241,14 +240,14 @@ public class MemberCenterMyWalletFragment extends Fragment {
             String currentYear = date_year.get(currentIndex-1);
             yearTitle.setText(currentYear);
             //取出相對應年份的資料
-            myWalletsYear.clear();
-            for(MyWallet tmp : myWallets) {
+            myIncomesYear.clear();
+            for(MyIncome tmp : myIncomes) {
                 if(currentYear.equals(tmp.getUpdateTime().toString().substring(0,4))) {
-                    myWalletsYear.add(tmp);
+                    myIncomesYear.add(tmp);
                 }
             }
-            sortMonthForDropDown(myWalletsYear);
-            updateUI(myWalletsYear);
+            sortMonthForDropDown(myIncomesYear);
+            updateUI(myIncomesYear);
 
             currentIndex = date_year.lastIndexOf(yearTitle.getText().toString());
 //            Log.d(TAG,"currentIndex: " + currentIndex + " date_year.size: " + date_year.size());
@@ -264,10 +263,10 @@ public class MemberCenterMyWalletFragment extends Fragment {
     }
 
     //整理年份
-    private void sortYearForDropDown(List<MyWallet> myWallets) {
+    private void sortYearForDropDown(List<MyIncome> myIncomes) {
         Set<String> hash_set_year = new HashSet<>();
         //把年取出來 存入SET 因為不重複
-        for(MyWallet tmp : myWallets){
+        for(MyIncome tmp : myIncomes){
             hash_set_year.add(tmp.getUpdateTime().toString().substring(0,4));
         }
         date_year.addAll(hash_set_year);
@@ -275,11 +274,11 @@ public class MemberCenterMyWalletFragment extends Fragment {
     }
 
     //整理月份
-    private void sortMonthForDropDown(List<MyWallet> myWallets) {
+    private void sortMonthForDropDown(List<MyIncome> myIncomes) {
 
         Set<String> hash_set_month = new HashSet<>();
         //從資料中取出月份
-        for(MyWallet tmp : myWallets){
+        for(MyIncome tmp : myIncomes){
             hash_set_month.add(tmp.getUpdateTime().toString().substring(6,7));
         }
         //增加All time
@@ -306,20 +305,20 @@ public class MemberCenterMyWalletFragment extends Fragment {
         });
     }
 
-    public class myListAdapter extends ArrayAdapter<MyWalletData>{
+    public class MyListAdapter extends ArrayAdapter<MyIncomeData>{
         private Context context;
         private int resource;
-        private ArrayList<MyWalletData> myWalletData;
+        private ArrayList<MyIncomeData> myIncomeData;
 
-        public myListAdapter(Context context, int resource, ArrayList<MyWalletData> myWalletData) {
-            super(context, resource, myWalletData);
+        public MyListAdapter(Context context, int resource, ArrayList<MyIncomeData> myIncomeData) {
+            super(context, resource, myIncomeData);
             this.context = context;
             this.resource = resource;
-            this.myWalletData = myWalletData;
+            this.myIncomeData = myIncomeData;
         }
 
-        void setMyWallets(ArrayList<MyWalletData> myWalletData) {
-            this.myWalletData = myWalletData;
+        void setMyIncomes(ArrayList<MyIncomeData> myIncomeData) {
+            this.myIncomeData = myIncomeData;
         }
 
         public View getView(int position, View convertView, ViewGroup parent){
@@ -332,68 +331,68 @@ public class MemberCenterMyWalletFragment extends Fragment {
             View view = convertView.findViewById(R.id.myWalletColorView);
 
 
-            tvCategory.setText(myWalletData.get(position).getCategory());
-            tvTotalPrice.setText(myWalletData.get(position).getTotalPrice()+"");
+            tvCategory.setText(myIncomeData.get(position).getCategory());
+            tvTotalPrice.setText(myIncomeData.get(position).getTotalPrice()+"");
             view.setBackgroundColor(My_COLORS[position]);
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    tvProgressBar.setProgress(0,true);
-                }else{
-                    tvProgressBar.setProgress(0);
-                }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                tvProgressBar.setProgress(0,true);
+            }else{
+                tvProgressBar.setProgress(0);
+            }
 
-                ;
-                tvProgressBar.setProgressTintList(ColorStateList.valueOf(My_COLORS[position]));
+            ;
+            tvProgressBar.setProgressTintList(ColorStateList.valueOf(My_COLORS[position]));
 
-                if(!(myWalletData.get(position).getProgressBar() == 100)) {
-                    new Thread(() -> {
-                        final int max = myWalletData.get(position).getProgressBar();
-                        int progress;
-                        while ((progress = tvProgressBar.getProgress()) < max) {
-                            tvProgressBar.setProgress(progress + 6);
-                            try {
-                                long time = 100000 / myWalletData.get(position).getTotalPrice();
-                                Thread.sleep(time);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+            if(!(myIncomeData.get(position).getProgressBar() == 100)) {
+                new Thread(() -> {
+                    final int max = myIncomeData.get(position).getProgressBar();
+                    int progress;
+                    while ((progress = tvProgressBar.getProgress()) < max) {
+                        tvProgressBar.setProgress(progress + 6);
+                        try {
+                            long time = 100000 / myIncomeData.get(position).getTotalPrice();
+                            Thread.sleep(time);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
-                    }).start();
-                }else{
-                    new Thread(() -> {
-                        final int max = myWalletData.get(position).getProgressBar();
-                        int progress;
-                        while ((progress = tvProgressBar.getProgress()) < max) {
-                            tvProgressBar.setProgress(progress + 1);
-                            try {
-                                long time = 6;
-                                Thread.sleep(time);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                    }
+                }).start();
+            }else{
+                new Thread(() -> {
+                    final int max = myIncomeData.get(position).getProgressBar();
+                    int progress;
+                    while ((progress = tvProgressBar.getProgress()) < max) {
+                        tvProgressBar.setProgress(progress + 1);
+                        try {
+                            long time = 6;
+                            Thread.sleep(time);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
                         }
-                    }).start();
-                }
+                    }
+                }).start();
+            }
 
-                //Navigation
+            //Navigation
 
             convertView.setOnClickListener(v -> {
 
                 Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
 
-                List<MyWallet> walletData = new ArrayList<>();
-                for(MyWallet data: dataForBundle){
+                List<MyIncome> incomeData = new ArrayList<>();
+                for(MyIncome data: dataForBundle){
                     if(data.getCategory().equals(tvCategory.getText().toString())){
-                        walletData.add(data);
+                        incomeData.add(data);
                     }
                 }
 
-                if(walletData.size() != 0) {
-                    String json = gson.toJson(walletData);
+                if(incomeData.size() != 0) {
+                    String json = gson.toJson(incomeData);
                     Bundle bundle = new Bundle();
-                    bundle.putString("WalletData", json);
+                    bundle.putString("IncomeData", json);
 
-                    Navigation.findNavController(v).navigate(R.id.action_memberCenterMyWalletFragment_to_memberCenterMyWalletDetailsFragment, bundle);
+                    Navigation.findNavController(v).navigate(R.id.action_memberCenterMyIncome_to_memberCenterIncomeDeatilsFragment, bundle);
                 }
             });
 
@@ -401,39 +400,39 @@ public class MemberCenterMyWalletFragment extends Fragment {
         }
     }
 
-        private void showWalletList(List<MyWallet> myWallets) {
-        if (myWallets == null || myWallets.isEmpty()) {
+    private void showIncomeList(List<MyIncome> myIncomes) {
+        if (myIncomes == null || myIncomes.isEmpty()) {
             Toast.makeText(activity, "", Toast.LENGTH_SHORT).show();
         }
-            myListAdapter merchAdapter = (myListAdapter) listView.getAdapter();
+        MyListAdapter merchAdapter = (MyListAdapter) listView.getAdapter();
         if (merchAdapter == null) {
-            listView.setAdapter(new myListAdapter(activity,R.layout.my_wallet_adapter_view_layout,getMyWalletData(myWallets)));
+            listView.setAdapter(new MyListAdapter(activity,R.layout.my_wallet_adapter_view_layout,getMyIncomeData(myIncomes)));
         } else {
-            merchAdapter.setMyWallets(getMyWalletData(myWallets));
+            merchAdapter.setMyIncomes(getMyIncomeData(myIncomes));
             merchAdapter.notifyDataSetChanged();
         }
     }
 
 
-    private void updateUI(List<MyWallet> myWallets) {
-        pieData = setPieData(getMyWalletEntries(myWallets));
+    private void updateUI(List<MyIncome> myIncomes) {
+        pieData = setPieData(getMyIncomeEntries(myIncomes));
         pieChart.setData(pieData);
         pieChart.invalidate();
         pieData.setValueFormatter(new MyPercentFormatter(pieChart));
         pieChart.animateY(1000, Easing.EaseInOutCubic);
 
         //更新arrayList
-        showWalletList(myWallets);
+        showIncomeList(myIncomes);
 
     }
 
     private void handlePieChartConfig(View view) {
         //處理pieChart
-        pieChart = view.findViewById(R.id.pieChart);
+        pieChart = view.findViewById(R.id.IncomePieChart);
         /* 設定可否旋轉 */
         pieChart.setRotationEnabled(false);
         /* 設定圓心文字 */
-        pieChart.setCenterText(getString(R.string.spending));
+        pieChart.setCenterText(getString(R.string.income));
         /* 設定圓心文字大小 */
         pieChart.setCenterTextSize(25);
 
@@ -465,21 +464,21 @@ public class MemberCenterMyWalletFragment extends Fragment {
         return new PieData(pieDataSet);
     }
 
-    private List<PieEntry> getMyWalletEntries(List<MyWallet> myWallets) {
+    private List<PieEntry> getMyIncomeEntries(List<MyIncome> myIncomes) {
         List<PieEntry> myWalletsEntries = new ArrayList<>();
         int cA = 0,cB = 0,cC = 0, cD = 0;
-        for(int i = 0; i < myWallets.size(); i++){
+        for(int i = 0; i < myIncomes.size(); i++){
 
-            String category = myWallets.get(i).getCategory();
+            String category = myIncomes.get(i).getCategory();
 
             if(category.equals("美食")){
-                cA += myWallets.get(i).getTotalPrice();
+                cA += myIncomes.get(i).getTotalPrice();
             }else if(category.equals("生活用品")){
-                cB += myWallets.get(i).getTotalPrice();
+                cB += myIncomes.get(i).getTotalPrice();
             }else if(category.equals("3C")){
-                cC += myWallets.get(i).getTotalPrice();
+                cC += myIncomes.get(i).getTotalPrice();
             }else if(category.equals("其他")) {
-                cD += myWallets.get(i).getTotalPrice();
+                cD += myIncomes.get(i).getTotalPrice();
             }
         }
 
@@ -507,23 +506,23 @@ public class MemberCenterMyWalletFragment extends Fragment {
 
     }
 
-    private ArrayList<MyWalletData> getMyWalletData(List<MyWallet> myWallets){
+    private ArrayList<MyIncomeData> getMyIncomeData(List<MyIncome> myIncomes){
 
-        ArrayList<MyWalletData> myWalletArrayList = new ArrayList<>();
+        ArrayList<MyIncomeData> myWalletArrayList = new ArrayList<>();
 
         int cA = 0, cB = 0, cC = 0, cD = 0, totalAmount = 0;
-        for(int i = 0; i < myWallets.size(); i++){
+        for(int i = 0; i < myIncomes.size(); i++){
 
-            String category = myWallets.get(i).getCategory();
+            String category = myIncomes.get(i).getCategory();
 
             if(category.equals("美食")){
-                cA += myWallets.get(i).getTotalPrice();
+                cA += myIncomes.get(i).getTotalPrice();
             }else if(category.equals("生活用品")){
-                cB += myWallets.get(i).getTotalPrice();
+                cB += myIncomes.get(i).getTotalPrice();
             }else if(category.equals("3C")){
-                cC += myWallets.get(i).getTotalPrice();
+                cC += myIncomes.get(i).getTotalPrice();
             }else if(category.equals("其他")) {
-                cD += myWallets.get(i).getTotalPrice();
+                cD += myIncomes.get(i).getTotalPrice();
             }
         }
 
@@ -534,20 +533,20 @@ public class MemberCenterMyWalletFragment extends Fragment {
         int percentC = (cC*100/totalAmount);
         int percentD = (cD*100/totalAmount);
 
-        myWalletArrayList.add(new MyWalletData("美食", cA, percentA));
-        myWalletArrayList.add(new MyWalletData("生活用品", cB, percentB));
-        myWalletArrayList.add(new MyWalletData("3C", cC, percentC));
-        myWalletArrayList.add(new MyWalletData("其他", cD, percentD));
+        myWalletArrayList.add(new MyIncomeData("美食", cA, percentA));
+        myWalletArrayList.add(new MyIncomeData("生活用品", cB, percentB));
+        myWalletArrayList.add(new MyIncomeData("3C", cC, percentC));
+        myWalletArrayList.add(new MyIncomeData("其他", cD, percentD));
 
         return myWalletArrayList;
     }
 
-    private static class MyWalletData {
+    private static class MyIncomeData {
         private String category;
         private int totalPrice;
         private int progressBar;
 
-        public MyWalletData(String category, int totalPrice, int progressBar) {
+        public MyIncomeData(String category, int totalPrice, int progressBar) {
             this.category = category;
             this.totalPrice = totalPrice;
             this.progressBar = progressBar;

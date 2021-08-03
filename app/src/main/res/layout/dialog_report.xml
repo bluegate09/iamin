@@ -17,14 +17,12 @@
             android:layout_gravity="center"
             android:orientation="horizontal">
 
-            <RatingBar
-                android:id="@+id/dialogRatingBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:progressTint="@color/ratingBarColor"
-                android:numStars="5"
-                android:stepSize="1"
-                android:rating="3"/>
+            <Spinner
+                android:id="@+id/sp_report"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:entries="@array/report" />
         </LinearLayout>
 
         <LinearLayout
@@ -36,30 +34,30 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                app:counterEnabled="true"
-                app:counterMaxLength="100"
+                android:layout_weight="1"
                 android:textColor="@color/black"
-                android:layout_weight="1">
+                app:counterEnabled="true"
+                app:counterMaxLength="50">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edt_rating_message"
+                    android:id="@+id/edt_report_message"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="top"
                     android:layout_weight="1"
                     android:ems="1"
-                    android:maxLength="100"
-                    android:lines="10"
-                    android:singleLine="false"
-                    android:textColor="@color/black"
+                    android:gravity="top"
+                    android:hint="輸入檢舉留言"
                     android:inputType="textMultiLine"
-                    android:hint="輸入評價留言" />
+                    android:lines="10"
+                    android:maxLength="100"
+                    android:singleLine="false"
+                    android:textColor="@color/black" />
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
 
         <Button
-            android:id="@+id/dialog_rating_button"
+            android:id="@+id/dialog_report_button"
             android:layout_gravity="center"
             android:background="@drawable/bg_black_border_button"
             android:textColor="@color/black"

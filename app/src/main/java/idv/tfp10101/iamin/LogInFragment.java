@@ -45,6 +45,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -88,9 +89,11 @@ public class LogInFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
+        //hide action bar
+//        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
         super.onCreate(savedInstanceState);
         activity = getActivity();
+        activity.setTitle("登入");
         auth = FirebaseAuth.getInstance();
         member = MemberControl.getInstance();
         callbackManager = CallbackManager.Factory.create();

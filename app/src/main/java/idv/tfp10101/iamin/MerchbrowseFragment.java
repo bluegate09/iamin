@@ -17,19 +17,19 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +54,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import idv.tfp10101.iamin.Report.ReportControl;
+import idv.tfp10101.iamin.Report.Report;
 import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.group.GroupControl;
 import idv.tfp10101.iamin.location.Location;
@@ -81,7 +83,7 @@ public class MerchbrowseFragment extends Fragment {
     private Button btn_buy, btn_back, btn_next;
     private Member member;
     private TextView txv_Seller, txv_Email, txv_Seller_phone, txv_followed, txv_rating; //賣家資料
-    private ImageView imv_Seller, imv_followed; //賣家圖片與追隨與否圖片
+    private ImageView imv_Seller, imv_followed, imv_report; //賣家圖片與追隨與否圖片
     private TextView txv_caution;
     private int total_quantity = 0, total_price = 0;
     private double userlat,userlng;//使用者的緯經度
@@ -89,6 +91,7 @@ public class MerchbrowseFragment extends Fragment {
     private TextView txv_group_progress,txv_group_location; //團購進度與團購面交地點
     private  List<Location> grouplocations; //團購的所有面交地點
     private Bundle bundle; //從首頁包的團購id與使用者資訊(重整頁面時用到)
+    private LinearLayout seller_rating;
     //商品圖片
     private List<byte[]> images = new ArrayList<>();
 
@@ -220,6 +223,11 @@ public class MerchbrowseFragment extends Fragment {
         Drawable.ConstantState red = activity.getResources().getDrawable(R.drawable.heart_red).getConstantState();
 //        實作點一下換圖並判斷是否有追隨 沒有就追 有就取消
           imv_followed.setOnClickListener(v ->{
+              //如果沒登入就不能操作
+              if (member.getId() == -1){
+                  Toast.makeText(activity, "您還沒登入喔", Toast.LENGTH_SHORT).show();
+                  return;
+              }
             Drawable.ConstantState imageView = imv_followed.getDrawable().getCurrent().getConstantState();
             int chackresult = MemberControl.chackfollowed(activity,member.getId(),SellerID.getId());
             if (imageView.equals(red)) {
@@ -245,6 +253,12 @@ public class MerchbrowseFragment extends Fragment {
         //發送賣家圖片請求
         Bitmap bitmap = MemberControl.getsellerimageByMemberId(activity,SellerID);
         imv_Seller.setImageBitmap(bitmap);
+        imv_Seller.setOnClickListener(v ->{
+            Bundle bundle = new Bundle();
+            bundle.putInt("followerId", sellerID);
+            bundle.putString("name", seller.getNickname());
+            Navigation.findNavController(v).navigate(R.id.memberCenterFollowersGroupFragment, bundle);
+        });
 
         StaggeredGridLayoutManager staggeredGridLayoutManager = new StaggeredGridLayoutManager(1,RecyclerView.HORIZONTAL);
         recyclerViewMerch.setLayoutManager(staggeredGridLayoutManager);
@@ -258,6 +272,42 @@ public class MerchbrowseFragment extends Fragment {
             }
         });
         showMerchs(localMerchs);
+
+        seller_rating.setOnClickListener(v ->{
+            Bundle sellerID_bundle = new Bundle();
+            sellerID_bundle.putInt("member_id", sellerID);
+
+            Navigation.findNavController(v).navigate(R.id.memberCenterRatingDialogFragment, sellerID_bundle);
+        });
+        //點擊檢舉icon會跳出檢舉對話筐
+        imv_report.setOnClickListener(v ->{
+            if (member.getId() == -1){
+                Toast.makeText(activity, "您還沒登入喔", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
+            LayoutInflater inflater = activity.getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.dialog_report,null);
+            dialogBuilder.setView(dialogView);
+
+            EditText report_message = dialogView.findViewById(R.id.edt_report_message);
+            Button btButton = dialogView.findViewById(R.id.dialog_report_button);
+            Spinner spinner = dialogView.findViewById(R.id.sp_report);
+            spinner.setSelection(0,true);
+
+            AlertDialog alertDialog = dialogBuilder.create();
+            alertDialog.show();
+
+            btButton.setOnClickListener(dialog ->{
+                Report report1 = new Report(member.getId(),sellerID,spinner.getSelectedItem().toString(),report_message.getText().toString());
+                alertDialog.dismiss();
+                int insertresult = ReportControl.insertReport(activity,report1);
+                if (insertresult == 1){
+                    Toast.makeText(activity, "已收到您的檢舉", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
         //取得商品列表總數
         int total = staggeredGridLayoutManager.getItemCount();
         AtomicInteger count = new AtomicInteger();
@@ -283,8 +333,8 @@ public class MerchbrowseFragment extends Fragment {
             }
             btn_next.setVisibility(View.VISIBLE);
         });
-        //按下訂單前做判斷
 
+        //按下訂單前做判斷
         btn_buy.setOnClickListener(v ->{
             NavController navController = Navigation.findNavController(view);
             if ( member.getId() == -1){
@@ -324,7 +374,7 @@ public class MerchbrowseFragment extends Fragment {
                             //建立選擇付款方式對話匡
                             createdDialog();
                         })
-                        .setNegativeButton("我在想一下", (dialog, which) -> {
+                        .setNegativeButton("我再想一下", (dialog, which) -> {
                             return;
                         })
                         .setCancelable(false)
@@ -351,7 +401,7 @@ public class MerchbrowseFragment extends Fragment {
             }
         //取得最新的團購資訊
         Group group = GroupControl.getGroupbyId(activity,groupID);
-        NavController navController = Navigation.findNavController(view);
+
         if(group != null) {
             int progress = group.getProgress();
             int status = group.getGroupStatus();
@@ -509,7 +559,7 @@ public class MerchbrowseFragment extends Fragment {
                             buyerChoose = 1;
                             getOrder();
                         })
-                        .setNegativeButton("我在想一下",(dialog, which) -> {return;})
+                        .setNegativeButton("我再想一下",(dialog, which) -> {return;})
                         .setCancelable(false)
                         .show();
                 break;
@@ -521,7 +571,7 @@ public class MerchbrowseFragment extends Fragment {
                             buyerChoose = 2;
                             getOrder();
                         })
-                        .setNegativeButton("我在想一下",(dialog, which) -> {return;})
+                        .setNegativeButton("我再想一下",(dialog, which) -> {return;})
                         .setCancelable(false)
                         .show();
                 break;
@@ -556,7 +606,7 @@ public class MerchbrowseFragment extends Fragment {
                             }
                             //預設第一個選項位置是0,寫進table要+1 1->面交 2->信用卡
                         })
-                        .setNegativeButton("我在想一下",(dialog, which) -> {return;})
+                        .setNegativeButton("我再想一下",(dialog, which) -> {return;})
                         .setCancelable(false)
                         .show();
                 break;
@@ -582,6 +632,8 @@ public class MerchbrowseFragment extends Fragment {
         imv_followed = view.findViewById(R.id.imv_followed);
         txv_group_progress = view.findViewById(R.id.txv_group_progress);
         txv_group_location = view.findViewById(R.id.txv_group_location);
+        imv_report = view.findViewById(R.id.imv_report);
+        seller_rating = view.findViewById(R.id.seller_rating);
 
     }
 

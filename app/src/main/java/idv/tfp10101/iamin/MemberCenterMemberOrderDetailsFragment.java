@@ -1,8 +1,6 @@
 package idv.tfp10101.iamin;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
@@ -11,8 +9,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,10 +18,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,17 +28,13 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
@@ -53,15 +44,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
-import idv.tfp10101.iamin.group.Group;
-import idv.tfp10101.iamin.group.GroupControl;
 import idv.tfp10101.iamin.location.Location;
 import idv.tfp10101.iamin.member.CustomMapView;
-import idv.tfp10101.iamin.member_order.MemberOrder;
 import idv.tfp10101.iamin.member_order_details.MemberOrderDetails;
-import idv.tfp10101.iamin.merch.Merch;
 import idv.tfp10101.iamin.merch.MerchControl;
-import idv.tfp10101.iamin.network.RemoteAccess;
 
 public class MemberCenterMemberOrderDetailsFragment extends Fragment {
     private static final int REQ_POSITIONING = 1;
@@ -71,11 +57,12 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
     private RecyclerView recyclerView;
     private List<Location> locations;
     private List<Marker> markers;
-    private TextView deadLine,location1,location2,location3,tloc2,tloc3;
-    private ImageButton btGooglePay;
+    private TextView deadLine1,deadLine2,deadLine3,location1,location2,location3,tloc2,tloc3,tvTotalPrice,pt1,pt2,pt3;
+    private Button btGooglePay;
     private GoogleMap googleMap;
     private String paymentMethod;
     private SearchView searchView;
+    private int totalPrice = 0 ;
     private ImageView imageViewQRcode;
     // 物件
     private int memberOderId = -1;
@@ -85,6 +72,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         final String TAG = "TAG_MemberOrderDetail";
         super.onCreate(savedInstanceState);
         activity = getActivity();
+        activity.setTitle("訂單明細");
 
         Bundle bundle = getArguments();
         String orderDetailsJson = "";
@@ -95,6 +83,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
             locationJson = bundle.getString("Locations");
             paymentMethod = bundle.getString("GroupStatus");
             memberOderId = bundle.getInt("MemberOrderID");
+            totalPrice = bundle.getInt("TotalPrice");
         }else{
             Log.d(TAG,"bundle is null");
         }
@@ -121,13 +110,24 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        deadLine = view.findViewById(R.id.MemberOrderDetailDeadLine);
+        deadLine1 = view.findViewById(R.id.memberOrderDetailDeadLine1);
+        deadLine2 = view.findViewById(R.id.memberOrderDetailDeadLine2);
+        deadLine3 = view.findViewById(R.id.memberOrderDetailDeadLine3);
+
+        //pickuptime textview
+        pt1 = view.findViewById(R.id.pt1);
+        pt2 = view.findViewById(R.id.pt2);
+        pt3 = view.findViewById(R.id.pt3);
+
         location1 = view.findViewById(R.id.memberOrderLocation1);
         location2 = view.findViewById(R.id.memberOrderLocation2);
         location3 = view.findViewById(R.id.memberOrderLocation3);
 
         tloc2 = view.findViewById(R.id.tPickupDetails2);
         tloc3 = view.findViewById(R.id.tPickupDetails3);
+
+        tvTotalPrice = view.findViewById(R.id.memberOrderDetailTotalPirce);
+        tvTotalPrice.setText(totalPrice+"");
 
         btGooglePay = view.findViewById(R.id.btGooglePay);
         btGooglePay.setVisibility(View.GONE);
@@ -162,9 +162,32 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
 
         handleSerchView();
-
+        String[] time = {"","",""};
+        for(int i = 0; i < locations.size(); i++){
+            if(locations.get(i).getPickup_time() != null)
+            time[i] = locations.get(i).getPickup_time().toString().substring(0,16);
+        }
+        Log.d(TAG,time[0]);
         //截止日期
-        deadLine.setText(getString(R.string.pickup_time) + locations.get(0).getPickup_time());
+        if(!(time[0].isEmpty())){
+            deadLine1.setText(time[0]);
+        }else{
+            pt1.setText("");
+            deadLine1.setText("");
+        }
+        if(!(time[1].isEmpty())){
+            deadLine2.setText(time[1]);
+        }else{
+            pt2.setText("");
+            deadLine2.setText("");
+        }
+        if(!(time[2]).isEmpty()){
+            deadLine3.setText(time[2]);
+        }else{
+            pt3.setText("");
+            deadLine3.setText("");
+        }
+
 
         //googlePay imageButton
         if(!(paymentMethod.equals("1"))){
@@ -245,7 +268,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         }
         LatLngBounds bounds = builder.build();
 
-        int padding = 100; // 以像素為單位從地圖邊緣偏移
+        int padding = 150; // 以像素為單位從地圖邊緣偏移
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
 
         googleMap.animateCamera(cu);

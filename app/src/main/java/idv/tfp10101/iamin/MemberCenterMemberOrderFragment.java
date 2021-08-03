@@ -1,6 +1,9 @@
 package idv.tfp10101.iamin;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.media.tv.TvContentRating;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,7 +19,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -27,11 +33,13 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import idv.tfp10101.iamin.Rating.Rating;
 import idv.tfp10101.iamin.location.Location;
 import idv.tfp10101.iamin.location.LocationControl;
 import idv.tfp10101.iamin.member.Member;
@@ -56,13 +64,13 @@ public class MemberCenterMemberOrderFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
+        activity.setTitle("訂單頁面");
         member = MemberControl.getInstance();
 
         String jsonIn = memberRemoteAccess(activity,member,"getMyMemberOrder");
         Type listType = new TypeToken<List<MemberOrder>>() {}.getType();
         memberOrderList = new Gson().fromJson(jsonIn, listType);
 
-//        Log.d(TAG, memberOrderList.toString());
     }
 
     @Override
@@ -78,10 +86,11 @@ public class MemberCenterMemberOrderFragment extends Fragment {
         SearchView searchView = view.findViewById(R.id.svOrderSearch);
         memberOrderSpinner = view.findViewById(R.id.memberOrderSpinner);
 
+
+
         recyclerView = view.findViewById(R.id.rvMemberCenterOrder);
         recyclerView.setAdapter(new MyAdapter(activity,memberOrderList));
         recyclerView.setLayoutManager(new LinearLayoutManager(activity));
-
 
         //spinner
         mapGroupStatus.put(0, "團購狀態");
@@ -92,8 +101,10 @@ public class MemberCenterMemberOrderFragment extends Fragment {
         for (Map.Entry<Integer, String> entry : mapGroupStatus.entrySet()) {
             strings.add(entry.getValue());
         }
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(activity,R.layout.spinner_seller,strings);
         adapter.setDropDownViewResource(R.layout.spinner_seller);
+
         memberOrderSpinner.setAdapter(adapter);
         memberOrderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -115,14 +126,11 @@ public class MemberCenterMemberOrderFragment extends Fragment {
                     }
                 }
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
-
-
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -176,6 +184,8 @@ public class MemberCenterMemberOrderFragment extends Fragment {
 
     private void showMyOrder(List<MemberOrder> memberOrderList) {
         if (memberOrderList == null || memberOrderList.isEmpty()) {
+            Toast.makeText(activity, "沒有訂單", Toast.LENGTH_SHORT).show();
+            return ;
         }
         MyAdapter myAdapter = (MyAdapter) recyclerView.getAdapter();
         if(myAdapter == null){
@@ -209,8 +219,6 @@ public class MemberCenterMemberOrderFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull MemberCenterMemberOrderFragment.MyViewHolder holder, int position) {
             final MemberOrder memberOrder = memberOrderList.get(position);
-
-
 //            團購狀態 (1.揪團中 2.達標 3.失敗or放棄)
             if(memberOrder.getGroupStatus() == 1){
                 holder.groupStatus.setImageResource(R.drawable.seller_status1);
@@ -249,10 +257,64 @@ public class MemberCenterMemberOrderFragment extends Fragment {
                 bundle.putString("OrderDetails", orderDetailsJson);
                 bundle.putString("Locations",locationsJson);
                 bundle.putString("GroupStatus",String.valueOf(memberOrder.getPayentMethod()));
+                bundle.putInt("TotalPrice",memberOrder.getTotal());
                 bundle.putInt("MemberOrderID", memberOrder.getMemberOrderId());
 
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterMemberOrderFragment_to_memberCenterOrderDetailsFragment,bundle);
             });
+
+            //判定是否可評價
+            if(!(memberOrder.isDeliverStatus() && memberOrder.isReceivePaymentStatus())){
+                holder.tvRatingButton.setVisibility(View.GONE);
+            }else{
+                holder.tvRatingButton.setVisibility(View.VISIBLE);
+            }
+
+            holder.tvRatingButton.setOnClickListener(v -> {
+
+                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(activity);
+                    LayoutInflater inflater = activity.getLayoutInflater();
+                    View dialogView = inflater.inflate(R.layout.dialog_rating,null);
+                    dialogBuilder.setView(dialogView);
+
+                EditText message = dialogView.findViewById(R.id.edt_rating_message);
+                Button btButton = dialogView.findViewById(R.id.dialog_rating_button);
+                RatingBar ratingBar = dialogView.findViewById(R.id.dialogRatingBar);
+
+                AlertDialog alertDialog = dialogBuilder.create();
+                alertDialog.show();
+
+                ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                    @Override
+                    public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                    }
+                });
+
+                btButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Rating rating = new Rating(memberOrder.getMemberOrderId(),
+                                                   member.getId(),
+                                                   memberOrder.getMemberOrderDetailsList().get(0).getMerch().getMemberId(),//只是取seller_memberId 所以index = 0即可
+                                                   (int) ratingBar.getRating(),
+                                                   message.getText().toString(),
+                                                   new Timestamp(System.currentTimeMillis()),
+                                                   memberOrder.getGroupName());
+
+                        Log.d(TAG,"GROUP_NAME: " + memberOrder.getGroupName());
+                        MemberControl.submitRating(activity,rating);
+                        alertDialog.cancel();
+
+                        Toast.makeText(activity, getString(R.string.text_rating_submit), Toast.LENGTH_SHORT).show();
+
+
+                    }
+                });
+
+            });
+
+
         }
 
         @Override
@@ -262,8 +324,9 @@ public class MemberCenterMemberOrderFragment extends Fragment {
     }
 
     private static class MyViewHolder extends RecyclerView.ViewHolder{
-        TextView groupName,memberOrderId,totalPrice,status,paymentMethod,toDetails;
+        TextView groupName,memberOrderId,totalPrice,status,paymentMethod,toDetails,tvRatingButton;
         ImageView groupStatus;
+
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -274,6 +337,7 @@ public class MemberCenterMemberOrderFragment extends Fragment {
             paymentMethod = itemView.findViewById(R.id.memberOrderPaymentMethod);
             groupStatus = itemView.findViewById(R.id.memberOrderstatus);
             toDetails = itemView.findViewById(R.id.memberOrdertoDetails);
+            tvRatingButton = itemView.findViewById(R.id.memberOrderToRating);
 
         }
     }

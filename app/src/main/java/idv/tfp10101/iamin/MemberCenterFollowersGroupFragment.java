@@ -34,6 +34,7 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -47,7 +48,6 @@ import idv.tfp10101.iamin.member.MemberControl;
 public class MemberCenterFollowersGroupFragment extends Fragment {
     private String TAG = "TAG_FollowerGroupPage";
     private Activity activity;
-    private Member member;
     private ExecutorService executor;
     private List<Group> groups;
     private RecyclerView recyclerViewGroup;
@@ -67,10 +67,20 @@ public class MemberCenterFollowersGroupFragment extends Fragment {
 
         Bundle bundle = getArguments();
         int followerId = bundle.getInt("followerId");
+        String nickname = bundle.getString("name");
+
+        activity.setTitle(nickname +"的團購");
 
         GroupControl.getAllGroupByMemberId(activity,followerId);
         groups = GroupControl.getLocalGroup();
-
+        List<Group> selectGroups = new ArrayList<>();
+        for (Group group : groups) {
+            if (group.getProgress() != group.getConditionCount() && (new Date().before(group.getConditionTime()))) {
+                selectGroups.add(group);
+            }
+        }
+        groups.clear();
+        groups = selectGroups;
 
     }
 
@@ -145,11 +155,13 @@ public class MemberCenterFollowersGroupFragment extends Fragment {
             Timestamp ts = group.getConditionTime();
             DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
             holder.txv_group_conditionTime.setText("結單日期:" + "\n" + sdf.format(ts));
+
             if (group.getConditionCount() == -1){
                 holder.txv_progress.setText("進度:" + group.getProgress() + "份\n" +"目標:" + group.getGoal() + "份");
             }else{
                 holder.txv_progress.setText("進度:" + group.getProgress() + "份\n" + "目標:" + group.getGoal() + "份\n" + "購買上限:" + group.getConditionCount() + "份");
             }
+
             holder.txv_distanceMin.setText("");
             holder.itemView.setOnClickListener(v -> {
 
