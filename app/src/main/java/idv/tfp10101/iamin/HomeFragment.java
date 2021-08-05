@@ -306,6 +306,12 @@ public class HomeFragment extends Fragment {
     private void coumputeDistancemin(){
         Loading.dismiss();
         localHomeDatas =  new ArrayList<>();
+        localGroups = new ArrayList<>();
+        HomeDataControl.getAllGroup(activity);
+        localGroups = HomeDataControl.getLocalGroups();
+        if (localGroups == null || localGroups.isEmpty()) {
+            Toast.makeText(activity, "找不到團購", Toast.LENGTH_SHORT).show();
+        }
 
         HomeData homeData;
         for (Group group: localGroups){
