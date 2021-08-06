@@ -2,6 +2,7 @@ package idv.tfp10101.iamin;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.IntentSender;
@@ -16,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,6 +33,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -142,8 +145,27 @@ public class HomeFragment extends Fragment {
             member = new Gson().fromJson(jsonMember, Member.class);
             MemberControl.setMember(member);
             Log.d("TAG_HOME", "Fetch Member Date Complete");
-        }
+            NavController navController = Navigation.findNavController(view);
+            //如果會員被檢舉成功了
+            if (member.getDeleteTime() != null){
+                //friebase,Google登出
+                FirebaseAuth.getInstance().signOut();
+                //fb登出
+                LoginManager.getInstance().logOut();
 
+                AlertDialog.Builder report = new AlertDialog.Builder(activity);
+                report.setTitle("您的帳號被封鎖了")
+                        .setMessage("您已被強制登出")
+                        .setPositiveButton("重新登入", (dialog, which) -> {
+                            navController.navigate(R.id.logInFragment);
+                        })
+                        .setNegativeButton("重新註冊", (dialog, which) -> {
+                            navController.navigate(R.id.signUpFragment);
+                        })
+                        .setCancelable(false)
+                        .show();
+            }
+        }
     }
 
     @Override
@@ -306,6 +328,12 @@ public class HomeFragment extends Fragment {
     private void coumputeDistancemin(){
         Loading.dismiss();
         localHomeDatas =  new ArrayList<>();
+        localGroups = new ArrayList<>();
+        HomeDataControl.getAllGroup(activity);
+        localGroups = HomeDataControl.getLocalGroups();
+        if (localGroups == null || localGroups.isEmpty()) {
+            Toast.makeText(activity, "找不到團購", Toast.LENGTH_SHORT).show();
+        }
 
         HomeData homeData;
         for (Group group: localGroups){
