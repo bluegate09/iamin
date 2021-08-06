@@ -82,6 +82,14 @@ public class MemeberCenterProfileFragment extends Fragment {
             new ActivityResultContracts.StartActivityForResult(),
             this::takePictureResult);
 
+    ActivityResultLauncher<Intent> pickPictureLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            this::pickPictureResult);
+
+    ActivityResultLauncher<Intent> cropPictureLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            this::cropPictureResult);
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -186,10 +194,14 @@ public class MemeberCenterProfileFragment extends Fragment {
             alert.show();
         });
 
-
-
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        setTextView();
+        setImageView();
+    }
 
     private void setTextView() {
         etEmail.setText(member.getEmail());
@@ -217,66 +229,64 @@ public class MemeberCenterProfileFragment extends Fragment {
         }
     }
 
-//    private ActivityResultLauncher<String> mPermissionResult = registerForActivityResult(
-//            new ActivityResultContracts.RequestPermission(),
-//            result -> {
-//                if(result) {
-//                    Log.e(TAG, "onActivityResult: PERMISSION GRANTED");
-//                } else {
-//                    Log.e(TAG, "onActivityResult: PERMISSION DENIED");
-//                }
-//            });
-//
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        if (requestCode == 0) {
-//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-//                Toast.makeText(activity, "Permission Grant", Toast.LENGTH_SHORT).show();
-//                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                takePictureLauncher.launch(intent);
-//                mPermissionResult.launch(MediaStore.ACTION_IMAGE_CAPTURE);
-//            }else{
+//    private void checkPermission(Intent intent) {
+//        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//            // 進入這兒表示沒有許可權
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.CAMERA)) {
+//                // 提示已經禁止
 //                Toast.makeText(activity, "需要相機權限", Toast.LENGTH_SHORT).show();
+//            } else {
+//                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA}, 100);
 //            }
+//        } else {
+//            takePictureLauncher.launch(intent);;
 //        }
 //    }
 
-    private void checkPermission(Intent intent) {
-        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            // 進入這兒表示沒有許可權
-            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.CAMERA)) {
-                // 提示已經禁止
-                Toast.makeText(activity, "需要相機權限", Toast.LENGTH_SHORT).show();
-            } else {
-                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA}, 100);
-            }
-        } else {
-            takePictureLauncher.launch(intent);;
-        }
-    }
-
     private void handleImgSelect(int which) {
         if(which == 0){
+//            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//            File dir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+//            if (dir != null && !dir.exists()) {
+//                if (!dir.mkdirs()) {
+//                    Log.e(TAG, "Directory not created");
+//                    return;
+//                }
+//            }
+//            File file = new File(dir, "picture.jpg");
+//            contentUri = FileProvider.getUriForFile(
+//                    activity, activity.getPackageName() + ".provider", file);
+//            intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
+//            try {
+//                checkPermission(intent);
+////                takePictureLauncher.launch(intent);
+////                mPermissionResult.launch(MediaStore.ACTION_IMAGE_CAPTURE);
+//            } catch (ActivityNotFoundException e) {
+//                Toast.makeText(activity, "Camera not found",
+//                        Toast.LENGTH_SHORT).show();
+//            }
+            // Intent -> 相機 ACTION
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            /**
+             * 照片的存取位置 設定
+             * API 24 版本以上，Android 不再允許在 app 中透漏 file://Uri 給其他 app
+             * FileProvider 將隱藏真實的共享檔案路徑，content://Uri 取代 file://Uri
+             * 注意：FileProvider需要在manifest.xml做設定
+             */
+            // 1.照片存放目錄 = 取得外部儲存體路徑(Environment.DIRECTORY_路徑種類)
             File dir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            if (dir != null && !dir.exists()) {
-                if (!dir.mkdirs()) {
-                    Log.e(TAG, "Directory not created");
-                    return;
-                }
-            }
-            File file = new File(dir, "picture.jpg");
+            // 2.建立存放照片的 路徑＆檔名
+            dir = new File(dir, "picture.jpg");
+            // 3.使用FileProvider建立Uri物件 (context, 需與manifest.xml的authorities相同名, 路徑檔名)
             contentUri = FileProvider.getUriForFile(
-                    activity, activity.getPackageName() + ".provider", file);
+                    activity, activity.getPackageName() + ".provider", dir);
+            // 4.intent.putExtra(key, value) -> 帶值
             intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
             try {
-                checkPermission(intent);
-//                takePictureLauncher.launch(intent);
-//                mPermissionResult.launch(MediaStore.ACTION_IMAGE_CAPTURE);
+                // Launcher() -> 進行跳轉 等待接收回傳結果 -> takePictureResult()
+                takePictureLauncher.launch(intent);
             } catch (ActivityNotFoundException e) {
-                Toast.makeText(activity, "Camera not found",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, R.string.textNoCameraApp, Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -289,13 +299,7 @@ public class MemeberCenterProfileFragment extends Fragment {
 
 
 
-    ActivityResultLauncher<Intent> pickPictureLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            this::pickPictureResult);
 
-    ActivityResultLauncher<Intent> cropPictureLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            this::cropPictureResult);
 
     private void takePictureResult(ActivityResult result) {
         if (result.getResultCode() == RESULT_OK) {

@@ -291,8 +291,8 @@ public class LogInFragment extends Fragment {
     }
 
     private void signInFB() {
-        setLoadingBar(getString(R.string.text_creating_new_account),
-                getString(R.string.text_creating_account_message));
+        setLoadingBar(getString(R.string.text_verification_account),
+                getString(R.string.text_account_verification_message));
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override

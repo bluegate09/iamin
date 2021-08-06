@@ -189,7 +189,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         }
 
 
-        //googlePay imageButton
+        //googlePay Button
         if(!(paymentMethod.equals("1"))){
             btGooglePay.setVisibility(View.VISIBLE);
             btGooglePay.setEnabled(true);
