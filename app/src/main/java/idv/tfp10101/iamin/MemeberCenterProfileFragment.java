@@ -60,7 +60,6 @@ import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.member_order.MemberOrder;
 import idv.tfp10101.iamin.network.RemoteAccess;
-import idv.tfp10101.iamin.user.User;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -74,7 +73,7 @@ public class MemeberCenterProfileFragment extends Fragment {
     private byte[] image;
     private FirebaseFirestore db;
     private FirebaseStorage storage;
-    private User user;
+    private ProgressDialog loadingBar;
     private Uri contentUri; // 拍照需要的Uri
     private Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
 
@@ -98,7 +97,7 @@ public class MemeberCenterProfileFragment extends Fragment {
         member = MemberControl.getInstance();
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
-        user = User.getInstance();
+        loadingBar = new ProgressDialog(activity);
 //        Log.d(TAG,"MC_Profile_OnCreate member: " + member.getNickname());
 
     }
@@ -424,7 +423,6 @@ public class MemeberCenterProfileFragment extends Fragment {
                     if (task.isSuccessful()) {
                         String message = getString(R.string.textUploadSuccess);
                         Log.d(TAG, message);
-                        user.setImagePath(imagePath);
                         db.collection("Users").document(member.getuUId())
                                 .update("imagePath", imagePath).addOnCompleteListener(task1 -> {
                             if (task1.isSuccessful()) {

@@ -12,7 +12,11 @@
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_homeFragment_to_merchbrowseFragment"
-            app:destination="@id/merchbrowseFragment" />
+            app:destination="@id/merchbrowseFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/chatFragment"
@@ -21,10 +25,18 @@
         tools:layout="@layout/fragment_chat" >
         <action
             android:id="@+id/action_chatFragment_to_logInFragment"
-            app:destination="@id/logInFragment" />
+            app:destination="@id/logInFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_chatFragment_to_messageFragment"
-            app:destination="@id/messageFragment" />
+            app:destination="@id/messageFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/logInFragment"
@@ -33,22 +45,46 @@
         tools:layout="@layout/fragment_log_in" >
         <action
             android:id="@+id/action_logInFragment_to_signUpFragment"
-            app:destination="@id/signUpFragment" />
+            app:destination="@id/signUpFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_logInFragment_to_phoneAuthFragment"
-            app:destination="@id/phoneAuthFragment" />
+            app:destination="@id/phoneAuthFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_logInFragment_to_memberCenterFragment"
-            app:destination="@id/memberCenterFragment" />
+            app:destination="@id/memberCenterFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_logInFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_logInFragment_to_socialLoginFragment"
-            app:destination="@id/socialLoginFragment" />
+            app:destination="@id/socialLoginFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_logInFragment_to_memberForgetPassword"
-            app:destination="@id/memberForgetPassword" />
+            app:destination="@id/memberForgetPassword"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
@@ -57,10 +93,18 @@
         tools:layout="@layout/fragment_sign_up" >
         <action
             android:id="@+id/action_signUpFragment_to_memberCenterFragment"
-            app:destination="@id/memberCenterFragment" />
+            app:destination="@id/memberCenterFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_signUpFragment_to_memberCenterFragment2"
-            app:destination="@id/memberCenterFragment" />
+            app:destination="@id/memberCenterFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/merchbrowseFragment"
@@ -74,10 +118,18 @@
         tools:layout="@layout/fragment_phone_auth" >
         <action
             android:id="@+id/action_phoneAuthFragment_to_socialLoginFragment"
-            app:destination="@id/socialLoginFragment" />
+            app:destination="@id/socialLoginFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_phoneAuthFragment_to_memberCenterFragment"
-            app:destination="@id/memberCenterFragment" />
+            app:destination="@id/memberCenterFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/memberCenterFragment"
@@ -86,25 +138,53 @@
         tools:layout="@layout/fragment_member_center" >
         <action
             android:id="@+id/action_memberCenterFragment_to_memeberCenterFollowFragment"
-            app:destination="@id/memeberCenterFollowFragment" />
+            app:destination="@id/memeberCenterFollowFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_memberCenterFragment_to_memeberCenterProfileFragment"
-            app:destination="@id/memeberCenterProfileFragment" />
+            app:destination="@id/memeberCenterProfileFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_memberCenterFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_memberCenterFragment_to_memberCenterMemberOrderFragment"
-            app:destination="@id/memberCenterMemberOrderFragment" />
+            app:destination="@id/memberCenterMemberOrderFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_memberCenterFragment_to_sellerFragment"
-            app:destination="@id/sellerFragment" />
+            app:destination="@id/sellerFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_memberCenterFragment_to_memberCenterRatingDialogFragment"
-            app:destination="@id/memberCenterRatingDialogFragment" />
+            app:destination="@id/memberCenterRatingDialogFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_memberCenterFragment_to_memberCenterTansferFragment"
-            app:destination="@id/memberCenterTansferFragment" />
+            app:destination="@id/memberCenterTansferFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/memeberCenterFollowFragment"
@@ -113,7 +193,11 @@
         tools:layout="@layout/fragment_memeber_center_follow" >
         <action
             android:id="@+id/action_memeberCenterFollowFragment_to_memberCenterFollowersGroupFragment"
-            app:destination="@id/memberCenterFollowersGroupFragment" />
+            app:destination="@id/memberCenterFollowersGroupFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/memberCenterMyWalletFragment"
@@ -122,7 +206,11 @@
         tools:layout="@layout/fragment_member_center_my_wallet" >
         <action
             android:id="@+id/action_memberCenterMyWalletFragment_to_memberCenterMyWalletDetailsFragment"
-            app:destination="@id/memberCenterMyWalletDetailsFragment" />
+            app:destination="@id/memberCenterMyWalletDetailsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/memeberCenterProfileFragment"
@@ -131,7 +219,11 @@
         tools:layout="@layout/fragment_memeber_center_profile" >
         <action
             android:id="@+id/action_memeberCenterProfileFragment_to_memberCenterFragment"
-            app:destination="@id/memberCenterFragment" />
+            app:destination="@id/memberCenterFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/memberCenterMyWalletDetailsFragment"
@@ -145,13 +237,25 @@
         tools:layout="@layout/fragment_payment_information" >
         <action
             android:id="@+id/action_paymentInformationFragment_to_merchFragment"
-            app:destination="@id/merchFragment" />
+            app:destination="@id/merchFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_paymentInformationFragment_to_groupFragment"
-            app:destination="@id/groupFragment" />
+            app:destination="@id/groupFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_paymentInformationFragment_to_reachFragment"
-            app:destination="@id/reachFragment" />
+            app:destination="@id/reachFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/groupFragment"
@@ -160,16 +264,32 @@
         tools:layout="@layout/fragment_group" >
         <action
             android:id="@+id/action_groupFragment_to_merchFragment"
-            app:destination="@id/merchFragment" />
+            app:destination="@id/merchFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_groupFragment_to_paymentInformationFragment"
-            app:destination="@id/paymentInformationFragment" />
+            app:destination="@id/paymentInformationFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_groupFragment_to_reachFragment"
-            app:destination="@id/reachFragment" />
+            app:destination="@id/reachFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_groupFragment_to_groupInsertFragment"
-            app:destination="@id/groupInsertFragment" />
+            app:destination="@id/groupInsertFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/merchFragment"
@@ -178,19 +298,39 @@
         tools:layout="@layout/fragment_merch" >
         <action
             android:id="@+id/action_merchFragment_to_groupFragment"
-            app:destination="@id/groupFragment" />
+            app:destination="@id/groupFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_merchFragment_to_paymentInformationFragment"
-            app:destination="@id/paymentInformationFragment" />
+            app:destination="@id/paymentInformationFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_merchFragment_to_reachFragment"
-            app:destination="@id/reachFragment" />
+            app:destination="@id/reachFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_merchFragment_to_merchInsertFragment"
-            app:destination="@id/merchInsertFragment" />
+            app:destination="@id/merchInsertFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_merchFragment_to_merchUpdateFragment"
-            app:destination="@id/merchUpdateFragment" />
+            app:destination="@id/merchUpdateFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/reachFragment"
@@ -199,16 +339,32 @@
         tools:layout="@layout/fragment_reach" >
         <action
             android:id="@+id/action_reachFragment_to_merchFragment"
-            app:destination="@id/merchFragment" />
+            app:destination="@id/merchFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_reachFragment_to_groupFragment"
-            app:destination="@id/groupFragment" />
+            app:destination="@id/groupFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_reachFragment_to_paymentInformationFragment"
-            app:destination="@id/paymentInformationFragment" />
+            app:destination="@id/paymentInformationFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_reachFragment_to_reachNotificationFragment"
-            app:destination="@id/reachNotificationFragment" />
+            app:destination="@id/reachNotificationFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/merchInsertFragment"
@@ -226,10 +382,18 @@
         tools:layout="@layout/fragment_group_insert" >
         <action
             android:id="@+id/action_groupInsertFragment_to_groupInsertLocationFragment"
-            app:destination="@id/groupInsertLocationFragment" />
+            app:destination="@id/groupInsertLocationFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_groupInsertFragment_to_groupSelectMFragment"
-            app:destination="@id/groupSelectMFragment" />
+            app:destination="@id/groupSelectMFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/groupInsertLocationFragment"
@@ -248,13 +412,25 @@
         tools:layout="@layout/fragment_seller" >
         <action
             android:id="@+id/action_sellerFragment_to_merchFragment"
-            app:destination="@id/merchFragment" />
+            app:destination="@id/merchFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_sellerFragment_to_memeberCenterProfileFragment"
-            app:destination="@id/memeberCenterProfileFragment" />
+            app:destination="@id/memeberCenterProfileFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_sellerFragment_to_logInFragment"
-            app:destination="@id/logInFragment" />
+            app:destination="@id/logInFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/messageFragment"
@@ -268,7 +444,11 @@
         tools:layout="@layout/fragment_social_login" >
         <action
             android:id="@+id/action_socialLoginFragment_to_memberCenterFragment"
-            app:destination="@id/memberCenterFragment" />
+            app:destination="@id/memberCenterFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/reachNotificationFragment"
@@ -287,7 +467,11 @@
         tools:layout="@layout/fragment_member_center_member_order" >
         <action
             android:id="@+id/action_memberCenterMemberOrderFragment_to_memberCenterOrderDetailsFragment"
-            app:destination="@id/memberCenterOrderDetailsFragment" />
+            app:destination="@id/memberCenterOrderDetailsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/memberCenterOrderDetailsFragment"
@@ -296,7 +480,11 @@
         tools:layout="@layout/fragment_member_center_member_order_details" >
         <action
             android:id="@+id/action_memberCenterOrderDetailsFragment_to_QRCodeGenFragment"
-            app:destination="@id/QRCodeGenFragment" />
+            app:destination="@id/QRCodeGenFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/memberCenterFollowersGroupFragment"
@@ -313,6 +501,13 @@
         android:name="idv.tfp10101.iamin.MemberCenterRatingDialogFragment"
         android:label="fragment_member_center_rating_dialog"
         tools:layout="@layout/fragment_member_center_rating_dialog" />
+
+    <activity
+        android:id="@+id/tappayActivity"
+        android:name="idv.tfp10101.iamin.TappayActivity"
+        android:label="activity_tappay"
+        tools:layout="@layout/activity_tappay" />
+
     <fragment
         android:id="@+id/memberCenterMyIncome"
         android:name="idv.tfp10101.iamin.MemberCenterMyIncomeFragment"
@@ -320,7 +515,11 @@
         tools:layout="@layout/fragment_member_center_my_income" >
         <action
             android:id="@+id/action_memberCenterMyIncome_to_memberCenterIncomeDeatilsFragment"
-            app:destination="@id/memberCenterIncomeDeatilsFragment" />
+            app:destination="@id/memberCenterIncomeDeatilsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/memberCenterIncomeDeatilsFragment"
@@ -334,9 +533,17 @@
         tools:layout="@layout/fragment_member_center_tansfer" >
         <action
             android:id="@+id/action_memberCenterTansferFragment_to_memberCenterMyIncome"
-            app:destination="@id/memberCenterMyIncome" />
+            app:destination="@id/memberCenterMyIncome"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
         <action
             android:id="@+id/action_memberCenterTansferFragment_to_memberCenterMyWalletFragment"
-            app:destination="@id/memberCenterMyWalletFragment" />
+            app:destination="@id/memberCenterMyWalletFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 </navigation>

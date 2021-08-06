@@ -1,7 +1,9 @@
 package idv.tfp10101.iamin;
 
+import androidx.annotation.FractionRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -10,6 +12,12 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
+import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.app.AlertDialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -31,23 +39,28 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import idv.tfp10101.iamin.message.Message;
 import java.util.Objects;
 
 import static idv.tfp10101.iamin.Constants.FCM_Token;
+import static idv.tfp10101.iamin.Constants.TAG;
 
 public class MainActivity extends AppCompatActivity {
-    /** FCMService 本地廣播 */
+    private static final String TAG = "TAG_MainActivity";
+    /**
+     * FCMService 本地廣播
+     */
     BroadcastReceiver broadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        handleBottomNavigationView();
+
+
 
         /** FCMService 本地廣播 */
-        broadcastReceiver = new BroadcastReceiver()
-        {
+        broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 /** 建立AlertDialog */
@@ -71,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String channelId = "seller_notification_channel_id";
             String channelName = "seller_notification_channel_name";
+            String channelChatId = "chat_notification_channel_id";
+            String channelChatName = "chat_notification_channel_name";
             /*
                 NotificationManager -> 需設定2大類
                 1. Notification本身訊息 (icon, 圖示, title, body, 自訂資料)
@@ -82,15 +97,17 @@ public class MainActivity extends AppCompatActivity {
             notificationManager.createNotificationChannel(new NotificationChannel(channelId,
                     channelName, NotificationManager.IMPORTANCE_DEFAULT));
             // 本身訊息 (icon 圖示 已在manifest設定， 訊息部分由Server發送)
+            notificationManager.createNotificationChannel(new NotificationChannel(channelChatId,
+                    channelChatName, NotificationManager.IMPORTANCE_DEFAULT));
         }
 
-        // 當Notification被點擊時會開啟App來到MainActivity，需取得自訂資料後，在跳轉Fragment頁面
+//         當Notification被點擊時會開啟App來到MainActivity，需取得自訂資料後，在跳轉Fragment頁面
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             String data = bundle.getString("data");
 
             // 可以依據data來決定要去哪一Fragment頁面
-            Log.d(Constants.TAG, "data: " + data);
+            Log.d(TAG, "" + data);
 //            Toast.makeText(this, "data: " + data, Toast.LENGTH_SHORT).show();
             // 先取得NavController
             NavController navController = Navigation.findNavController(
@@ -103,6 +120,11 @@ public class MainActivity extends AppCompatActivity {
                     case "Reach_Notification":
                         navController.navigate(R.id.memberCenterMemberOrderFragment);
                         break;
+                    case "Message_Fragment":
+                        navController.navigate(R.id.messageFragment, bundle);
+                        break;
+                    case "Chat_Fragment":
+                        navController.navigate(R.id.chatFragment, bundle);
                     default:
                         break;
                 }
@@ -120,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
 
                     SharedPreferences pref = this.getSharedPreferences(FCM_Token, MODE_PRIVATE);
                     pref.edit()
-                            .putString(FCM_Token,token)
+                            .putString(FCM_Token, token)
                             .apply();
 
                 }
@@ -131,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<String> task) {
 
-                Log.d("TAG_MAIN","Token: " + task.getResult());
+                Log.d(TAG, "Token: " + task.getResult());
             }
         });
     }
@@ -151,7 +173,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        handleBottomNavigationView();
     }
 
     @Override
@@ -171,7 +192,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        handleBottomNavigationView();
     }
 
     private void handleBottomNavigationView() {
@@ -190,11 +210,9 @@ public class MainActivity extends AppCompatActivity {
                destination.getId() == R.id.messageFragment
             ){
                 bottomNavigationView.setVisibility(View.GONE);
-            }else{
+            } else {
                 bottomNavigationView.setVisibility(View.VISIBLE);
             }
         });
     }
-
-
 }

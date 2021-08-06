@@ -21,10 +21,17 @@
             android:layout_height="wrap_content"
             android:iconifiedByDefault="false" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvSellers"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvSellers"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

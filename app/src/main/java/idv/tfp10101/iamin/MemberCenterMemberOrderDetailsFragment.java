@@ -1,6 +1,9 @@
 package idv.tfp10101.iamin;
 
 import android.app.Activity;
+
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
@@ -21,6 +24,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -127,7 +132,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         tloc3 = view.findViewById(R.id.tPickupDetails3);
 
         tvTotalPrice = view.findViewById(R.id.memberOrderDetailTotalPirce);
-        tvTotalPrice.setText(totalPrice+"");
+        tvTotalPrice.setText(String.valueOf(totalPrice));
 
         btGooglePay = view.findViewById(R.id.btGooglePay);
         btGooglePay.setVisibility(View.GONE);
@@ -193,7 +198,10 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         if(!(paymentMethod.equals("1"))){
             btGooglePay.setVisibility(View.VISIBLE);
             btGooglePay.setEnabled(true);
+            toTapPay();
         }
+
+
 
         showMyOrder(memberOrderDetailsList);
 
@@ -202,7 +210,14 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         handleQRcode();
     }
 
-
+    private void toTapPay() {
+        btGooglePay.findViewById(R.id.btGooglePay).setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), TappayActivity.class);
+            intent.putExtra("totalPrice", totalPrice);
+            intent.putExtra("memberOderId", memberOderId);
+            startActivity(intent);
+        });
+    }
 
     private void handlePickUpLocation() {
         ArrayList<String> locList = new ArrayList<>();

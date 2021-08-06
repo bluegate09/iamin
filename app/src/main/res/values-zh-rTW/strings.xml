@@ -122,6 +122,13 @@
     <string name="text_verification_account">帳號驗證中</string>
     <string name="text_account_verification_message">請稍等…</string>
     <string name="text_welcome_back">歡迎回來</string>
+    <string name="textMessageIsInvalid">訊息無效</string>
+    <string name="textSendMessage">傳送訊息</string>
+    <string name="textSendMessageFail">傳送訊息失敗</string>
+    <string name="textNoMessageFound">找不到訊息</string>
+    <string name="textMessage">訊息</string>
+    <string name="default_notification_channel_id">default_channel_id</string>
+    <string name="chat_notification_channel_id">chat_notification_channel_id</string>
     <string name="text_update_failed">更新失敗</string>
     <string name="text_update_success">更新成功</string>
     <string name="test_no_network">沒有網路</string>
@@ -149,6 +156,9 @@
     <string name="text_group_name">團購名稱: </string>
     <string name="text_details_all">全部</string>
     <string name="text_order_details">訂單細項</string>
+    <string name="textCannotUseGPay">無法使用Google Pay</string>
+    <string name="textCanceled">使用者取消服務</string>
+    <string name="textConfirmPay">確認付款</string>
     <string name="text_perchase_number">購買數量: </string>
     <string name="text_show_password">顯示密碼</string>
     <string name="text_sign_in_with_google">使用Google登入</string>
@@ -157,6 +167,8 @@
     <string name="text_rating_submit">評價已送出，感謝您的填寫。</string>
     <string name="text_message">留言: </string>
     <string name="my_rating">我的評價</string>
+    <string name="Success" />
+    <string name="textBuySuccess">成功</string>
     <string name="text_checkout">結帳</string>
     <string name="text_takePicture">拍照</string>
     <string name="text_pickpicture">選取圖片</string>
