@@ -173,7 +173,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        handleBottomNavigationView();
     }
 
     @Override
@@ -181,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         handleBottomNavigationView();
         /** FCMService 本地廣播 */
-//        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver);
     }
 
     @Override
@@ -193,7 +192,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        handleBottomNavigationView();
     }
 
     private void handleBottomNavigationView() {
@@ -203,7 +201,6 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(bottomNavigationView, navController);
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             if(destination.getId() == R.id.memberCenterMyWalletFragment||
-               destination.getId() == R.id.logInFragment||
                destination.getId() == R.id.signUpFragment||
                destination.getId() == R.id.phoneAuthFragment||
                destination.getId() == R.id.memeberCenterProfileFragment||
