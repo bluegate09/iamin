@@ -4,14 +4,33 @@ public class Message {
     private String sender;
     private String receiver;
     private String message;
+    private String time;
+    private String token;
 
     public Message() {
     }
 
-    public Message(String sender, String receiver, String message) {
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public Message(String sender, String receiver, String message, String time) {
         this.sender = sender;
         this.receiver = receiver;
         this.message = message;
+        this.time = time;
     }
 
     public String getSender() {

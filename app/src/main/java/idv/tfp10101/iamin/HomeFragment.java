@@ -48,6 +48,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 
 import java.math.BigDecimal;
@@ -102,6 +103,8 @@ public class HomeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Chat token在這裡取得
+        getTokenSendServer();
         //
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).show();
 
@@ -619,6 +622,18 @@ public class HomeFragment extends Fragment {
         }
         // 10.2 請求定位更新
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+    }
+
+    // send Chat token
+    private void getTokenSendServer() {
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                if (task.getResult() != null) {
+                    String token = task.getResult();
+                    RemoteAccess.sendChatTokenToServer(token, activity);
+                }
+            }
+        });
     }
 
 }

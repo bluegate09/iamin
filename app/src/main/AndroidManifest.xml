@@ -2,19 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="idv.tfp10101.iamin">
-
     <!-- 檢查網路 - 權限 -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!-- 使用網路 - 權限 -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!-- 跳轉後使用全螢幕 - 權限 -->
-    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
-    <!-- 概略定位 - 權限 -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!-- 精準定位 - 權限 -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!--避免沒有支援的裝置在Google Play上搜尋到此App-->
-    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- 使用網路 - 權限 -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 跳轉後使用全螢幕 - 權限 -->
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" /> <!-- 概略定位 - 權限 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- 精準定位 - 權限 -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- 避免沒有支援的裝置在Google Play上搜尋到此App -->
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -24,8 +20,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Iamin"
         android:usesCleartextTraffic="true"
+        tools:replace="android:allowBackup"
         tools:targetApi="m">
-
+        <activity android:name=".TappayActivity"></activity>
+        <!-- TapPay allowBackup= true 需加入這行 -->
         <!-- FileProvider相關設定，若最後要取得 照片原圖 或 圖片裁剪 才需要 -->
         <!-- authorities：自訂授權識別字串(要與getUriForFile的參數對應) -->
         <!-- exported：表示該 FileProvider 是否需要公開出去 -->
@@ -39,38 +37,31 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
-        </provider>
-
-        <!--facebook 相關-->
+        </provider> <!-- facebook 相關 -->
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
-
-        <!-- 地理資訊 -->
+            android:value="@string/facebook_app_id" /> <!-- 地理資訊 -->
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
-
-        <!-- 加入金鑰 -->
+            android:value="@integer/google_play_services_version" /> <!-- 加入金鑰 -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyB_ENNHaxQHBqIp2KNObr-9p0xB1cNjbrs" />
-
-        <!-- FCM: 圖示 -->
+            android:value="AIzaSyB_ENNHaxQHBqIp2KNObr-9p0xB1cNjbrs" /> <!-- FCM: 圖示 -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@android:drawable/ic_dialog_info" />
-
-        <!-- FCM: 顏色 (會改變訊息圖示顏色 參看 https://goo.gl/6BKBk7) -->
+            android:resource="@android:drawable/ic_dialog_info" /> <!-- FCM: 顏色 (會改變訊息圖示顏色 參看 https://goo.gl/6BKBk7) -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/colorSecondary" />
-
-        <!-- FCM: ID -->
+            android:resource="@color/colorSecondary" /> <!-- FCM: ID -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="seller_notification_channel_id" />
-
+            android:value="seller_notification_channel_id" /> <!-- android:windowSoftInputMode="adjustPan"  防止bottom navigation跟鍵盤一起移往上動 -->
+        <meta-data
+            android:name="com.google.firebase.messaging.chat_notification_channel_id"
+            android:value="@string/chat_notification_channel_id" />
+        <meta-data
+            android:name="com.google.android.gms.wallet.api.enabled"
+            android:value="true" />
 
         <!--android:windowSoftInputMode="adjustPan"  防止bottom navigation跟鍵盤一起移往上動-->
         <!--android:screenOrientation="portrait"  強制豎屏-->
@@ -82,24 +73,23 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!--facebook 相關-->
+        </activity> <!-- facebook 相關 -->
         <activity
             android:name="com.facebook.FacebookActivity"
-            android:configChanges= "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
         <activity
-            android:name="com.facebook.CustomTabActivity" android:exported="true">
+            android:name="com.facebook.CustomTabActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
-        </activity>
-
-        <!-- 註冊Ucrop(裁切器)Activity -->
+        </activity> <!-- 註冊Ucrop(裁切器)Activity -->
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
@@ -114,6 +104,13 @@
         <!-- 當接收端開著app，有沒有接收到FCN訊息的監聽 (覆寫: onMessageReceived()) -->
         <service
             android:name=".service.FCMServiceSeller"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service> <!-- chat service -->
+        <service
+            android:name=".message.FCMChatService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

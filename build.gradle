@@ -28,6 +28,10 @@ allprojects {
         jcenter()
         // Ucrop需要
         maven { url "https://jitpack.io" }
+        // TapPay
+        flatDir {
+            dirs 'libs'
+        }
     }
 }
 

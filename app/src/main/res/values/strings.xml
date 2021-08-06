@@ -127,6 +127,13 @@
     <string name="text_verification_account">Account verification</string>
     <string name="text_account_verification_message">Please wait for a while…</string>
     <string name="text_welcome_back">Welcome Come Back</string>
+    <string name="textMessageIsInvalid">Message Is Invalid</string>
+    <string name="textSendMessage">Send Message</string>
+    <string name="textSendMessageFail">Send Message Fail</string>
+    <string name="textNoMessageFound">No Message Found</string>
+    <string name="textMessage">Message</string>
+    <string name="default_notification_channel_id">default_channel_id</string>
+    <string name="chat_notification_channel_id">chat_notification_channel_id</string>
     <string name="text_update_failed">Update failed</string>
     <string name="text_update_success">Update success</string>
     <string name="test_no_network">No network</string>
@@ -154,6 +161,21 @@
     <string name="text_group_name">Group Name</string>
     <string name="text_details_all">All</string>
     <string name="text_order_details">Order details</string>
+    <string name="textCannotUseGPay">Cannot use Google Pay</string>
+    <string name="textCanceled">Canceled by the user.</string>
+
+    <!-- 填上TapPay Portal上註冊的資料 -->
+    <!-- 開發者 / 應用程式 -->
+    <string name="TapPay_AppID">14130</string>
+    <string name="TapPay_AppKey">app_LfnLPvybt8PKvwwmxEjRxG2TEsAtm61JgrSCIK1HJwBgPE9VUsJ0veTN9zlA</string>
+
+    <!-- 帳戶資訊 -->
+    <string name="TapPay_PartnerKey">partner_o7gqvRS1LSD6jxazGAWczibPhXKXAcmx1g4LSl2WGRDsLsQGaOCBgpWe</string>
+
+    <!-- 商家管理 / 商家設置-->
+    <string name="TapPay_MerchantName">TW_TAISHIN</string>
+    <string name="TapPay_MerchantID">85147883_TAISHIN</string>
+    <string name="textConfirmPay">Confirm Pay</string>
     <string name="text_perchase_number">Perchase number:</string>
     <string name="text_show_password">Show Password</string>
     <string name="text_sign_in_with_google">Sign in with google</string>
@@ -162,6 +184,8 @@
     <string name="text_rating_submit">Message Sumbit, Thanks You!</string>
     <string name="text_message">message: </string>
     <string name="my_rating">My Rating</string>
+    <string name="Success" />
+    <string name="textBuySuccess">success</string>
     <string name="text_checkout">Checkout</string>
     <string-array name="report">
         <item>類別錯誤</item>
