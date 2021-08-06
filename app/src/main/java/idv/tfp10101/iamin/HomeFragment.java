@@ -2,13 +2,13 @@ package idv.tfp10101.iamin;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.icu.number.Precision;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,13 +28,12 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -44,30 +44,23 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.CancellationTokenSource;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.protobuf.Empty;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -155,8 +148,27 @@ public class HomeFragment extends Fragment {
             member = new Gson().fromJson(jsonMember, Member.class);
             MemberControl.setMember(member);
             Log.d("TAG_HOME", "Fetch Member Date Complete");
-        }
+            NavController navController = Navigation.findNavController(view);
+            //如果會員被檢舉成功了
+            if (member.getDeleteTime() != null){
+                //friebase,Google登出
+                FirebaseAuth.getInstance().signOut();
+                //fb登出
+                LoginManager.getInstance().logOut();
 
+                AlertDialog.Builder report = new AlertDialog.Builder(activity);
+                report.setTitle("您的帳號被封鎖了")
+                        .setMessage("您已被強制登出")
+                        .setPositiveButton("重新登入", (dialog, which) -> {
+                            navController.navigate(R.id.logInFragment);
+                        })
+                        .setNegativeButton("重新註冊", (dialog, which) -> {
+                            navController.navigate(R.id.signUpFragment);
+                        })
+                        .setCancelable(false)
+                        .show();
+            }
+        }
     }
 
     @Override
@@ -242,8 +254,8 @@ public class HomeFragment extends Fragment {
                                 } else {
                                     // 搜尋原始資料內有無包含關鍵字(不區別大小寫)
                                     for (HomeData group : localHomeDatas) {
-                                        //只顯示團購狀態是1的(1-> 揪團中)
-                                        if (group.getGroup().getProgress() != group.getGroup().getConditionCount()) {
+                                        //只顯示 團購名稱有包含輸入的字的團購 && 團購進度還沒到最大上限的團購 && 還未超過團購時間的團購
+                                        if (group.getGroup().getName().toUpperCase().contains(newText.toUpperCase())) {
                                             searchHomeData.add(group);
                                         }
                                     }
@@ -319,6 +331,12 @@ public class HomeFragment extends Fragment {
     private void coumputeDistancemin(){
         Loading.dismiss();
         localHomeDatas =  new ArrayList<>();
+        localGroups = new ArrayList<>();
+        HomeDataControl.getAllGroup(activity);
+        localGroups = HomeDataControl.getLocalGroups();
+        if (localGroups == null || localGroups.isEmpty()) {
+            Toast.makeText(activity, "找不到團購", Toast.LENGTH_SHORT).show();
+        }
 
         HomeData homeData;
         for (Group group: localGroups){
@@ -340,7 +358,8 @@ public class HomeFragment extends Fragment {
             //四捨五入到小數第一位
             float groupDismin = b.setScale(1,BigDecimal.ROUND_HALF_UP).floatValue();
             homeData = new HomeData(group,groupDismin);
-            if (group.getProgress() != group.getConditionCount()) {
+            //團購進度還沒到購買上限 && 還沒到結單時間的團購 才會加入本地團購
+            if (group.getProgress() != group.getConditionCount() && (new Date().before(group.getConditionTime()))) {
                 localHomeDatas.add(homeData);
             }
         }
@@ -363,7 +382,7 @@ public class HomeFragment extends Fragment {
         searchView.setQuery("", false);
         List<HomeData> selectHomeData = new ArrayList<>();
         for (HomeData category : categoryHomeData) {
-            //類別ID與為達到團購最大上限
+            //類別ID
             if (category.getGroup().getCategoryId() == category_Id) {
                 selectHomeData.add(category);
             }

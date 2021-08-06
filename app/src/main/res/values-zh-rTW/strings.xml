@@ -168,5 +168,6 @@
     <string name="text_message">留言: </string>
     <string name="my_rating">我的評價</string>
     <string name="Success" />
-    <string name="textBuySuccess">success</string>
+    <string name="textBuySuccess">成功</string>
+    <string name="text_checkout">結帳</string>
 </resources>

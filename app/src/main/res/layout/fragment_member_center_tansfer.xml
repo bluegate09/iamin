@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".MemberCenterTansferFragment">
+
+    <Button
+        android:background="@drawable/bg_black_border_button"
+        android:textColor="@color/black"
+        app:backgroundTint="@null"
+        android:id="@+id/button2Income"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:text="我的收入" />
+
+    <Button
+        android:background="@drawable/bg_black_border_button"
+        android:textColor="@color/black"
+        app:backgroundTint="@null"
+        android:id="@+id/button2Spending"
+        android:layout_width="wrap_content"
+        android:layout_height="80dp"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:text="我的支出" />
+</LinearLayout>

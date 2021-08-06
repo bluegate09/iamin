@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Set;
 
 import idv.tfp10101.iamin.group.Group;
+import idv.tfp10101.iamin.group.GroupBlockade;
 import idv.tfp10101.iamin.group.GroupControl;
 import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
@@ -142,6 +143,33 @@ public class SellerFragment extends Fragment {
             });
             // 顯示
             builder.show();
+        }
+
+        // 如果有團購被管理員封鎖
+        List<GroupBlockade> groupBlockades = new ArrayList<>();
+        groupBlockades = GroupControl.getBlockade(activity, member.getId());
+        if (groupBlockades != null) {
+            StringBuffer stringBuffer = new StringBuffer();
+            for (GroupBlockade groupBlockade : groupBlockades) {
+                if (!groupBlockade.isNotify()) {
+                    stringBuffer.append(groupBlockade.getGroupName());
+                    stringBuffer.append("\n");
+                }
+            }
+            //
+            if (stringBuffer.length() > 0) {
+                /** 建立AlertDialog */
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setTitle("封鎖通知!您以下的團購違反規章，已被管理員封鎖。");
+                builder.setMessage(stringBuffer);
+                builder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                // 顯示
+                builder.show();
+            }
         }
 
         // 跟server抓取所有Group

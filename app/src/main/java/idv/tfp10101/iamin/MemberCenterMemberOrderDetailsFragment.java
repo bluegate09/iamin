@@ -1,7 +1,7 @@
 package idv.tfp10101.iamin;
 
-import android.Manifest;
 import android.app.Activity;
+
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -12,8 +12,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,7 +21,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -35,17 +33,13 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
@@ -55,15 +49,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
-import idv.tfp10101.iamin.group.Group;
-import idv.tfp10101.iamin.group.GroupControl;
 import idv.tfp10101.iamin.location.Location;
 import idv.tfp10101.iamin.member.CustomMapView;
-import idv.tfp10101.iamin.member_order.MemberOrder;
 import idv.tfp10101.iamin.member_order_details.MemberOrderDetails;
-import idv.tfp10101.iamin.merch.Merch;
 import idv.tfp10101.iamin.merch.MerchControl;
-import idv.tfp10101.iamin.network.RemoteAccess;
 
 public class MemberCenterMemberOrderDetailsFragment extends Fragment {
     private static final int REQ_POSITIONING = 1;
@@ -73,8 +62,8 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
     private RecyclerView recyclerView;
     private List<Location> locations;
     private List<Marker> markers;
-    private TextView deadLine1,deadLine2,deadLine3,location1,location2,location3,tloc2,tloc3,tvTotalPrice;
-    private ImageButton btGooglePay;
+    private TextView deadLine1,deadLine2,deadLine3,location1,location2,location3,tloc2,tloc3,tvTotalPrice,pt1,pt2,pt3;
+    private Button btGooglePay;
     private GoogleMap googleMap;
     private String paymentMethod;
     private SearchView searchView;
@@ -129,6 +118,12 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         deadLine1 = view.findViewById(R.id.memberOrderDetailDeadLine1);
         deadLine2 = view.findViewById(R.id.memberOrderDetailDeadLine2);
         deadLine3 = view.findViewById(R.id.memberOrderDetailDeadLine3);
+
+        //pickuptime textview
+        pt1 = view.findViewById(R.id.pt1);
+        pt2 = view.findViewById(R.id.pt2);
+        pt3 = view.findViewById(R.id.pt3);
+
         location1 = view.findViewById(R.id.memberOrderLocation1);
         location2 = view.findViewById(R.id.memberOrderLocation2);
         location3 = view.findViewById(R.id.memberOrderLocation3);
@@ -179,15 +174,22 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         }
         Log.d(TAG,time[0]);
         //截止日期
-        deadLine1.setText(time[0]);
+        if(!(time[0].isEmpty())){
+            deadLine1.setText(time[0]);
+        }else{
+            pt1.setText("");
+            deadLine1.setText("");
+        }
         if(!(time[1].isEmpty())){
             deadLine2.setText(time[1]);
         }else{
+            pt2.setText("");
             deadLine2.setText("");
         }
         if(!(time[2]).isEmpty()){
             deadLine3.setText(time[2]);
         }else{
+            pt3.setText("");
             deadLine3.setText("");
         }
 

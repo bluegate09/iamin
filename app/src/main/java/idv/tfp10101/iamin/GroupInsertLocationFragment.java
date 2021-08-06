@@ -470,6 +470,11 @@ public class GroupInsertLocationFragment extends Fragment {
 
             navController.popBackStack();
         });
+        // 長按直接輸入預設地址
+        buttonGroupLocation.setOnLongClickListener(view -> {
+            searchViewLocation.setQuery("新北市三重區中正北路163號", false);
+            return false;
+        });
     }
 
     /**

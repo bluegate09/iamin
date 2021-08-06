@@ -116,6 +116,7 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/pt1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/pickup_time"
@@ -131,6 +132,7 @@
                 android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/pt2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/pickup_time"
@@ -146,6 +148,7 @@
                 android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/pt3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/pickup_time"
@@ -182,12 +185,15 @@
                     android:textSize="20sp" />
             </LinearLayout>
 
-            <ImageButton
+            <Button
+                android:background="@drawable/bg_black_border_button"
+                android:textColor="@color/black"
+                app:backgroundTint="@null"
                 android:id="@+id/btGooglePay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:src="@drawable/bt_google_pay" />
+                android:text="@string/text_checkout"
+                android:layout_margin="8dp" />
 
             <ImageView
                 android:id="@+id/imageViewQRcode"
