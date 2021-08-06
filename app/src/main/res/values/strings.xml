@@ -163,6 +163,9 @@
     <string name="text_message">message: </string>
     <string name="my_rating">My Rating</string>
     <string name="text_checkout">Checkout</string>
+    <string name="text_takePicture">TakePicture</string>
+    <string name="text_pickpicture">PickPicture</string>
+    <string name="text_reset_phone_number">Reset Phone Number?</string>
     <string-array name="report">
         <item>類別錯誤</item>
         <item>違反善良風俗</item>

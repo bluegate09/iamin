@@ -5,7 +5,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="textGroupInsert">新增團購</string>
     <string name="textMerchInsert">新增商品</string>
-    <string name="textNoNetwork">no network connection available</string>
+    <string name="textNoNetwork">沒有網路</string>
     <string name="textNoMerchsFound">找不到商品清單</string>
     <string name="textCurrency">NT</string>
     <string name="textEdit">編輯</string>
@@ -158,4 +158,7 @@
     <string name="text_message">留言: </string>
     <string name="my_rating">我的評價</string>
     <string name="text_checkout">結帳</string>
+    <string name="text_takePicture">拍照</string>
+    <string name="text_pickpicture">選取圖片</string>
+    <string name="text_reset_phone_number">重置電話號碼？</string>
 </resources>
