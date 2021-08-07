@@ -1,20 +1,26 @@
 package idv.tfp10101.iamin;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
@@ -40,15 +46,19 @@ import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.HashMap;
+import java.util.List;
 
 import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
+import idv.tfp10101.iamin.member_order.MemberOrder;
 import idv.tfp10101.iamin.network.RemoteAccess;
 
 import static android.app.Activity.RESULT_OK;
@@ -66,6 +76,18 @@ public class MemeberCenterProfileFragment extends Fragment {
     private ProgressDialog loadingBar;
     private Uri contentUri; // 拍照需要的Uri
     private Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
+
+    ActivityResultLauncher<Intent> takePictureLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            this::takePictureResult);
+
+    ActivityResultLauncher<Intent> pickPictureLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            this::pickPictureResult);
+
+    ActivityResultLauncher<Intent> cropPictureLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            this::cropPictureResult);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -139,14 +161,30 @@ public class MemeberCenterProfileFragment extends Fragment {
             MemberControl.setMember(member);
             //mysql更新修改後的資訊
             sendInfotoMysql(member);
-
-
+        });
+        //要求重置電話號碼
+        view.findViewById(R.id.resetPhoneNumber).setOnClickListener(v -> {
+            if (RemoteAccess.networkConnected(activity)) {
+                // 網址 ＆ Action
+                String url = RemoteAccess.URL_SERVER + "memberController";
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("action", "ResetPhoneNumberRequest");
+                jsonObject.addProperty("member", new Gson().toJson(member));
+                String result = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
+                if(Integer.parseInt(result) == -1){
+                    Toast.makeText(activity, "重置電話號碼的要求 已在處理中，請耐心等候", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(activity, "重置要求已傳送", Toast.LENGTH_SHORT).show();
+                }
+            }else{
+                Toast.makeText(activity, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
+            }
         });
 
         //照片修改
         view.findViewById(R.id.ibProfile).setOnClickListener(v -> {
             AlertDialog.Builder alert = new AlertDialog.Builder(activity);
-            String[] items = {"TakePicture","PickPicture"};
+            String[] items = {getString(R.string.text_takePicture),getString(R.string.text_pickpicture)};
             alert.setSingleChoiceItems(items, -1, (dialog, which) -> {
                 dialog.dismiss();
                 //彈出視窗
@@ -155,6 +193,13 @@ public class MemeberCenterProfileFragment extends Fragment {
             alert.show();
         });
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        setTextView();
+        setImageView();
     }
 
     private void setTextView() {
@@ -183,25 +228,64 @@ public class MemeberCenterProfileFragment extends Fragment {
         }
     }
 
+//    private void checkPermission(Intent intent) {
+//        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//            // 進入這兒表示沒有許可權
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.CAMERA)) {
+//                // 提示已經禁止
+//                Toast.makeText(activity, "需要相機權限", Toast.LENGTH_SHORT).show();
+//            } else {
+//                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA}, 100);
+//            }
+//        } else {
+//            takePictureLauncher.launch(intent);;
+//        }
+//    }
+
     private void handleImgSelect(int which) {
         if(which == 0){
+//            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//            File dir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+//            if (dir != null && !dir.exists()) {
+//                if (!dir.mkdirs()) {
+//                    Log.e(TAG, "Directory not created");
+//                    return;
+//                }
+//            }
+//            File file = new File(dir, "picture.jpg");
+//            contentUri = FileProvider.getUriForFile(
+//                    activity, activity.getPackageName() + ".provider", file);
+//            intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
+//            try {
+//                checkPermission(intent);
+////                takePictureLauncher.launch(intent);
+////                mPermissionResult.launch(MediaStore.ACTION_IMAGE_CAPTURE);
+//            } catch (ActivityNotFoundException e) {
+//                Toast.makeText(activity, "Camera not found",
+//                        Toast.LENGTH_SHORT).show();
+//            }
+            // Intent -> 相機 ACTION
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            /**
+             * 照片的存取位置 設定
+             * API 24 版本以上，Android 不再允許在 app 中透漏 file://Uri 給其他 app
+             * FileProvider 將隱藏真實的共享檔案路徑，content://Uri 取代 file://Uri
+             * 注意：FileProvider需要在manifest.xml做設定
+             */
+            // 1.照片存放目錄 = 取得外部儲存體路徑(Environment.DIRECTORY_路徑種類)
             File dir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            if (dir != null && !dir.exists()) {
-                if (!dir.mkdirs()) {
-                    Log.e(TAG, "Directory not created");
-                    return;
-                }
-            }
-            File file = new File(dir, "picture.jpg");
+            // 2.建立存放照片的 路徑＆檔名
+            dir = new File(dir, "picture.jpg");
+            // 3.使用FileProvider建立Uri物件 (context, 需與manifest.xml的authorities相同名, 路徑檔名)
             contentUri = FileProvider.getUriForFile(
-                    activity, activity.getPackageName() + ".provider", file);
+                    activity, activity.getPackageName() + ".provider", dir);
+            // 4.intent.putExtra(key, value) -> 帶值
             intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
             try {
+                // Launcher() -> 進行跳轉 等待接收回傳結果 -> takePictureResult()
                 takePictureLauncher.launch(intent);
             } catch (ActivityNotFoundException e) {
-                Toast.makeText(activity, "Camera not found",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(activity, R.string.textNoCameraApp, Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -212,17 +296,9 @@ public class MemeberCenterProfileFragment extends Fragment {
         }
     }
 
-    ActivityResultLauncher<Intent> takePictureLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            this::takePictureResult);
 
-    ActivityResultLauncher<Intent> pickPictureLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            this::pickPictureResult);
 
-    ActivityResultLauncher<Intent> cropPictureLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            this::cropPictureResult);
+
 
     private void takePictureResult(ActivityResult result) {
         if (result.getResultCode() == RESULT_OK) {
@@ -253,7 +329,7 @@ public class MemeberCenterProfileFragment extends Fragment {
         if (result.getResultCode() == RESULT_OK && result.getData() != null) {
             // 截圖的Uri
             Uri cropImageUri = UCrop.getOutput(result.getData());
-            uploadImage(cropImageUri);
+//            uploadImage(cropImageUri);
             if (cropImageUri != null) {
                 Bitmap bitmap = null;
                 try {
@@ -277,30 +353,30 @@ public class MemeberCenterProfileFragment extends Fragment {
 
     private void sendInfotoMysql(Member member) {
 
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                if (task.getResult() != null) {
-                    String token = task.getResult();
-                    HashMap<String, String> hashMap = new HashMap<>();
-                    hashMap.put("id", member.getuUId());
-                    hashMap.put("email", member.getEmail());
-                    hashMap.put("name", member.getNickname());
-                    hashMap.put("phonenumber", member.getPhoneNumber());
-                    hashMap.put("token", token);
-                    if(member.getuUId() == null){
-                        member.setuUId(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                    }
-                    db.collection("Users").document(member.getuUId()).set(hashMap)
-                            .addOnCompleteListener(task1 -> {
-                                if (task1.isSuccessful()) {
-                                    Log.d(TAG, "user into firebase success: " + member.getId());
-                                } else {
-                                    Log.e(TAG, "message: " + task.getException().getMessage());
-                                }
-                            });
-                }
-            }
-        });
+//        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+//            if (task.isSuccessful()) {
+//                if (task.getResult() != null) {
+//                    String token = task.getResult();
+//                    HashMap<String, String> hashMap = new HashMap<>();
+//                    hashMap.put("id", member.getuUId());
+//                    hashMap.put("email", member.getEmail());
+//                    hashMap.put("name", member.getNickname());
+//                    hashMap.put("phonenumber", member.getPhoneNumber());
+//                    hashMap.put("token", token);
+//                    if(member.getuUId() == null){
+//                        member.setuUId(FirebaseAuth.getInstance().getCurrentUser().getUid());
+//                    }
+//                    db.collection("Users").document(member.getuUId()).set(hashMap)
+//                            .addOnCompleteListener(task1 -> {
+//                                if (task1.isSuccessful()) {
+//                                    Log.d(TAG, "user into firebase success: " + member.getId());
+//                                } else {
+//                                    Log.e(TAG, "message: " + task.getException().getMessage());
+//                                }
+//                            });
+//                }
+//            }
+//        });
 
         if (RemoteAccess.networkConnected(activity)) {
             String url = RemoteAccess.URL_SERVER + "memberController";

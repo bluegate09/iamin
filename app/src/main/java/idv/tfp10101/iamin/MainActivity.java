@@ -207,7 +207,10 @@ public class MainActivity extends AppCompatActivity {
                destination.getId() == R.id.memberCenterFragment||
                destination.getId() == R.id.memberCenterMyIncome||
                destination.getId() == R.id.merchbrowseFragment ||
-               destination.getId() == R.id.messageFragment
+               destination.getId() == R.id.messageFragment||
+               destination.getId() == R.id.memberCenterIncomeDeatilsFragment||
+               destination.getId() == R.id.memberCenterMyWalletDetailsFragment
+
             ){
                 bottomNavigationView.setVisibility(View.GONE);
             } else {

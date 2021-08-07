@@ -231,7 +231,6 @@ public class MemberControl {
          return memberOrders;
      }
 
-
     /**
      *當前使用者座標
      */

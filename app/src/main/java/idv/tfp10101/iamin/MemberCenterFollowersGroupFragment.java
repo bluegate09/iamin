@@ -1,18 +1,12 @@
 package idv.tfp10101.iamin;
 
-import android.Manifest;
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.location.Location;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.view.menu.MenuView;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,11 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.CancellationTokenSource;
-import com.google.android.gms.tasks.Task;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -42,7 +31,6 @@ import java.util.concurrent.Executors;
 import idv.tfp10101.iamin.Data.HomeDataControl;
 import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.group.GroupControl;
-import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
 
 public class MemberCenterFollowersGroupFragment extends Fragment {
@@ -52,12 +40,10 @@ public class MemberCenterFollowersGroupFragment extends Fragment {
     private List<Group> groups;
     private RecyclerView recyclerViewGroup;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
-
 
         // 需要開啟多個執行緒取得圖片，使用執行緒池功能
         int numProcs = Runtime.getRuntime().availableProcessors();
@@ -99,7 +85,6 @@ public class MemberCenterFollowersGroupFragment extends Fragment {
         recyclerViewGroup.setLayoutManager(new LinearLayoutManager(activity));
         showMyGroup(groups);
 
-
     }
 
 
@@ -108,6 +93,8 @@ public class MemberCenterFollowersGroupFragment extends Fragment {
             Log.d(TAG,"no group found");
         }
         FollowerGroupAdapter groupAdapter = (FollowerGroupAdapter) recyclerViewGroup.getAdapter();
+        int px = (int) Constants.convertDpToPixel(8, activity); // 間距 8 dp
+        recyclerViewGroup.addItemDecoration(new Constants.SpacesItemDecoration("bottom", px));
         if(groupAdapter == null){
             recyclerViewGroup.setAdapter(new FollowerGroupAdapter(activity,groups));
         }else{
@@ -151,6 +138,7 @@ public class MemberCenterFollowersGroupFragment extends Fragment {
             } else {
                 holder.imv_group.setImageResource(R.drawable.no_image);
             }
+
             holder.txv_group_name.setText(group.getName());
             Timestamp ts = group.getConditionTime();
             DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");

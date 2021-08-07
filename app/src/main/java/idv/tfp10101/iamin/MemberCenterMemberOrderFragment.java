@@ -2,6 +2,7 @@ package idv.tfp10101.iamin;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.media.tv.TvContentRating;
 import android.os.Bundle;
@@ -44,6 +45,7 @@ import idv.tfp10101.iamin.location.Location;
 import idv.tfp10101.iamin.location.LocationControl;
 import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
+import idv.tfp10101.iamin.member.MyLoadingBar;
 import idv.tfp10101.iamin.member_order.MemberOrder;
 
 import static idv.tfp10101.iamin.member.MemberControl.memberRemoteAccess;
@@ -60,16 +62,13 @@ public class MemberCenterMemberOrderFragment extends Fragment {
     private int groupStatus = 0; // 目前團購spinner的狀態
     private String groupSearch = ""; // 搜尋的字串
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
         activity.setTitle("訂單頁面");
         member = MemberControl.getInstance();
-
-        String jsonIn = memberRemoteAccess(activity,member,"getMyMemberOrder");
-        Type listType = new TypeToken<List<MemberOrder>>() {}.getType();
-        memberOrderList = new Gson().fromJson(jsonIn, listType);
 
     }
 
@@ -83,10 +82,14 @@ public class MemberCenterMemberOrderFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        String jsonIn = memberRemoteAccess(activity,member,"getMyMemberOrder");
+        Type listType = new TypeToken<List<MemberOrder>>() {}.getType();
+        memberOrderList = new Gson().fromJson(jsonIn, listType);
+
         SearchView searchView = view.findViewById(R.id.svOrderSearch);
         memberOrderSpinner = view.findViewById(R.id.memberOrderSpinner);
 
-
+        MyLoadingBar.dismissLoadingBar();
 
         recyclerView = view.findViewById(R.id.rvMemberCenterOrder);
         recyclerView.setAdapter(new MyAdapter(activity,memberOrderList));
@@ -150,8 +153,9 @@ public class MemberCenterMemberOrderFragment extends Fragment {
                 return true;
             }
         });
-
     }
+
+
 
     private void updateFilterMemberOrder() {
         // 每次清空
@@ -259,6 +263,7 @@ public class MemberCenterMemberOrderFragment extends Fragment {
                 bundle.putString("GroupStatus",String.valueOf(memberOrder.getPayentMethod()));
                 bundle.putInt("TotalPrice",memberOrder.getTotal());
                 bundle.putInt("MemberOrderID", memberOrder.getMemberOrderId());
+                bundle.putBoolean("ReceivePaymentStatus",memberOrder.isReceivePaymentStatus());
 
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterMemberOrderFragment_to_memberCenterOrderDetailsFragment,bundle);
             });
