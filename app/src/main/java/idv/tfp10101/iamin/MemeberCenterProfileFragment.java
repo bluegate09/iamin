@@ -329,7 +329,7 @@ public class MemeberCenterProfileFragment extends Fragment {
         if (result.getResultCode() == RESULT_OK && result.getData() != null) {
             // 截圖的Uri
             Uri cropImageUri = UCrop.getOutput(result.getData());
-            uploadImage(cropImageUri);
+//            uploadImage(cropImageUri);
             if (cropImageUri != null) {
                 Bitmap bitmap = null;
                 try {
@@ -353,30 +353,30 @@ public class MemeberCenterProfileFragment extends Fragment {
 
     private void sendInfotoMysql(Member member) {
 
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                if (task.getResult() != null) {
-                    String token = task.getResult();
-                    HashMap<String, String> hashMap = new HashMap<>();
-                    hashMap.put("id", member.getuUId());
-                    hashMap.put("email", member.getEmail());
-                    hashMap.put("name", member.getNickname());
-                    hashMap.put("phonenumber", member.getPhoneNumber());
-                    hashMap.put("token", token);
-                    if(member.getuUId() == null){
-                        member.setuUId(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                    }
-                    db.collection("Users").document(member.getuUId()).set(hashMap)
-                            .addOnCompleteListener(task1 -> {
-                                if (task1.isSuccessful()) {
-                                    Log.d(TAG, "user into firebase success: " + member.getId());
-                                } else {
-                                    Log.e(TAG, "message: " + task.getException().getMessage());
-                                }
-                            });
-                }
-            }
-        });
+//        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+//            if (task.isSuccessful()) {
+//                if (task.getResult() != null) {
+//                    String token = task.getResult();
+//                    HashMap<String, String> hashMap = new HashMap<>();
+//                    hashMap.put("id", member.getuUId());
+//                    hashMap.put("email", member.getEmail());
+//                    hashMap.put("name", member.getNickname());
+//                    hashMap.put("phonenumber", member.getPhoneNumber());
+//                    hashMap.put("token", token);
+//                    if(member.getuUId() == null){
+//                        member.setuUId(FirebaseAuth.getInstance().getCurrentUser().getUid());
+//                    }
+//                    db.collection("Users").document(member.getuUId()).set(hashMap)
+//                            .addOnCompleteListener(task1 -> {
+//                                if (task1.isSuccessful()) {
+//                                    Log.d(TAG, "user into firebase success: " + member.getId());
+//                                } else {
+//                                    Log.e(TAG, "message: " + task.getException().getMessage());
+//                                }
+//                            });
+//                }
+//            }
+//        });
 
         if (RemoteAccess.networkConnected(activity)) {
             String url = RemoteAccess.URL_SERVER + "memberController";

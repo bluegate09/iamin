@@ -31,7 +31,7 @@ public class MyPercentFormatter extends ValueFormatter {
 
     @Override
     public String getPieLabel(float value, PieEntry pieEntry) {
-        if (pieEntry.getValue() <= 0) {
+        if (pieEntry.getValue() <= 300) {
             return "";
         } else {
             // raw value, skip percent sign

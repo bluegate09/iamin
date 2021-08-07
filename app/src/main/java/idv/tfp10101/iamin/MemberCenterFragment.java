@@ -1,6 +1,7 @@
 package idv.tfp10101.iamin;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,6 +33,7 @@ import java.util.List;
 
 import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
+import idv.tfp10101.iamin.member.MyLoadingBar;
 import idv.tfp10101.iamin.member.MyWallet;
 import idv.tfp10101.iamin.network.RemoteAccess;
 
@@ -87,8 +89,11 @@ public class MemberCenterFragment extends Fragment {
         view.findViewById(R.id.btMCProfile).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memeberCenterProfileFragment));
         //前往訂單
-        view.findViewById(R.id.btMCOrderList).setOnClickListener(v ->
-                Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memberCenterMemberOrderFragment));
+        view.findViewById(R.id.btMCOrderList).setOnClickListener(v ->{
+
+            MyLoadingBar.setLoadingBar(activity,"資料擷取中","請稍候");
+                Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memberCenterMemberOrderFragment);});
+
         //前往追隨
         view.findViewById(R.id.btMCFollow).setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterFragment_to_memeberCenterFollowFragment));
@@ -150,6 +155,9 @@ public class MemberCenterFragment extends Fragment {
         }
         activity.setTitle("會員中心");
     }
+
+
+
 
     private void setTextView() {
         email.setText(member.getEmail());

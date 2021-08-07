@@ -20,6 +20,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -45,6 +47,8 @@ public class SignUpFragment extends Fragment {
     private FirebaseAuth auth;
     private TextInputLayout emailTil,passwordTil,passwordTil2,phoneTil,nameTil;
     private EditText etEmail,etPassword,etPassword2,etNickname,etPhoneNumber;
+    private TextView quick1;
+    private ImageView quick2;
     private CheckBox checkBox;
     private Member member;
     private Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
@@ -82,6 +86,10 @@ public class SignUpFragment extends Fragment {
         nameTil = view.findViewById(R.id.signupNickNameTil);
 
         checkBox = view.findViewById(R.id.signUPcheckBox);
+        //快速輸入
+        quick1 = view.findViewById(R.id.quickType1);
+        quick2 = view.findViewById(R.id.idforalign);
+
 
         handleCheckBox();
 
@@ -165,6 +173,20 @@ public class SignUpFragment extends Fragment {
                 passwordTil2.setErrorEnabled(true);
                 passwordTil2.setError(getString(R.string.text_confirm_error));
             }
+        });
+        //快速登入
+        quick1.setOnClickListener(v -> {
+            etEmail.setText("bobowenwen@gmail.com");
+            etPassword.setText("password");
+            etPassword2.setText("password");
+            etNickname.setText("伯文");
+        });
+
+        quick2.setOnClickListener(v -> {
+            etEmail.setText("iEiElElE@gmail.com");
+            etPassword.setText("password");
+            etPassword2.setText("password");
+            etNickname.setText("以樂");
         });
     }
 

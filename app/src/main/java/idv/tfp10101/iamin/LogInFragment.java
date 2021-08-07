@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,7 +65,9 @@ public class LogInFragment extends Fragment {
     private CallbackManager callbackManager;
     private Member member;
     private EditText etEmail, etPassword;
+    private TextView quick1;
     private TextInputLayout emailTil,passwordTil;
+    private ImageView quick2;
     private ProgressDialog loadingBar;
     private final Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
 
@@ -89,8 +92,6 @@ public class LogInFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        //hide action bar
-//        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).hide();
         super.onCreate(savedInstanceState);
         activity = getActivity();
         activity.setTitle("登入");
@@ -124,9 +125,17 @@ public class LogInFragment extends Fragment {
         emailTil = view.findViewById(R.id.logInEmailTil);
         passwordTil = view.findViewById(R.id.logInPasswordTil);
 
+        quick1 = view.findViewById(R.id.quickLogin);
+        quick2 = view.findViewById(R.id.forLogin);
+
         //快速填寫
-        view.findViewById(R.id.idforalign).setOnClickListener(v -> {
-            etEmail.setText("mysql99@test.com");
+        quick1.setOnClickListener(v -> {
+            etEmail.setText("iEiElElE@gmail.com");
+            etPassword.setText("password");
+        });
+
+        quick2.setOnClickListener(v -> {
+            etEmail.setText("bobowenwen@gmail.com");
             etPassword.setText("password");
         });
 
