@@ -67,6 +67,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
     private GoogleMap googleMap;
     private String paymentMethod;
     private SearchView searchView;
+    private boolean receivePaymentStatus;
     private int totalPrice = 0 ;
     private ImageView imageViewQRcode;
     // 物件
@@ -89,6 +90,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
             paymentMethod = bundle.getString("GroupStatus");
             memberOderId = bundle.getInt("MemberOrderID");
             totalPrice = bundle.getInt("TotalPrice");
+            receivePaymentStatus = bundle.getBoolean("ReceivePaymentStatus");
         }else{
             Log.d(TAG,"bundle is null");
         }
@@ -135,7 +137,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         tvTotalPrice.setText(String.valueOf(totalPrice));
 
         btGooglePay = view.findViewById(R.id.btGooglePay);
-        btGooglePay.setVisibility(View.GONE);
+//        btGooglePay.setVisibility(View.GONE);
 
         markers = new ArrayList<>();
 
@@ -193,15 +195,16 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
             deadLine3.setText("");
         }
 
-
-        //googlePay imageButton
-        if(!(paymentMethod.equals("1"))){
+        //googlePay Button
+        if(!(paymentMethod.equals("1"))&&!receivePaymentStatus){
             btGooglePay.setVisibility(View.VISIBLE);
             btGooglePay.setEnabled(true);
             toTapPay();
+        }else{
+            btGooglePay.setEnabled(false);
+            btGooglePay.setText("已付款");
+//            Toast.makeText(activity, "此訂單已付款了喔", Toast.LENGTH_SHORT).show();
         }
-
-
 
         showMyOrder(memberOrderDetailsList);
 
