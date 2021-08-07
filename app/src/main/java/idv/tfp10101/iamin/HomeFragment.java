@@ -107,7 +107,6 @@ public class HomeFragment extends Fragment {
         getTokenSendServer();
         //
         Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar()).show();
-
         // 需要開啟多個執行緒取得圖片，使用執行緒池功能
         int numProcs = Runtime.getRuntime().availableProcessors();
         Log.d("TAG", "JVM可用的處理器數量: " + numProcs);
@@ -175,9 +174,9 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         findView(view);
+        searchView.setQuery("", false);
         // 3. 詢問使用權限
         requestPermissions();
-
         HomeDataControl.getAllGroup(activity);
         localGroups = HomeDataControl.getLocalGroups();
         if (localGroups == null || localGroups.isEmpty()) {
@@ -192,8 +191,6 @@ public class HomeFragment extends Fragment {
 
         //實作取得買家緯精度方法
         getUserloaction();
-
-
 
         //將searchView清空
         searchView.setQuery("", false);
@@ -272,29 +269,31 @@ public class HomeFragment extends Fragment {
                             searchView.setQuery("", false);
                             swipeRefreshLayout.setRefreshing(false);
                         });
-                        Toast.makeText(activity, "未分類", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(activity, "未分類", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.food:
                         choosesort(1, localHomeDatas);
-                        Toast.makeText(activity, "美食", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(activity, "美食", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.life:
                         choosesort(2, localHomeDatas);
-                        Toast.makeText(activity, "生活用品", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(activity, "生活用品", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.theerc:
                         choosesort(3, localHomeDatas);
-                        Toast.makeText(activity, "3C", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(activity, "3C", Toast.LENGTH_SHORT).show();
                         return true;
                     case R.id.other:
                         choosesort(4, localHomeDatas);
-                        Toast.makeText(activity, "其他", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(activity, "其他", Toast.LENGTH_SHORT).show();
                         return true;
                 }
                 return false;
             }
         });
     }
+
+
     //取得User的當前位置
     private void getUserloaction() {
         checkPositioning();
@@ -387,7 +386,7 @@ public class HomeFragment extends Fragment {
                 selectHomeData.add(category);
             }
         }
-        List<HomeData> searchHomeData = new ArrayList<>();
+
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -397,6 +396,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                List<HomeData> searchHomeData = new ArrayList<>();
                 if (newText.equals("")||newText.isEmpty()) {
                     showGroup(selectHomeData);
                 } else {
@@ -508,7 +508,9 @@ public class HomeFragment extends Fragment {
 
             //設定點擊商品觸發
             holder.itemView.setOnClickListener(v -> {
-
+                searchView.setQuery("", false);
+                //將分類bar指回無分類
+                bottomNavigationView.setSelectedItemId(R.id.no);
                 Bundle bundle = new Bundle();
                 bundle.putInt("GroupID", GroupID);
                 bundle.putDouble("Userlat",userlat);

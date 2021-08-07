@@ -93,6 +93,8 @@ public class MemberCenterFollowersGroupFragment extends Fragment {
             Log.d(TAG,"no group found");
         }
         FollowerGroupAdapter groupAdapter = (FollowerGroupAdapter) recyclerViewGroup.getAdapter();
+        int px = (int) Constants.convertDpToPixel(8, activity); // 間距 8 dp
+        recyclerViewGroup.addItemDecoration(new Constants.SpacesItemDecoration("bottom", px));
         if(groupAdapter == null){
             recyclerViewGroup.setAdapter(new FollowerGroupAdapter(activity,groups));
         }else{
