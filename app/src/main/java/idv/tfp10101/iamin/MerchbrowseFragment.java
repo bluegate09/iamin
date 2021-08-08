@@ -62,6 +62,7 @@ import idv.tfp10101.iamin.location.Location;
 import idv.tfp10101.iamin.location.LocationControl;
 import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
+import idv.tfp10101.iamin.member.MyLoadingBar;
 import idv.tfp10101.iamin.member_order.MemberOrder;
 import idv.tfp10101.iamin.member_order.MemberOrderControl;
 import idv.tfp10101.iamin.member_order_details.MemberOrderDetails;
@@ -127,6 +128,7 @@ public class MerchbrowseFragment extends Fragment {
             jsonMember = RemoteAccess.getRemoteData(url, jsonObject.toString());
             member = new Gson().fromJson(jsonMember,Member.class);
             MemberControl.setMember(member);
+            MyLoadingBar.dismissLoadingBar();
         }
     }
 

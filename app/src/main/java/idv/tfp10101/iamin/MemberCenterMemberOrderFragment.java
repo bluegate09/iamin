@@ -88,8 +88,12 @@ public class MemberCenterMemberOrderFragment extends Fragment {
 
         SearchView searchView = view.findViewById(R.id.svOrderSearch);
         memberOrderSpinner = view.findViewById(R.id.memberOrderSpinner);
+        try {
+            MyLoadingBar.dismissLoadingBar();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        MyLoadingBar.dismissLoadingBar();
 
         recyclerView = view.findViewById(R.id.rvMemberCenterOrder);
         recyclerView.setAdapter(new MyAdapter(activity,memberOrderList));
