@@ -355,7 +355,9 @@ public class HomeFragment extends Fragment {
                     //取得買家與所有團購面交地點的距離
                     android.location.Location.distanceBetween(userlat, userlng, groupLat, groupLng, results);
                     //除以1000從公尺變成公里後加入list
-                    distance.add(results[0] / 1000);
+                    if (results != null) {
+                        distance.add(results[0] / 1000);
+                    }
                 }
                 //由小到大排序(只取最近的距離)
                 Collections.sort(distance);
@@ -515,10 +517,10 @@ public class HomeFragment extends Fragment {
 
             //設定點擊商品觸發
             holder.itemView.setOnClickListener(v -> {
+                MyLoadingBar.setLoadingBar(activity,"正在進入商品頁面","");
                 searchView.setQuery("", false);
                 //將分類bar指回無分類
                 bottomNavigationView.setSelectedItemId(R.id.no);
-                MyLoadingBar.setLoadingBar(activity,"正在進入商品頁面","");
                 Bundle bundle = new Bundle();
                 bundle.putInt("GroupID", GroupID);
                 bundle.putDouble("Userlat",userlat);
