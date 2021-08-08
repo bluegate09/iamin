@@ -100,6 +100,7 @@ public class MerchbrowseFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         member = MemberControl.getInstance();
+
     }
 
     @Override
@@ -107,7 +108,7 @@ public class MerchbrowseFragment extends Fragment {
                              Bundle savedInstanceState) {
         activity = getActivity();
         view = inflater.inflate(R.layout.fragment_merchbrowse, container, false);
-
+        activity.setTitle("商品細項");
         return view;
     }
 
