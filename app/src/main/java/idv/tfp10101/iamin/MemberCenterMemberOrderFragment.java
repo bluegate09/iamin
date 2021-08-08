@@ -326,8 +326,9 @@ public class MemberCenterMemberOrderFragment extends Fragment {
                                                    new Timestamp(System.currentTimeMillis()),
                                                    memberOrder.getGroupName());
 
-                        Log.d(TAG,"GROUP_NAME: " + memberOrder.getGroupName());
+//                        Log.d(TAG,"GROUP_NAME: " + memberOrder.getGroupName());
                         MemberControl.submitRating(activity,rating);
+
                         alertDialog.cancel();
 
                         Toast.makeText(activity, getString(R.string.text_rating_submit), Toast.LENGTH_SHORT).show();

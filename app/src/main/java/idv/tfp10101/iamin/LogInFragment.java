@@ -252,6 +252,7 @@ public class LogInFragment extends Fragment {
                         String myToken = sharedPreferences.getString("FCM_TOKEN", "");
                         member.setFCM_token(myToken);
                         member.setuUId(auth.getCurrentUser().getUid());
+                        member.setuUId2(auth.getCurrentUser().getUid());
 
                         String jsonMember = MemberControl.memberRemoteAccess(activity,member,"findbyUuid");
                         member = new Gson().fromJson(jsonMember,Member.class);
@@ -269,7 +270,8 @@ public class LogInFragment extends Fragment {
                         if(signInAccount != null) {
 
                             if(signInAccount.getEmail() != null ) {
-//                                Log.d(TAG,signInAccount.getEmail());
+                                Log.d(TAG,"signInAccount: " + signInAccount.getEmail());
+                                member = MemberControl.getInstance();
                                 member.setEmail(signInAccount.getEmail());
                             }
                             MemberControl.setMember(member);

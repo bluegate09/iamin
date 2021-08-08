@@ -231,6 +231,7 @@ public class SignUpFragment extends Fragment {
                     } else {
                         Log.d(TAG,"task: " + task.getResult());
                         Toast.makeText(getContext(), "Authentication failed", Toast.LENGTH_SHORT).show();
+
                     }
                 });
     }
