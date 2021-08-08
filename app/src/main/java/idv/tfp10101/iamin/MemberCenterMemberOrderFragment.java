@@ -264,20 +264,35 @@ public class MemberCenterMemberOrderFragment extends Fragment {
                 Bundle bundle = new Bundle();
                 bundle.putString("OrderDetails", orderDetailsJson);
                 bundle.putString("Locations",locationsJson);
-                bundle.putString("GroupStatus",String.valueOf(memberOrder.getPayentMethod()));
-                bundle.putInt("TotalPrice",memberOrder.getTotal());
-                bundle.putInt("MemberOrderID", memberOrder.getMemberOrderId());
+
+                String memberOrderJson = gson.toJson(memberOrder);
+                bundle.putString("MemberOrder",memberOrderJson);
+
+//                bundle.putString("GroupStatus",String.valueOf(memberOrder.getPayentMethod()));
+//                bundle.putInt("TotalPrice",memberOrder.getTotal());
+//                bundle.putInt("MemberOrderID", memberOrder.getMemberOrderId());
                 bundle.putBoolean("ReceivePaymentStatus",memberOrder.isReceivePaymentStatus());
 
                 Navigation.findNavController(v).navigate(R.id.action_memberCenterMemberOrderFragment_to_memberCenterOrderDetailsFragment,bundle);
             });
 
             //判定是否可評價
-            if(!(memberOrder.isDeliverStatus() && memberOrder.isReceivePaymentStatus())){
-                holder.tvRatingButton.setVisibility(View.GONE);
-            }else{
-                holder.tvRatingButton.setVisibility(View.VISIBLE);
-            }
+
+                Rating checkRating = MemberControl.checkIsRate(activity,memberOrder.getMemberOrderId());
+                if(checkRating == null){
+                    if(!(memberOrder.isDeliverStatus() && memberOrder.isReceivePaymentStatus())){
+                        holder.tvRatingButton.setVisibility(View.GONE);
+                    }else{
+                        holder.tvRatingButton.setVisibility(View.VISIBLE);
+                    }
+                }else{
+                        holder.tvRatingButton.setEnabled(false);
+                        holder.tvRatingButton.setText("已評價");
+
+                }
+
+
+
 
             holder.tvRatingButton.setOnClickListener(v -> {
 

@@ -194,8 +194,8 @@ public class LogInFragment extends Fragment {
         view.findViewById(R.id.btToSignUp).setOnClickListener(v ->
                 Navigation.findNavController(view).navigate(R.id.action_logInFragment_to_signUpFragment));
         //電話驗證
-        view.findViewById(R.id.btPhoneSingIn).setOnClickListener(v ->
-                Navigation.findNavController(view).navigate(R.id.action_logInFragment_to_phoneAuthFragment));
+//        view.findViewById(R.id.btPhoneSingIn).setOnClickListener(v ->
+//                Navigation.findNavController(view).navigate(R.id.action_logInFragment_to_phoneAuthFragment));
 
         //忘記密碼 進入email fragment
         view.findViewById(R.id.btForgetPassword).setOnClickListener(v -> {
@@ -232,19 +232,6 @@ public class LogInFragment extends Fragment {
         loadingBar.setMessage(messageText);
         loadingBar.show();
         loadingBar.setCanceledOnTouchOutside(true);
-    }
-
-    protected void setGooglePlusButtonText(SignInButton signInButton, String buttonText) {
-        // Find the TextView that is inside of the SignInButton and set its text
-        for (int i = 0; i < signInButton.getChildCount(); i++) {
-            View v = signInButton.getChildAt(i);
-
-            if (v instanceof TextView) {
-                TextView tv = (TextView) v;
-                tv.setText(buttonText);
-                return;
-            }
-        }
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {

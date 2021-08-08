@@ -175,5 +175,11 @@ public class ReachNotificationFragment extends Fragment {
                 Toast.makeText(activity, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
             }
         });
+        // 長按測試按鍵
+        buttonSubmit.setOnLongClickListener(view -> {
+            editTextTitle.setText("成功達標囉～");
+            editTextBody.setText("請準時到取貨地點呦！");
+            return true;
+        });
     }
 }

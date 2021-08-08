@@ -77,12 +77,12 @@ public class SignUpFragment extends Fragment {
         etPassword = view.findViewById(R.id.etRegisterPassword);
         etPassword2 = view.findViewById(R.id.etRegisterPassword2);
         etNickname = view.findViewById(R.id.etRegisterNickname);
-        etPhoneNumber = view.findViewById(R.id.etRegisterPhoneNumber);
+//        etPhoneNumber = view.findViewById(R.id.etRegisterPhoneNumber);
 
         emailTil = view.findViewById(R.id.signupEmailTil);
         passwordTil = view.findViewById(R.id.signupPasswordTil);
         passwordTil2 = view.findViewById(R.id.signupPasswordTil2);
-        phoneTil = view.findViewById(R.id.signupPhoneTil);
+//        phoneTil = view.findViewById(R.id.signupPhoneTil);
         nameTil = view.findViewById(R.id.signupNickNameTil);
 
         checkBox = view.findViewById(R.id.signUPcheckBox);
@@ -101,7 +101,7 @@ public class SignUpFragment extends Fragment {
             String password = etPassword.getText().toString().trim();
             String password2 = etPassword2.getText().toString().trim();
             String nickname = etNickname.getText().toString().trim();
-            String phoneNumber = etPhoneNumber.getText().toString().trim();
+//            String phoneNumber = etPhoneNumber.getText().toString().trim();
 
             boolean isFormatCorrect = true;
 
@@ -148,17 +148,17 @@ public class SignUpFragment extends Fragment {
                 nameTil.setErrorEnabled(false);
             }
 
-            if(!(phoneNumber.isEmpty())){
-                if(phoneNumber.length() < 10){
-                    phoneTil.setErrorEnabled(true);
-                    phoneTil.setError(getString(R.string.textphoneformaterror));
-                    isFormatCorrect = false;
-                }else{
-                    phoneTil.setError(null);
-                    phoneTil.setErrorEnabled(false);
-                    member.setPhoneNumber(phoneNumber);
-                }
-            }
+//            if(!(phoneNumber.isEmpty())){
+//                if(phoneNumber.length() < 10){
+//                    phoneTil.setErrorEnabled(true);
+//                    phoneTil.setError(getString(R.string.textphoneformaterror));
+//                    isFormatCorrect = false;
+//                }else{
+//                    phoneTil.setError(null);
+//                    phoneTil.setErrorEnabled(false);
+//                    member.setPhoneNumber(phoneNumber);
+//                }
+//            }
 
             if(password.equals(password2)&&isFormatCorrect){
                 member.setEmail(email);
@@ -166,9 +166,6 @@ public class SignUpFragment extends Fragment {
                 member.setNickname(nickname);
                 //firebase創帳號
                 createAccount(member);
-            }else if(password.equals(password2)&&phoneNumber.length() < 10){
-                passwordTil2.setError(null);
-                passwordTil2.setErrorEnabled(false);
             }else{
                 passwordTil2.setErrorEnabled(true);
                 passwordTil2.setError(getString(R.string.text_confirm_error));

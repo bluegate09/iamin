@@ -182,11 +182,32 @@ public class MemberControl {
     }
 
     /**
-     * 輸入member_id取得rating
+     *
+     * 檢查是否評價過
      * @param context
-     * @param member_id
-     * @return
+     * @param memberOrderID
      */
+    public static Rating checkIsRate(Context context, int memberOrderID){
+        if (RemoteAccess.networkConnected(context)) {
+            String url = RemoteAccess.URL_SERVER + "Rating";
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("action","checkIsRated");
+            jsonObject.addProperty("memberOrderID",new Gson().toJson(memberOrderID));
+            String jsonRating =  RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
+            return new Gson().fromJson(jsonRating , Rating.class);
+        }else {
+            Toast.makeText(context, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
+            return null;
+        }
+    }
+
+
+        /**
+         * 輸入member_id取得rating
+         * @param context
+         * @param member_id
+         * @return
+         */
 
     public static List<Rating> getRating(Context context, int member_id){
         List<Rating> ratings = new ArrayList<>();
@@ -205,6 +226,25 @@ public class MemberControl {
             Toast.makeText(context, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
         }
         return ratings;
+    }
+
+    /**
+     *
+     * 電話號碼驗證成功更新
+     * @param context
+     * @param member
+     */
+    public static void updatePhoneNumber(Context context,Member member){
+        Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
+        if (RemoteAccess.networkConnected(context)) {
+            String url = RemoteAccess.URL_SERVER + "memberController";
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("action","phoneAuthSuccess");
+            jsonObject.addProperty("member",new Gson().toJson(member));
+            RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
+        }else {
+            Toast.makeText(context, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
+        }
     }
 
 

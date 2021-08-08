@@ -55,6 +55,7 @@ public class PhoneAuthFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         activity = getActivity();
+        activity.setTitle("電話驗證");
         auth = FirebaseAuth.getInstance();
         member = MemberControl.getInstance();
         handlePhoneAuthProvider();
@@ -194,31 +195,38 @@ public class PhoneAuthFragment extends Fragment {
         auth.signInWithCredential(phoneAuthCredential).addOnCompleteListener(task -> {
             if(task.isSuccessful()){
                 Log.d(TAG, "signInWithCredential:success");
-                FirebaseUser user = task.getResult().getUser();
+//                FirebaseUser user = task.getResult().getUser();
 //                Toast.makeText(activity, "signInWithCredential:success", Toast.LENGTH_SHORT).show();
+                member.setuUId2(auth.getCurrentUser().getUid());
+                member.setPhoneNumber(phoneNumber.getText().toString().trim());
+                MemberControl.updatePhoneNumber(activity,member);
 
-                String jsonMember;
-                member.setuUId(auth.getCurrentUser().getUid());
-                jsonMember = memberRemoteAccess(activity,member,"findbyUuid");
-                member = gson.fromJson(jsonMember,Member.class);
-                if(member != null){
-                    Toast.makeText(activity, getString(R.string.welcomeback), Toast.LENGTH_SHORT).show();
-                    Log.d(TAG,"Welcome back");
-                    MemberControl.setMember(member);
-                    Navigation.findNavController(requireView()).navigate(R.id.action_phoneAuthFragment_to_memberCenterFragment);
-                    return;
-                }else{
-                    member = MemberControl.getInstance();
-                }
+                MemberControl.setMember(member);
+
+//                String jsonMember;
+//                member.setuUId(auth.getCurrentUser().getUid());
+//                jsonMember = memberRemoteAccess(activity,member,"findbyUuid");
+//                member = gson.fromJson(jsonMember,Member.class);
+//                if(member != null){
+//                    Toast.makeText(activity, getString(R.string.welcomeback), Toast.LENGTH_SHORT).show();
+//                    Log.d(TAG,"Welcome back");
+//                    MemberControl.setMember(member);
+//                    Navigation.findNavController(requireView()).navigate(R.id.action_phoneAuthFragment_to_memberCenterFragment);
+//                    return;
+//                }else{
+//                    member = MemberControl.getInstance();
+//                }
+
 
                 String phoneNumber = auth.getCurrentUser().getPhoneNumber();
                 Log.d(TAG,"phoneNumber: " + phoneNumber);
                 if(phoneNumber!= null) {
-                    member.setPhoneNumber(phoneNumber);
+                    ;
                 }
-                MemberControl.setMember(member);
-                Navigation.findNavController(requireView())
-                        .navigate(R.id.action_phoneAuthFragment_to_socialLoginFragment);
+
+                Navigation.findNavController(requireView()).popBackStack();
+//                Navigation.findNavController(requireView())
+//                        .navigate(R.id.action_phoneAuthFragment_to_socialLoginFragment);
 
             }else{
                 if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
