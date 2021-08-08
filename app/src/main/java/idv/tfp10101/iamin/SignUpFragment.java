@@ -176,7 +176,7 @@ public class SignUpFragment extends Fragment {
             etEmail.setText("bobowenwen@gmail.com");
             etPassword.setText("password");
             etPassword2.setText("password");
-            etNickname.setText("伯文");
+            etNickname.setText("柏文");
         });
 
         quick2.setOnClickListener(v -> {
