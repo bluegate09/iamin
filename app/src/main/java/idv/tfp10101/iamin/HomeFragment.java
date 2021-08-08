@@ -353,7 +353,9 @@ public class HomeFragment extends Fragment {
                     //取得買家與所有團購面交地點的距離
                     android.location.Location.distanceBetween(userlat, userlng, groupLat, groupLng, results);
                     //除以1000從公尺變成公里後加入list
-                    distance.add(results[0] / 1000);
+                    if (results != null) {
+                        distance.add(results[0] / 1000);
+                    }
                 }
                 //由小到大排序(只取最近的距離)
                 Collections.sort(distance);
