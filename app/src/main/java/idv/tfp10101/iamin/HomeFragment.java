@@ -513,10 +513,10 @@ public class HomeFragment extends Fragment {
 
             //設定點擊商品觸發
             holder.itemView.setOnClickListener(v -> {
+                MyLoadingBar.setLoadingBar(activity,"正在進入商品頁面","");
                 searchView.setQuery("", false);
                 //將分類bar指回無分類
                 bottomNavigationView.setSelectedItemId(R.id.no);
-                MyLoadingBar.setLoadingBar(activity,"正在進入商品頁面","");
                 Bundle bundle = new Bundle();
                 bundle.putInt("GroupID", GroupID);
                 bundle.putDouble("Userlat",userlat);

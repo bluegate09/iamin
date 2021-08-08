@@ -128,7 +128,6 @@ public class MerchbrowseFragment extends Fragment {
             jsonMember = RemoteAccess.getRemoteData(url, jsonObject.toString());
             member = new Gson().fromJson(jsonMember,Member.class);
             MemberControl.setMember(member);
-            MyLoadingBar.dismissLoadingBar();
         }
     }
 
@@ -745,7 +744,7 @@ public class MerchbrowseFragment extends Fragment {
                         holder.imageView.setImageBitmap(data);
                     }
                 });
-
+        MyLoadingBar.dismissLoadingBar();
         }
         //設定回傳數量
         @Override
