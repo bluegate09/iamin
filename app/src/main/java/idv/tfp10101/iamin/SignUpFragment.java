@@ -176,7 +176,7 @@ public class SignUpFragment extends Fragment {
             etEmail.setText("bobowenwen@gmail.com");
             etPassword.setText("password");
             etPassword2.setText("password");
-            etNickname.setText("伯文");
+            etNickname.setText("柏文");
         });
 
         quick2.setOnClickListener(v -> {
@@ -231,6 +231,7 @@ public class SignUpFragment extends Fragment {
                     } else {
                         Log.d(TAG,"task: " + task.getResult());
                         Toast.makeText(getContext(), "Authentication failed", Toast.LENGTH_SHORT).show();
+
                     }
                 });
     }

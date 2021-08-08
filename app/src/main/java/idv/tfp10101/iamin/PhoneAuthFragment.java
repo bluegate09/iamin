@@ -200,7 +200,6 @@ public class PhoneAuthFragment extends Fragment {
                 member.setuUId2(auth.getCurrentUser().getUid());
                 member.setPhoneNumber(phoneNumber.getText().toString().trim());
                 MemberControl.updatePhoneNumber(activity,member);
-
                 MemberControl.setMember(member);
 
 //                String jsonMember;
