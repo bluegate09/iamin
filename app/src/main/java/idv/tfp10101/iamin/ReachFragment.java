@@ -357,7 +357,7 @@ public class ReachFragment extends Fragment {
      */
     private String timestampToString(Timestamp pickup_time) {
         String string = "";
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy h:mm:ss a");
 
         try {
             string = dateFormat.format(pickup_time);

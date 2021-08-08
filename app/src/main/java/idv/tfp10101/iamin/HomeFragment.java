@@ -142,10 +142,12 @@ public class HomeFragment extends Fragment {
             SharedPreferences sharedPreferences = activity.getSharedPreferences(FCM_Token, MODE_PRIVATE);
             String token = sharedPreferences.getString(FCM_Token, "");
             member.setFCM_token(token);
+
             member.setuUId(currentUser.getUid());
-            //tmp
             MemberControl.memberRemoteAccess(activity, member, "updateTokenbyUid");
             String jsonMember = MemberControl.memberRemoteAccess(activity, member, "findbyUuid");
+
+
             member = new Gson().fromJson(jsonMember, Member.class);
             MemberControl.setMember(member);
             Log.d("TAG_HOME", "Fetch Member Date Complete");

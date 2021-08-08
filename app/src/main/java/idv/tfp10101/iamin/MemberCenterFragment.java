@@ -57,6 +57,10 @@ public class MemberCenterFragment extends Fragment {
         auth = FirebaseAuth.getInstance();
         member = MemberControl.getInstance();
 
+        String jsonMember = MemberControl.memberRemoteAccess(activity, member, "findbyUuid");
+        member = new Gson().fromJson(jsonMember, Member.class);
+        MemberControl.setMember(member);
+
     }
 
     @Override
