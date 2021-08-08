@@ -59,9 +59,9 @@
     <string name="authfailed">驗證失敗.</string>
     <string name="signinwithemailsuccess">Email登入成功</string>
     <string name="welcome_back">歡迎來到</string>
-    <string name="forget_password">忘記密碼</string>
+    <string name="forget_password">忘記密碼?</string>
     <string name="login">登入</string>
-    <string name="don_t_have_an_account_yet_register_now">現在註冊</string>
+    <string name="don_t_have_an_account_yet_register_now">現在註冊!</string>
     <string name="authenticate_with_phone_number">以電話號碼登入</string>
     <string name="facebookloginsuccess">facebook:登入成功:</string>
     <string name="facebooklogincancel">facebook:登入取消</string>
@@ -172,5 +172,5 @@
     <string name="text_checkout">結帳</string>
     <string name="text_takePicture">拍照</string>
     <string name="text_pickpicture">選取圖片</string>
-    <string name="text_reset_phone_number">重置電話號碼？</string>
+    <string name="text_reset_phone_number">變更電話號碼？</string>
 </resources>

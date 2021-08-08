@@ -24,6 +24,8 @@ public class Member implements Serializable {
     private Timestamp loginTime;
     private Timestamp deleteTime;
     private String FCM_token;
+    //
+    private String uUId2;
 
     public Member() {
         this(
@@ -33,6 +35,7 @@ public class Member implements Serializable {
         null,
         null,
         null,
+                null,
                 null,
                 null,
                 null,
@@ -72,7 +75,23 @@ public class Member implements Serializable {
         this.FCM_token = FCM_token;
     }
 
-
+    public Member(int id, int follow_count, double rating, String uUId, String email, String password, String nickname, String phoneNumber, Timestamp startTime, Timestamp updateTime, Timestamp logoutTime, Timestamp loginTime, Timestamp deleteTime, String FCM_token, String uUId2) {
+        this.id = id;
+        this.follow_count = follow_count;
+        this.rating = rating;
+        this.uUId = uUId;
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.phoneNumber = phoneNumber;
+        this.startTime = startTime;
+        this.updateTime = updateTime;
+        this.logoutTime = logoutTime;
+        this.loginTime = loginTime;
+        this.deleteTime = deleteTime;
+        this.FCM_token = FCM_token;
+        this.uUId2 = uUId2;
+    }
 
     public int getId() {
         return id;
@@ -202,4 +221,11 @@ public class Member implements Serializable {
         FCM_token = fCM_token;
     }
 
+    public String getuUId2() {
+        return uUId2;
+    }
+
+    public void setuUId2(String uUId2) {
+        this.uUId2 = uUId2;
+    }
 }

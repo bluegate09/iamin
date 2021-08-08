@@ -8,139 +8,164 @@
     android:background="@color/colorBackground"
     tools:context=".MemeberCenterProfileFragment" >
 
-    <RelativeLayout
-        android:id="@+id/RelativeLayout"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:padding="20dp"
-        android:background="@drawable/member_center_background"
-        android:elevation="1dp">
+        android:layout_height="match_parent">
 
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/ivProfilePic"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_centerInParent="true"
-            android:contentDescription="userprotrait"
-            android:padding="8dp"
-            android:src="@drawable/silhouettes"
-            app:civ_border_color="#FF000000"
-            app:civ_border_width="2dp" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/ibProfile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/ivProfilePic"
-            android:layout_marginStart="-60dp"
-            android:layout_marginTop="10dp"
-            android:src="@drawable/add_pic" />
-
-
-    </RelativeLayout>
-
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="20dp">
-
-
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
-            app:boxStrokeWidth="0dp"
-            app:boxStrokeWidthFocused="0dp"
-            android:layout_margin="8dp"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:startIconDrawable="@drawable/icon_user"
-            android:hint="@string/nickname">
+            android:orientation="vertical" >
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etProfileNickname"
+            <RelativeLayout
+                android:id="@+id/RelativeLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="250dp"
+                android:background="@drawable/member_center_background"
+                android:elevation="1dp"
+                android:padding="20dp">
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
-            app:boxStrokeWidth="0dp"
-            app:boxStrokeWidthFocused="0dp"
-            android:layout_margin="8dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:startIconDrawable="@drawable/email"
-            android:hint="@string/email">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etProfileEmail"
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/ivProfilePic"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_centerInParent="true"
+                    android:contentDescription="userprotrait"
+                    android:padding="8dp"
+                    android:src="@drawable/silhouettes"
+                    app:civ_border_color="#FF000000"
+                    app:civ_border_width="2dp" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/ibProfile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="-60dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_toEndOf="@id/ivProfilePic"
+                    android:src="@drawable/add_pic" />
+
+
+            </RelativeLayout>
+
+            <LinearLayout
+
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="20dp">
 
-<!--        <com.google.android.material.textfield.TextInputLayout-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:endIconDrawable="@drawable/eye"-->
-<!--            app:startIconDrawable="@drawable/lock"-->
-<!--            android:hint="@string/password">-->
 
-<!--            <com.google.android.material.textfield.TextInputEditText-->
-<!--                android:id="@+id/etProfilePassword"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:background="@color/white"-->
-<!--                android:inputType="textPassword" />-->
-<!--        </com.google.android.material.textfield.TextInputLayout>-->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:hint="@string/nickname"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="0dp"
+                    app:startIconDrawable="@drawable/icon_user">
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
-            app:boxStrokeWidth="0dp"
-            app:boxStrokeWidthFocused="0dp"
-            android:layout_margin="8dp"
-            android:id="@+id/memberProfilePhoneTil"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:startIconDrawable="@drawable/phone"
-            android:hint="@string/phone_number">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etProfileNickname"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etProfilePhoneNumber"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:digits="0987654321"
-                android:maxLength="10"
-                android:inputType="phone"
-                android:background="@color/white" />
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:hint="@string/email"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="0dp"
+                    app:startIconDrawable="@drawable/email">
 
-        <Button
-            android:id="@+id/resetPhoneNumber"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
-            android:textColor="@color/black"
-            android:layout_marginEnd="8dp"
-            android:textSize="12sp"
-            android:text="@string/text_reset_phone_number"/>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etProfileEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@color/white" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
-            android:background="@drawable/bg_black_border_button"
-            app:backgroundTint="@null"
-            android:textColor="@color/black"
-            android:id="@+id/btProfileUpdate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/textUpdate" />
 
-    </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="16dp"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/imageView3"
+                        android:layout_marginStart="8dp"
+                        android:layout_gravity="center"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/phone" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginTop="8dp"
+                            android:textSize="12sp"
+                            android:text="電話號碼" />
+
+                        <TextView
+                            android:id="@+id/myProfilePhoneNumber"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="20dp"
+                            android:layout_marginBottom="8dp"
+                            android:text="0999999999"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/phoneButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:background="@drawable/bg_black_border_button"
+                    android:text="電話驗證"
+                    android:textColor="@color/black"
+                    app:backgroundTint="@null" />
+
+
+                <Button
+                    android:id="@+id/resetPhoneNumber"
+                    style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="8dp"
+                    android:text="@string/text_reset_phone_number"
+                    android:textColor="@color/black"
+                    android:textSize="12sp" />
+
+                <Button
+                    android:id="@+id/btProfileUpdate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/bg_black_border_button"
+                    android:text="@string/textUpdate"
+                    android:textColor="@color/black"
+                    app:backgroundTint="@null" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
 
 </LinearLayout>

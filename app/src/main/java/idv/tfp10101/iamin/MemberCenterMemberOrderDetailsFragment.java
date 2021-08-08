@@ -51,6 +51,8 @@ import java.util.Locale;
 
 import idv.tfp10101.iamin.location.Location;
 import idv.tfp10101.iamin.member.CustomMapView;
+import idv.tfp10101.iamin.member_order.MemberOrder;
+import idv.tfp10101.iamin.member_order.MemberOrderControl;
 import idv.tfp10101.iamin.member_order_details.MemberOrderDetails;
 import idv.tfp10101.iamin.merch.MerchControl;
 
@@ -65,11 +67,13 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
     private TextView deadLine1,deadLine2,deadLine3,location1,location2,location3,tloc2,tloc3,tvTotalPrice,pt1,pt2,pt3;
     private Button btGooglePay;
     private GoogleMap googleMap;
-    private String paymentMethod;
+    private MemberOrder memberOrder;
+    private int paymentMethod;
     private SearchView searchView;
     private boolean receivePaymentStatus;
     private int totalPrice = 0 ;
     private ImageView imageViewQRcode;
+    private final Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
     // 物件
     private int memberOderId = -1;
 
@@ -83,13 +87,21 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         Bundle bundle = getArguments();
         String orderDetailsJson = "";
         String locationJson = "";
-        paymentMethod ="";
+        paymentMethod = 0;
         if(bundle!=null) {
             orderDetailsJson = bundle.getString("OrderDetails");
             locationJson = bundle.getString("Locations");
-            paymentMethod = bundle.getString("GroupStatus");
-            memberOderId = bundle.getInt("MemberOrderID");
-            totalPrice = bundle.getInt("TotalPrice");
+
+            String jsonMemberOrder = bundle.getString("MemberOrder");
+            memberOrder = gson.fromJson(jsonMemberOrder,MemberOrder.class);
+
+            paymentMethod = memberOrder.getPayentMethod();
+            memberOderId = memberOrder.getMemberOrderId();
+            totalPrice = memberOrder.getTotal();
+
+//            paymentMethod = bundle.getString("GroupStatus");
+//            memberOderId = bundle.getInt("MemberOrderID");
+//            totalPrice = bundle.getInt("TotalPrice");
             receivePaymentStatus = bundle.getBoolean("ReceivePaymentStatus");
         }else{
             Log.d(TAG,"bundle is null");
@@ -134,7 +146,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         tloc3 = view.findViewById(R.id.tPickupDetails3);
 
         tvTotalPrice = view.findViewById(R.id.memberOrderDetailTotalPirce);
-        tvTotalPrice.setText(String.valueOf(totalPrice));
+        tvTotalPrice.setText(String.valueOf(totalPrice) + "元");
 
         btGooglePay = view.findViewById(R.id.btGooglePay);
 //        btGooglePay.setVisibility(View.GONE);
@@ -196,15 +208,22 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         }
 
         //googlePay Button
-        if(!(paymentMethod.equals("1"))&&!receivePaymentStatus){
-            btGooglePay.setVisibility(View.VISIBLE);
-            btGooglePay.setEnabled(true);
-            toTapPay();
-        }else{
+        if(paymentMethod ==1){
+            btGooglePay.setVisibility(View.GONE);
             btGooglePay.setEnabled(false);
-            btGooglePay.setText("已付款");
-//            Toast.makeText(activity, "此訂單已付款了喔", Toast.LENGTH_SHORT).show();
+        }else{
+            if(paymentMethod == 2 &&!receivePaymentStatus){
+                btGooglePay.setVisibility(View.VISIBLE);
+                btGooglePay.setEnabled(true);
+                toTapPay();
+            }else{
+                btGooglePay.setEnabled(false);
+                btGooglePay.setText("已付款");
+            }
         }
+
+
+
 
         showMyOrder(memberOrderDetailsList);
 
@@ -215,6 +234,14 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
 
     private void toTapPay() {
         btGooglePay.findViewById(R.id.btGooglePay).setOnClickListener(v -> {
+
+            List<MemberOrder> memberOrders = new ArrayList<>();
+            memberOrders.add(memberOrder);
+            MemberOrderControl.updateMemberOrders(activity,memberOrders,"PaymentInformation");
+
+//            22:55 柏文 MemberOrderControl.updateMemberOrders(activity, memberOrders, "PaymentInformation");
+//            22:56 柏文 private List<MemberOrder> memberOrders = new ArrayList<>(); // 目前過濾的買家訂單
+
             Intent intent = new Intent(getActivity(), TappayActivity.class);
             intent.putExtra("totalPrice", totalPrice);
             intent.putExtra("memberOderId", memberOderId);
