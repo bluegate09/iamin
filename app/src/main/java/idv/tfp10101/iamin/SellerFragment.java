@@ -406,6 +406,7 @@ public class SellerFragment extends Fragment {
             // 截止時間
             String time = timestampToString(rsGroup.getConditionTime());
             holder.textViewTime.setText(time);
+//            holder.textViewTime.setTextSize(12);
             // 問與答
             holder.textViewProblemNum.setText("10");
             // 狀態圖
@@ -442,7 +443,7 @@ public class SellerFragment extends Fragment {
      */
     private String timestampToString(Timestamp pickup_time) {
         String string = "";
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("MMM d, yyyy h:mm:ss a");
 
         try {
             string = dateFormat.format(pickup_time);

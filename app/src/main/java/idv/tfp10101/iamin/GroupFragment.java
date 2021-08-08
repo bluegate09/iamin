@@ -289,8 +289,9 @@ public class GroupFragment extends Fragment {
             holder.textViewTAmount.setText(String.valueOf(rsGroup.getTotalAmount()));   // int -> str
             // Timestamp -> String
             Timestamp ts = rsGroup.getConditionTime();
-            DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            DateFormat sdf = new SimpleDateFormat("MMM d, yyyy h:mm:ss a");
             holder.textViewDeadlineTime.setText(sdf.format(ts));
+            holder.textViewDeadlineTime.setTextSize(12);
             Log.d(Constants.TAG, "BindViewHolder: " + rsGroup.getName());
 
             // HorizontalScrollView
