@@ -97,7 +97,7 @@ public class MessageFragment extends Fragment {
             long time = date.getTime();
             String timeStr = sdf.format(time);
             message.setMessage(lastMessage);
-
+            Log.d(TAG, "Message 除錯看這裡" + auth.getCurrentUser().getUid());
             message.setSender(auth.getCurrentUser().getUid());
             message.setToken(member.getFCM_token());
             message.setReceiver(member.getuUId());

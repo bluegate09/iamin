@@ -236,6 +236,7 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
         btGooglePay.findViewById(R.id.btGooglePay).setOnClickListener(v -> {
 
             List<MemberOrder> memberOrders = new ArrayList<>();
+            memberOrder.setReceivePaymentStatus(true);
             memberOrders.add(memberOrder);
             MemberOrderControl.updateMemberOrders(activity,memberOrders,"PaymentInformation");
 
