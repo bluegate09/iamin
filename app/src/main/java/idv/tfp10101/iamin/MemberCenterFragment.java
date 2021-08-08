@@ -166,7 +166,7 @@ public class MemberCenterFragment extends Fragment {
         if(member.getRating() < 0 ){
             rating.setText(0 + "");
         }else{
-            rating.setText("評分: " + member.getRating());
+            rating.setText("評分: " +  member.getRating());
         }
 
         if(member.getFollow_count() < 0){

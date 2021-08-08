@@ -12,6 +12,10 @@ public class Rating {
     //關聯資料
     private String group_name;
 
+    public Rating(){
+        this(-1,-1,-1,-1,"",null,"");
+    }
+
     public Rating(int member_order_id, int buyer_Id, int seller_Id, int order_rating, String rating_message, Timestamp start_time, String group_name) {
         this.member_order_id = member_order_id;
         this.buyer_Id = buyer_Id;

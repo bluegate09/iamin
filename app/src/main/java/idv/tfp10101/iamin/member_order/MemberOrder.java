@@ -1,5 +1,6 @@
 package idv.tfp10101.iamin.member_order;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 
@@ -57,6 +58,7 @@ public class MemberOrder {
         this.groupStatus = groupStatus;
         this.memberOrderDetailsList = memberOrderDetailsList;
     }
+
 
     public int getMemberOrderId() {
         return memberOrderId;

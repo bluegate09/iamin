@@ -72,6 +72,7 @@ import idv.tfp10101.iamin.location.Location;
 import idv.tfp10101.iamin.location.LocationControl;
 import idv.tfp10101.iamin.member.Member;
 import idv.tfp10101.iamin.member.MemberControl;
+import idv.tfp10101.iamin.member.MyLoadingBar;
 import idv.tfp10101.iamin.merch.Merch;
 import idv.tfp10101.iamin.merch.MerchControl;
 import idv.tfp10101.iamin.network.RemoteAccess;
@@ -181,6 +182,7 @@ public class HomeFragment extends Fragment {
         localGroups = HomeDataControl.getLocalGroups();
         if (localGroups == null || localGroups.isEmpty()) {
             Toast.makeText(activity, "找不到團購", Toast.LENGTH_SHORT).show();
+            return;
         }
         //建立載入對話筐
         Loading = new ProgressDialog(activity);
@@ -335,45 +337,48 @@ public class HomeFragment extends Fragment {
         localGroups = HomeDataControl.getLocalGroups();
         if (localGroups == null || localGroups.isEmpty()) {
             Toast.makeText(activity, "找不到團購", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         HomeData homeData;
-        for (Group group: localGroups){
-            List<Float> distance = new ArrayList<>();
-            List<Location> locations = group.getLocations();
-            for (Location grouplocation : locations){
-                float[] results = new float[1];
-                //取得所有面交地點的緯經度
-                Double groupLat = grouplocation.getLatitude();
-                Double groupLng = grouplocation.getLongtitude();
-                //取得買家與所有團購面交地點的距離
-                android.location.Location.distanceBetween(userlat,userlng,groupLat,groupLng,results);
-                //除以1000從公尺變成公里後加入list
-                distance.add(results[0]/1000);
-            }
-            //由小到大排序(只取最近的距離)
-            Collections.sort(distance);
-            BigDecimal b = new BigDecimal(distance.get(0));
-            //四捨五入到小數第一位
-            float groupDismin = b.setScale(1,BigDecimal.ROUND_HALF_UP).floatValue();
-            homeData = new HomeData(group,groupDismin);
-            //團購進度還沒到購買上限 && 還沒到結單時間的團購 才會加入本地團購
-            if (group.getProgress() != group.getConditionCount() && (new Date().before(group.getConditionTime()))) {
-                localHomeDatas.add(homeData);
-            }
-        }
-        //將Homedata用使用者與團購的最短距離排序
-        Collections.sort(localHomeDatas, new Comparator<HomeData>() {
-            @Override
-            public int compare(HomeData o1, HomeData o2) {
-                if (o1.getDistance() < o2.getDistance()){
-                    return -1;
-                }else if (o1.getDistance() > o2.getDistance()) {
-                    return 1;
+        if (localGroups != null) {
+            for (Group group : localGroups) {
+                List<Float> distance = new ArrayList<>();
+                List<Location> locations = group.getLocations();
+                for (Location grouplocation : locations) {
+                    float[] results = new float[1];
+                    //取得所有面交地點的緯經度
+                    Double groupLat = grouplocation.getLatitude();
+                    Double groupLng = grouplocation.getLongtitude();
+                    //取得買家與所有團購面交地點的距離
+                    android.location.Location.distanceBetween(userlat, userlng, groupLat, groupLng, results);
+                    //除以1000從公尺變成公里後加入list
+                    distance.add(results[0] / 1000);
                 }
-                return 0;
+                //由小到大排序(只取最近的距離)
+                Collections.sort(distance);
+                BigDecimal b = new BigDecimal(distance.get(0));
+                //四捨五入到小數第一位
+                float groupDismin = b.setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
+                homeData = new HomeData(group, groupDismin);
+                //團購進度還沒到購買上限 && 還沒到結單時間的團購 才會加入本地團購
+                if (group.getProgress() != group.getConditionCount() && (new Date().before(group.getConditionTime()))) {
+                    localHomeDatas.add(homeData);
+                }
             }
-        });
+            //將Homedata用使用者與團購的最短距離排序
+            Collections.sort(localHomeDatas, new Comparator<HomeData>() {
+                @Override
+                public int compare(HomeData o1, HomeData o2) {
+                    if (o1.getDistance() < o2.getDistance()) {
+                        return -1;
+                    } else if (o1.getDistance() > o2.getDistance()) {
+                        return 1;
+                    }
+                    return 0;
+                }
+            });
+        }
     }
 
     //根據所選的分類去搜尋並可以下拉更新
@@ -511,6 +516,7 @@ public class HomeFragment extends Fragment {
                 searchView.setQuery("", false);
                 //將分類bar指回無分類
                 bottomNavigationView.setSelectedItemId(R.id.no);
+                MyLoadingBar.setLoadingBar(activity,"正在進入商品頁面","");
                 Bundle bundle = new Bundle();
                 bundle.putInt("GroupID", GroupID);
                 bundle.putDouble("Userlat",userlat);

@@ -9,6 +9,7 @@ public class MyLoadingBar {
     private static ProgressDialog loadingBar;
     /**
      * 進度條
+     * @param context activity
      * @param titleText 標題
      * @param messageText 訊息
      */
