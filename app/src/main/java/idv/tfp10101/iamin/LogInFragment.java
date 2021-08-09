@@ -268,7 +268,6 @@ public class LogInFragment extends Fragment {
                         GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(activity);
 
                         if(signInAccount != null) {
-
                             if(signInAccount.getEmail() != null ) {
                                 Log.d(TAG,"signInAccount: " + signInAccount.getEmail());
                                 member = MemberControl.getInstance();

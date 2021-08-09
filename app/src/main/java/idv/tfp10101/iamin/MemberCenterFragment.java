@@ -150,8 +150,11 @@ public class MemberCenterFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-            member = MemberControl.getInstance();
-            setTextView();
+        String jsonMember = MemberControl.memberRemoteAccess(activity, member, "findbyUuid");
+        member = new Gson().fromJson(jsonMember, Member.class);
+        MemberControl.setMember(member);
+        member = MemberControl.getInstance();
+        setTextView();
         if (member.getPhoneNumber() == null || String.valueOf(member.getPhoneNumber()).trim().isEmpty()) {
             memberClass.setImageResource(R.drawable.silver_member);
         }else{
@@ -159,9 +162,6 @@ public class MemberCenterFragment extends Fragment {
         }
         activity.setTitle("會員中心");
     }
-
-
-
 
     private void setTextView() {
         email.setText(member.getEmail());
