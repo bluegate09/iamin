@@ -193,9 +193,6 @@ public class LogInFragment extends Fragment {
         //註冊
         view.findViewById(R.id.btToSignUp).setOnClickListener(v ->
                 Navigation.findNavController(view).navigate(R.id.action_logInFragment_to_signUpFragment));
-        //電話驗證
-//        view.findViewById(R.id.btPhoneSingIn).setOnClickListener(v ->
-//                Navigation.findNavController(view).navigate(R.id.action_logInFragment_to_phoneAuthFragment));
 
         //忘記密碼 進入email fragment
         view.findViewById(R.id.btForgetPassword).setOnClickListener(v -> {
@@ -233,7 +230,7 @@ public class LogInFragment extends Fragment {
         loadingBar.show();
         loadingBar.setCanceledOnTouchOutside(true);
     }
-
+    //google登入
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
 
         setLoadingBar(getString(R.string.text_verification_account),
@@ -252,7 +249,7 @@ public class LogInFragment extends Fragment {
                         String myToken = sharedPreferences.getString("FCM_TOKEN", "");
                         member.setFCM_token(myToken);
                         member.setuUId(auth.getCurrentUser().getUid());
-                        member.setuUId2(auth.getCurrentUser().getUid());
+//                        member.setuUId2(auth.getCurrentUser().getUid());
 
                         String jsonMember = MemberControl.memberRemoteAccess(activity,member,"findbyUuid");
                         member = new Gson().fromJson(jsonMember,Member.class);
@@ -268,7 +265,6 @@ public class LogInFragment extends Fragment {
                         GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(activity);
 
                         if(signInAccount != null) {
-
                             if(signInAccount.getEmail() != null ) {
                                 Log.d(TAG,"signInAccount: " + signInAccount.getEmail());
                                 member = MemberControl.getInstance();
@@ -287,7 +283,7 @@ public class LogInFragment extends Fragment {
                     }
                 });
     }
-
+    //FB登入
     private void signInFB() {
         setLoadingBar(getString(R.string.text_verification_account),
                 getString(R.string.text_account_verification_message));
@@ -315,15 +311,11 @@ public class LogInFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Pass the activity result back to the Facebook SDK
-//        Log.d(TAG,"requestCode: " + requestCode);
-//        Log.d(TAG,"resultCode: " + resultCode);
-//        Log.d(TAG,"data: " + data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
         super.onActivityResult(requestCode, resultCode, data);
     }
-
+    //FB金鑰
     private void handleFaceBookCredential(AccessToken token) {
-//        Log.d(TAG, "signInFirebase: " + token);
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
 

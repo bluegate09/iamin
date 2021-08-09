@@ -123,6 +123,17 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/seller_status3" />
 
+        <ImageView
+            android:id="@+id/imageViewStatus4"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/seller_status4" />
+
         <TextView
             android:id="@+id/textViewName"
             android:layout_width="wrap_content"

@@ -59,6 +59,7 @@ public class SellerFragment extends Fragment {
     private Map<Integer, String> mapGroupStatus = new HashMap<>(); // 團購種類MAP
     private int groupStatus = 0; // 目前團購spinner的狀態
     private String groupSearch = ""; // 搜尋的字串
+    List<GroupBlockade> groupBlockades = new ArrayList<>(); // 封鎖清單
     // 導航控制(頁面切換用)
     private NavController navController;
     /**
@@ -146,7 +147,6 @@ public class SellerFragment extends Fragment {
         }
 
         // 如果有團購被管理員封鎖
-        List<GroupBlockade> groupBlockades = new ArrayList<>();
         groupBlockades = GroupControl.getBlockade(activity, member.getId());
         if (groupBlockades != null) {
             StringBuffer stringBuffer = new StringBuffer();
@@ -351,6 +351,12 @@ public class SellerFragment extends Fragment {
             private ImageView imageViewStatus1;
             private ImageView imageViewStatus2;
             private ImageView imageViewStatus3;
+            private ImageView imageViewStatus4;
+            // 封鎖隱藏用
+            private TextView textView20;
+            private TextView textView21;
+            private TextView textView22;
+            private TextView textView23;
 
             public MyViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -363,6 +369,11 @@ public class SellerFragment extends Fragment {
                 imageViewStatus1 = itemView.findViewById(R.id.imageViewStatus1);
                 imageViewStatus2 = itemView.findViewById(R.id.imageViewStatus2);
                 imageViewStatus3 = itemView.findViewById(R.id.imageViewStatus3);
+                imageViewStatus4 = itemView.findViewById(R.id.imageViewStatus4);
+                textView20 = itemView.findViewById(R.id.textView20);
+                textView21 = itemView.findViewById(R.id.textView21);
+                textView22 = itemView.findViewById(R.id.textView22);
+                textView23 = itemView.findViewById(R.id.textView23);
             }
         }
 
@@ -388,7 +399,7 @@ public class SellerFragment extends Fragment {
             }
 
             // 參加人數-抓取會員訂單
-            holder.textViewNumber.setText("0"); // 預設
+            holder.textViewNumber.setText(""); // 預設
             List<MemberOrder> memberOrders =
                     MemberOrderControl.getMemberOrderByGroupId(
                             activity,
@@ -415,20 +426,46 @@ public class SellerFragment extends Fragment {
                     holder.imageViewStatus1.setVisibility(View.VISIBLE);
                     holder.imageViewStatus2.setVisibility(View.GONE);
                     holder.imageViewStatus3.setVisibility(View.GONE);
+                    holder.imageViewStatus4.setVisibility(View.GONE);
                     break;
                 case 2:
                     holder.imageViewStatus1.setVisibility(View.GONE);
                     holder.imageViewStatus2.setVisibility(View.GONE);
                     holder.imageViewStatus3.setVisibility(View.VISIBLE);
+                    holder.imageViewStatus4.setVisibility(View.GONE);
                     break;
-
                 case 3:
                     holder.imageViewStatus1.setVisibility(View.GONE);
                     holder.imageViewStatus2.setVisibility(View.VISIBLE);
                     holder.imageViewStatus3.setVisibility(View.GONE);
+                    holder.imageViewStatus4.setVisibility(View.GONE);
+                    break;
+                case 4:
+                    holder.imageViewStatus1.setVisibility(View.GONE);
+                    holder.imageViewStatus2.setVisibility(View.GONE);
+                    holder.imageViewStatus3.setVisibility(View.GONE);
+                    holder.imageViewStatus4.setVisibility(View.VISIBLE);
                     break;
                 default:
                     break;
+            }
+            // 封鎖隱藏
+            if (rsGroup.getGroupStatus() == 4) {
+                for (GroupBlockade groupBlockade : groupBlockades) {
+                    if (groupBlockade.getGroupId() == rsGroup.getGroupId()) {
+                        holder.textView21.setText("封鎖原因：" + groupBlockade.getReason());
+                    }
+                }
+                holder.textView20.setText("");
+                holder.textView22.setText("");
+                holder.textView23.setText("");
+                holder.textViewCount.setText("");
+                holder.textViewTime.setText("");
+            }else {
+                holder.textView20.setText("團購標題：");
+                holder.textView21.setText("參加人數：");
+                holder.textView22.setText("訂購份數：");
+                holder.textView23.setText("截止日期：");
             }
         }
 
