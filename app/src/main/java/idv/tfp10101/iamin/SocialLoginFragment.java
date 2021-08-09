@@ -58,6 +58,9 @@ public class SocialLoginFragment extends Fragment {
         etNickName= view.findViewById(R.id.etSocialSignUpNickName);
         til = view.findViewById(R.id.tilSocialSignUp);
 
+        view.findViewById(R.id.socialView1).setOnClickListener(v -> etNickName.setText("靖"));
+        view.findViewById(R.id.socialView2).setOnClickListener(v -> etNickName.setText("渝"));
+
         view.findViewById(R.id.btSocialLogin).setOnClickListener(v -> {
             String nickname = etNickName.getText().toString().trim();
             if(nickname.isEmpty()){

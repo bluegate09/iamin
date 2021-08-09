@@ -229,9 +229,8 @@ public class SignUpFragment extends Fragment {
                         //移動到會員中心
                         Navigation.findNavController(requireView()).navigate(R.id.action_signUpFragment_to_memberCenterFragment);
                     } else {
-                        Log.d(TAG,"task: " + task.getResult());
-                        Toast.makeText(getContext(), "Authentication failed", Toast.LENGTH_SHORT).show();
-
+//                        Log.d(TAG,"task: " + task.getResult());
+                        Toast.makeText(getContext(), "此帳號已存在", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

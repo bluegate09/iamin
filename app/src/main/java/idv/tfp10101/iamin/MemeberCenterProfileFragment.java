@@ -85,7 +85,6 @@ public class MemeberCenterProfileFragment extends Fragment {
         member = MemberControl.getInstance();
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
-//        Log.d(TAG,"MC_Profile_OnCreate member: " + member.getNickname());
 
     }
 
@@ -146,6 +145,9 @@ public class MemeberCenterProfileFragment extends Fragment {
                 jsonObject.addProperty("action", "ResetPhoneNumberRequest");
                 jsonObject.addProperty("member", new Gson().toJson(member));
                 String result = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
+
+                member.setPhoneNumber("");
+
                 if(Integer.parseInt(result) == -1){
                     Toast.makeText(activity, "重置電話號碼的要求 已在處理中，請耐心等候", Toast.LENGTH_SHORT).show();
                 }else{
