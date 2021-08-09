@@ -29,6 +29,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -68,7 +70,15 @@ public class MemberCenterMemberOrderFragment extends Fragment {
         super.onCreate(savedInstanceState);
         activity = getActivity();
         activity.setTitle("訂單頁面");
+
         member = MemberControl.getInstance();
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null && member.getuUId() == null){
+            member.setuUId(currentUser.getUid());
+            String jsonMember = MemberControl.memberRemoteAccess(activity, member, "findbyUuid");
+            member = new Gson().fromJson(jsonMember, Member.class);
+            MemberControl.setMember(member);
+        }
 
     }
 
@@ -93,7 +103,6 @@ public class MemberCenterMemberOrderFragment extends Fragment {
         }catch (Exception e) {
             e.printStackTrace();
         }
-
 
         recyclerView = view.findViewById(R.id.rvMemberCenterOrder);
         recyclerView.setAdapter(new MyAdapter(activity,memberOrderList));
@@ -191,11 +200,13 @@ public class MemberCenterMemberOrderFragment extends Fragment {
     }
 
     private void showMyOrder(List<MemberOrder> memberOrderList) {
+        MyAdapter myAdapter = (MyAdapter) recyclerView.getAdapter();
         if (memberOrderList == null || memberOrderList.isEmpty()) {
             Toast.makeText(activity, "沒有訂單", Toast.LENGTH_SHORT).show();
+            myAdapter.setMemberOrders(memberOrderList);
+            myAdapter.notifyDataSetChanged();
             return ;
         }
-        MyAdapter myAdapter = (MyAdapter) recyclerView.getAdapter();
         if(myAdapter == null){
             recyclerView.setAdapter(new MyAdapter(activity,memberOrderList));
         }else{

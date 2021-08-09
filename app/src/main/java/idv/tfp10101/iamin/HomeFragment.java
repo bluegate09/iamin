@@ -122,6 +122,7 @@ public class HomeFragment extends Fragment {
         // 取得Activity參考
         activity = getActivity();
         view = inflater.inflate(R.layout.fragment_home, container, false);
+        activity.setTitle("首頁");
         return view;
     }
 

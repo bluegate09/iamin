@@ -125,6 +125,13 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case "Home_Fragment":
                         navController.navigate(R.id.homeFragment, bundle);
+                    case "Chat_Fragment":
+                        navController.navigate(R.id.chatFragment, bundle);
+                        break;
+                    case "Seller_Fragment":
+//                        navController.navigate(R.id.sellerFragment);
+                        navController.navigate(R.id.homeFragment);
+                        break;
                     default:
                         break;
                 }

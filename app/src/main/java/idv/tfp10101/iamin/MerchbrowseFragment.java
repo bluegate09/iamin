@@ -77,7 +77,7 @@ public class MerchbrowseFragment extends Fragment {
     private View view;
     private int groupID, sellerID, progress, goal, payment_method, group_status, condition_count;
     private int buyerChoose;//買家選擇的付款方式 1->面交,2->信用卡
-    private String contact_number,caution;
+    private String contact_number, caution, groupname, seller_FCM_token;
     private Timestamp condition_Time;
     private List<Merch> localMerchs;
     private RecyclerView recyclerViewMerch;
@@ -93,6 +93,7 @@ public class MerchbrowseFragment extends Fragment {
     private  List<Location> grouplocations; //團購的所有面交地點
     private Bundle bundle; //從首頁包的團購id與使用者資訊(重整頁面時用到)
     private LinearLayout seller_rating;
+    private Member seller;
     //商品圖片
     private List<byte[]> images = new ArrayList<>();
 
@@ -100,6 +101,7 @@ public class MerchbrowseFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         member = MemberControl.getInstance();
+
     }
 
     @Override
@@ -107,7 +109,7 @@ public class MerchbrowseFragment extends Fragment {
                              Bundle savedInstanceState) {
         activity = getActivity();
         view = inflater.inflate(R.layout.fragment_merchbrowse, container, false);
-
+        activity.setTitle("商品細項");
         return view;
     }
 
@@ -145,6 +147,7 @@ public class MerchbrowseFragment extends Fragment {
         firstGroup = GroupControl.getGroupbyId(activity,groupID);
         if (firstGroup != null){
             sellerID = firstGroup.getMemberId();
+            groupname = firstGroup.getName();
             progress = firstGroup.getProgress();
             goal = firstGroup.getGoal();
             payment_method = firstGroup.getPaymentMethod();
@@ -198,7 +201,7 @@ public class MerchbrowseFragment extends Fragment {
         Member SellerID = new Member();
         SellerID.setId(sellerID);
         //取得賣家資料
-        Member seller = MemberControl.getsellerByMemberId(activity,SellerID);
+        seller = MemberControl.getsellerByMemberId(activity,SellerID);
         if (seller != null){
             txv_Seller.setText(seller.getNickname());
             txv_Email.setText(seller.getEmail());
@@ -422,8 +425,9 @@ public class MerchbrowseFragment extends Fragment {
                                     false
                             );
                             setMemberorder(memberOrder);
-                            if ((total_quantity + progress) > goal){
+                            if ((total_quantity + progress) >= goal){
                                 status = 2;
+                                handleSubmit();
                             }
                             Group updaategroup = new Group(
                                     group.getGroupId(),
@@ -473,8 +477,9 @@ public class MerchbrowseFragment extends Fragment {
                                 false
                         );
                        setMemberorder(memberOrder);
-                        if ((total_quantity + progress) > goal){
+                        if ((total_quantity + progress) >= goal){
                             status = 2;
+                            handleSubmit();
                         }
                         Group updaategroup = new Group(
                                 group.getGroupId(),
@@ -783,6 +788,26 @@ public class MerchbrowseFragment extends Fragment {
         return name.toString();
     }
 
+    /**
+     * 發送
+     */
+    private void handleSubmit() {
+        NavController navController = Navigation.findNavController(view);
+            // 如果有網路，就進行 request
+            if (RemoteAccess.networkConnected(activity)) {
+                // 網址 ＆ Action
+                String url = RemoteAccess.URL_SERVER + "FcmChatServlet";
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("action", "singleBuyerFcm");
+                jsonObject.addProperty("sellerToken", seller.getFCM_token());
+                jsonObject.addProperty("title", "您的" + groupname + "已經達標了");
+                jsonObject.addProperty("body", "趕快去檢查吧");
+                jsonObject.addProperty("data", "Seller_Fragment");
 
-
+                // requst
+                String jsonString = RemoteAccess.getRemoteData(url, new Gson().toJson(jsonObject));
+            }else {
+                Toast.makeText(activity, R.string.textNoNetwork, Toast.LENGTH_SHORT).show();
+            }
+    }
 }
