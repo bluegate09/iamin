@@ -178,7 +178,7 @@ public class PhoneAuthFragment extends Fragment {
                 // now need to ask the user to enter the code and then construct a credential
                 // by combining the code with a verification ID.
                 Log.d(TAG, "onCodeSent:" + verificationId);
-                Toast.makeText(activity, getString(R.string.textcodesent), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(activity, getString(R.string.textcodesent), Toast.LENGTH_SHORT).show();
                 // Save verification ID and resending token so we can use them later
 
                 mVerificationId = verificationId;

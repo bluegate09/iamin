@@ -197,7 +197,7 @@ public class TappayActivity extends AppCompatActivity {
                         Log.d(TAG, prime);
                         // TODO: Check
                         Intent intent = new Intent(TappayActivity.this, MainActivity.class);
-                        intent.putExtra("data", "Chat_Fragment");
+                        intent.putExtra("data", "Home_Fragment");
                         startActivity(intent);
                     }
                 },

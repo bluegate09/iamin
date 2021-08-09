@@ -60,6 +60,7 @@ public class MessageFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
         final Bundle bundle = getArguments();
         activity = (AppCompatActivity) getActivity();
         member = (Member) bundle.getSerializable("member");
@@ -67,6 +68,7 @@ public class MessageFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         messages = new ArrayList<>();
         auth = FirebaseAuth.getInstance();
+        getTokenSendServer();
         listenMessages();
     }
 
@@ -80,6 +82,8 @@ public class MessageFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Log.d(TAG, "onViewCreated");
+        getTokenSendServer();
         rvMessages = view.findViewById(R.id.rvMessages);
         rvMessages.setLayoutManager(new LinearLayoutManager(activity));
         etMessage = view.findViewById(R.id.etMessage);
@@ -90,33 +94,52 @@ public class MessageFragment extends Fragment {
                 Toast.makeText(activity, R.string.textMessageIsInvalid, Toast.LENGTH_SHORT).show();
                 return;
             }
-            id = db.collection("Messages").document().getId();
+//            id = db.collection("Messages").document().getId();
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
             Date date = new Date();
             long time = date.getTime();
             String timeStr = sdf.format(time);
             message.setMessage(lastMessage);
-            Log.d(TAG, "Message 除錯看這裡" + auth.getCurrentUser().getUid());
+            Log.d(TAG, "Message 除錯看這裡 : auth UID" + auth.getCurrentUser().getUid());
+//            Log.d(TAG, "Message 除錯看這裡" + member.getFCM_token());
             message.setSender(auth.getCurrentUser().getUid());
-            message.setToken(member.getFCM_token());
-            message.setReceiver(member.getuUId());
+//            try {
+//                message.setToken(member.getFCM_token());
+//            } catch (Exception e) {
+//                Log.d(TAG, "抓對方的token有問題 : " + e.getMessage());
+//            }
+
+//            message.setReceiver(member.getuUId());
             message.setTime(timeStr);
-            sendFcm();
-            db.collection("Messages").document(id).set(message).addOnCompleteListener(task1 -> {
-                if (task1.isSuccessful()) {
-                    String result = getString(R.string.textSendMessage);
-                    Toast.makeText(activity, result, Toast.LENGTH_SHORT).show();
-                } else {
-                    String result = task1.getException() == null ?
-                            getString(R.string.textSendMessageFail) :
-                            task1.getException().getMessage();
-                    Log.e(TAG, "message: " + result);
-                    Toast.makeText(activity, result, Toast.LENGTH_SHORT).show();
-                }
-            });
+
+            try {
+                message.setReceiver(member.getuUId());
+                sendFcm();
+            } catch (Exception e) {
+                Log.d(TAG, e.getMessage());
+            }
+
+
+
+            sendMessage();
 
             etMessage.setText("");
+        });
+    }
+
+    private void sendMessage() {
+        db.collection("Messages").document().set(message).addOnCompleteListener(task1 -> {
+            if (task1.isSuccessful()) {
+                String result = getString(R.string.textSendMessage);
+                Toast.makeText(activity, result, Toast.LENGTH_SHORT).show();
+            } else {
+                String result = task1.getException() == null ?
+                        getString(R.string.textSendMessageFail) :
+                        task1.getException().getMessage();
+                Log.e(TAG, "message: " + result);
+                Toast.makeText(activity, result, Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -128,7 +151,7 @@ public class MessageFragment extends Fragment {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("action", action);
             jsonObject.addProperty("title", "+1團購");
-            jsonObject.addProperty("body", "Someone sent a message to you!");
+            jsonObject.addProperty("body", "你有新訊息！");
             jsonObject.addProperty("data", "Message_Fragment");
             String result = RemoteAccess.getRemoteChatData(url, jsonObject.toString());
             Log.d(TAG, result);
@@ -141,6 +164,7 @@ public class MessageFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        getTokenSendServer();
         showAllMessages();
     }
 
@@ -281,13 +305,13 @@ public class MessageFragment extends Fragment {
                                     Message message = dc.getDocument().toObject(Message.class);
                                     switch (dc.getType()) {
                                         case ADDED:
-                                            Log.d(TAG, "Added message" + message.getReceiver());
+                                            Log.d(TAG, "Added message");
                                             break;
                                         case MODIFIED:
-                                            Log.d(TAG, "MODIFIED message" + message.getReceiver());
+                                            Log.d(TAG, "MODIFIED message");
                                             break;
                                         case REMOVED:
-                                            Log.d(TAG, "REMOVED message" + message.getReceiver());
+                                            Log.d(TAG, "REMOVED message");
                                             break;
                                         default:
                                             break;
@@ -310,6 +334,7 @@ public class MessageFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "onDestroy");
         if (registration != null) {
             registration.remove();
             registration = null;
@@ -317,17 +342,59 @@ public class MessageFragment extends Fragment {
         }
     }
 
-    private void delete(final Message message) {
+    private void delete(Message message) {
+        Log.d(TAG, "Message delete");
         // 刪除Firestore內的資料
         db.collection("Messages").document().delete()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-
+                        Log.d(TAG, "Message delete");
                         messages.remove(message);
                         showMessages(messages);
                     } else {
                         Toast.makeText(activity, R.string.textDeleteFail, Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        Log.d(TAG, "onViewStateRestored");
+        getTokenSendServer();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
+        getTokenSendServer();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause");
+        getTokenSendServer();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(TAG, "onSaveInstanceState");
+        getTokenSendServer();
+    }
+
+    // send Chat token
+    private void getTokenSendServer() {
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                if (task.getResult() != null) {
+                    String token = task.getResult();
+                    Log.d(TAG, "Chat 取token : " + token);
+                    RemoteAccess.sendChatTokenToServer(token, activity);
+                }
+            }
+        });
     }
 }

@@ -123,8 +123,8 @@ public class MainActivity extends AppCompatActivity {
                     case "Message_Fragment":
                         navController.navigate(R.id.messageFragment, bundle);
                         break;
-                    case "Chat_Fragment":
-                        navController.navigate(R.id.chatFragment, bundle);
+                    case "Home_Fragment":
+                        navController.navigate(R.id.homeFragment, bundle);
                     default:
                         break;
                 }
@@ -146,14 +146,6 @@ public class MainActivity extends AppCompatActivity {
                             .apply();
 
                 }
-            }
-        });
-
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
-            @Override
-            public void onComplete(@NonNull Task<String> task) {
-
-                Log.d(TAG, "Token: " + task.getResult());
             }
         });
     }

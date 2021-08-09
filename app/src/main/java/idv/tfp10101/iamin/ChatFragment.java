@@ -20,6 +20,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -47,6 +48,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getTokenSendServer();
         activity = (AppCompatActivity) getActivity();
         int numProcs = Runtime.getRuntime().availableProcessors();
         Log.d(TAG, "JVM可用的處理器數量: " + numProcs);
@@ -66,6 +68,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        getTokenSendServer();
         SearchView searchView = view.findViewById(R.id.searchView);
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         rvSeller = view.findViewById(R.id.rvSellers);
@@ -109,6 +112,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        getTokenSendServer();
         showAllSellers();
     }
 
@@ -191,6 +195,7 @@ public class ChatFragment extends Fragment {
             holder.tvName.setText(member.getNickname());
 
             holder.itemView.setOnClickListener(v -> {
+                getTokenSendServer();
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("member", member);
                 Log.d(TAG, "進入聊天");
@@ -219,6 +224,19 @@ public class ChatFragment extends Fragment {
         if (executor != null) {
             executor.shutdownNow();
         }
+    }
+
+    // send Chat token
+    private void getTokenSendServer() {
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                if (task.getResult() != null) {
+                    String token = task.getResult();
+                    Log.d(TAG, "Chat 取token : " + token);
+                    RemoteAccess.sendChatTokenToServer(token, activity);
+                }
+            }
+        });
     }
 
 }

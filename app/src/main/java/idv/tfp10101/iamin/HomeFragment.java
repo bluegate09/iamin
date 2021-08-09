@@ -131,7 +131,8 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
+        // Chat token在這裡取得
+        getTokenSendServer();
         member = MemberControl.getInstance();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -176,6 +177,8 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        // Chat token在這裡取得
+        getTokenSendServer();
         findView(view);
         searchView.setQuery("", false);
         // 3. 詢問使用權限
@@ -642,10 +645,24 @@ public class HomeFragment extends Fragment {
             if (task.isSuccessful()) {
                 if (task.getResult() != null) {
                     String token = task.getResult();
+                    Log.d(TAG, "Home Chat 取token : " + token);
                     RemoteAccess.sendChatTokenToServer(token, activity);
                 }
             }
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume()被呼叫");
+        getTokenSendServer();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(TAG, "onSaveInstanceState() 被呼叫");
+        getTokenSendServer();
+    }
 }
