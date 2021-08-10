@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 
@@ -11,11 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -32,6 +36,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -43,19 +49,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Stream;
 
 import idv.tfp10101.iamin.Data.HomeData;
 import idv.tfp10101.iamin.Data.HomeDataControl;
 import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.member.CustomMapView;
 import idv.tfp10101.iamin.member.MemberControl;
+import idv.tfp10101.iamin.merch.Merch;
 
 
 public class HomeMapFragment extends Fragment {
 
     private Activity activity;
     private View view;
+    private List<Marker> markers;
     private List<Group> localGroups;
     private List<HomeData> localHomeDatas;
     private FusedLocationProviderClient fusedLocationClient;
@@ -66,6 +78,11 @@ public class HomeMapFragment extends Fragment {
     private double userlat,userlng;//使用者的緯經度
     private GoogleMap googleMap;
     private MapView mapView;
+    private Button btn_serch;
+    private EditText edt_scope;
+    private float scope = 0f; //預設輸入範圍
+    private Marker marker; //標記
+    private Circle circle;  //範圍圓圈
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,13 +101,29 @@ public class HomeMapFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        findView(view);
         //mapView
         mapView = view.findViewById(R.id.homemapView);
         mapView.onCreate(savedInstanceState);
         mapView.onStart();
+        mapView.getMapAsync(googleMap -> {
+            this.googleMap = googleMap;
+            btn_serch.setOnClickListener(v ->{
+                scope = Float.parseFloat(String.valueOf(edt_scope.getText())) * 1000;
+                googleMap.clear();
 
+                //加入範圍(圓形)
+                CircleOptions circleOptions = new CircleOptions();
+                circleOptions.center(new LatLng(userlat,userlng));
+                circleOptions.radius(scope);
+                //填滿顏色
+//                    circleOptions.fillColor(Color.BLUE);
+                circleOptions.strokeColor(Color.BLUE);
+                circle = googleMap.addCircle(circleOptions);
+                getUserloaction();
+            });
+        });
         getUserloaction();
-
     }
 
     //取得User的當前位置
@@ -117,7 +150,7 @@ public class HomeMapFragment extends Fragment {
 
                 mapView.getMapAsync(googleMap -> {
                     this.googleMap = googleMap;
-
+                    //標記自己的位置
                     LatLng latLng  = new LatLng(userlat,userlng);
                     MarkerOptions markerOptions = new MarkerOptions() .position(latLng)
                             .title("您的位置")
@@ -136,14 +169,8 @@ public class HomeMapFragment extends Fragment {
                     CameraUpdate cameraUpdate =
                             CameraUpdateFactory.newCameraPosition(cameraPosition);
                     googleMap.animateCamera(cameraUpdate);
-
+                    coumputeDistancemin();
                 });
-
-
-
-                coumputeDistancemin();
-                //我得member追隨頁面要用的 by:渝
-                MemberControl.setMemberCoordinate(new MemberControl.MemberCoordinate(userlat,userlng));
             }
         });
     }
@@ -162,7 +189,19 @@ public class HomeMapFragment extends Fragment {
         HomeData homeData;
         if (localGroups != null) {
             for (Group group : localGroups) {
-                List<Float> distance = new ArrayList<>();
+                Map<Float, LatLng> groupMap = new TreeMap<>(
+                        new Comparator<Float>() {
+                            @Override
+                            public int compare(Float o1, Float o2) {
+                                if (o1 < o2) {
+                                    return -1;
+                                } else if (o1 > o2) {
+                                    return 1;
+                                }
+                                return 0;
+                            }
+                        }
+                );
                 List<idv.tfp10101.iamin.location.Location> locations = group.getLocations();
                 for (idv.tfp10101.iamin.location.Location grouplocation : locations) {
                     float[] results = new float[1];
@@ -171,36 +210,61 @@ public class HomeMapFragment extends Fragment {
                     Double groupLng = grouplocation.getLongtitude();
                     //取得買家與所有團購面交地點的距離
                     android.location.Location.distanceBetween(userlat, userlng, groupLat, groupLng, results);
+                    LatLng latLng = new LatLng(groupLat, groupLng);
                     //除以1000從公尺變成公里後加入list
                     if (results != null) {
-                        distance.add(results[0] / 1000);
+                        groupMap.put(results[0] / 1000, latLng);
                     }
                 }
-                //由小到大排序(只取最近的距離)
-                Collections.sort(distance);
-                BigDecimal b = new BigDecimal(distance.get(0));
+                float mindis = 0f;
+                LatLng latLng = null;
+                for (Map.Entry<Float, LatLng> entry : groupMap.entrySet()) {
+                    mindis = entry.getKey();
+                    latLng = entry.getValue();
+                    if (mindis == 0 || latLng == null) {
+                        break;
+                    }
+                }
+                BigDecimal b = new BigDecimal(mindis);
                 //四捨五入到小數第一位
                 float groupDismin = b.setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
-                homeData = new HomeData(group, groupDismin);
+                homeData = new HomeData(group, groupDismin, latLng);
                 //團購進度還沒到購買上限 && 還沒到結單時間的團購 才會加入本地團購
                 if (group.getProgress() != group.getConditionCount() && (new Date().before(group.getConditionTime()))) {
-                    localHomeDatas.add(homeData);
-                }
-            }
-            //將Homedata用使用者與團購的最短距離排序
-            Collections.sort(localHomeDatas, new Comparator<HomeData>() {
-                @Override
-                public int compare(HomeData o1, HomeData o2) {
-                    if (o1.getDistance() < o2.getDistance()) {
-                        return -1;
-                    } else if (o1.getDistance() > o2.getDistance()) {
-                        return 1;
+                    if (scope == 0){
+                        localHomeDatas.add(homeData);
+                    }else if(homeData.getDistance() <= scope/1000){
+                        localHomeDatas.add(homeData);
                     }
-                    return 0;
                 }
-            });
+                mapView.getMapAsync(googleMap -> {
+                    this.googleMap = googleMap;
+                    double latitude, longtitude;
+                    for (HomeData mapHomeData : localHomeDatas) {
+                        latitude = mapHomeData.getLatLng().latitude;
+                        longtitude = mapHomeData.getLatLng().longitude;
+                        String groupName = mapHomeData.getGroup().getName();//取得團購名稱
+                        int groupId = mapHomeData.getGroup().getGroupId(); //取的團購id(跳轉到商品頁面用)
+                        float dis = mapHomeData.getDistance();
+
+                        LatLng maplatLng = new LatLng(latitude, longtitude);
+                        MarkerOptions mapmarker = new MarkerOptions().position(maplatLng)
+                                .title(groupName)
+                                .snippet("該團購最近面交地址距離您" + dis + "公里")
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.mapview_pin))
+                                .draggable(false);
+                        marker = googleMap.addMarker(mapmarker);
+                    }
+                });
+            }
         }
     }
+
+    private void findView(View view) {
+        edt_scope = view.findViewById(R.id.edt_scope);
+        btn_serch = view.findViewById(R.id.btn_serch);
+    }
+
     /**
      * 定位功能檢查
      */
@@ -246,4 +310,5 @@ public class HomeMapFragment extends Fragment {
                 .addLocationRequest(locationRequest)
                 .build();
     }
+
 }

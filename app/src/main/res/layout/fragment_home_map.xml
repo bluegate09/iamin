@@ -5,8 +5,38 @@
     android:layout_height="match_parent"
     tools:context=".HomeMapFragment">
 
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/homemapView"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/edt_scope"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:ems="10"
+                android:hint="輸入您的範圍(Km)"
+                android:inputType="numberSigned" />
+
+            <Button
+                android:id="@+id/btn_serch"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:text="Button" />
+        </LinearLayout>
+
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/homemapView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </LinearLayout>
+
 </FrameLayout>
