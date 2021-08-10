@@ -2,6 +2,7 @@ package idv.tfp10101.iamin;
 
 import android.app.Activity;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,12 +10,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +45,7 @@ public class PhoneAuthFragment extends Fragment {
     private FirebaseAuth auth;
     private TextView processText,processText2;
     private EditText phoneNumber,otpEditText;
+    private ProgressBar pBCountdown;
     private Button btDown;
     private TextInputLayout phoneTil;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
@@ -80,6 +84,8 @@ public class PhoneAuthFragment extends Fragment {
         btDown = view.findViewById(R.id.btOTPConfirm);
         phoneTil = view.findViewById(R.id.phoneAuthTil);
 
+        pBCountdown = view.findViewById(R.id.phoneAuthFinalCountDown);
+        pBCountdown.setVisibility(View.GONE);
 
         handleVisibility(View.GONE);
 
@@ -180,6 +186,30 @@ public class PhoneAuthFragment extends Fragment {
                 Log.d(TAG, "onCodeSent:" + verificationId);
 //                Toast.makeText(activity, getString(R.string.textcodesent), Toast.LENGTH_SHORT).show();
                 // Save verification ID and resending token so we can use them later
+
+                pBCountdown.setVisibility(View.VISIBLE);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    pBCountdown.setProgress(0,true);
+                }else{
+                    pBCountdown.setProgress(0);
+                }
+                new Thread(() -> {
+                    final int max = 600;
+                    int progress = 0;
+                    while (progress  <= max) {
+                        pBCountdown.setProgress(progress++);
+                        try {
+                            long time = 100;
+                            Thread.sleep(time);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+
+
+
 
                 mVerificationId = verificationId;
                 mResendToken = token;
