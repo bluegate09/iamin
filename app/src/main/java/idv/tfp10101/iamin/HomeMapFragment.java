@@ -2,6 +2,7 @@ package idv.tfp10101.iamin;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -60,6 +61,7 @@ import idv.tfp10101.iamin.Data.HomeDataControl;
 import idv.tfp10101.iamin.group.Group;
 import idv.tfp10101.iamin.member.CustomMapView;
 import idv.tfp10101.iamin.member.MemberControl;
+import idv.tfp10101.iamin.member.MyLoadingBar;
 import idv.tfp10101.iamin.merch.Merch;
 
 
@@ -81,8 +83,7 @@ public class HomeMapFragment extends Fragment {
     private Button btn_serch;
     private EditText edt_scope;
     private float scope = 0f; //預設輸入範圍
-    private Marker marker; //標記
-    private Circle circle;  //範圍圓圈
+    private ProgressDialog loadingBar;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,6 +110,12 @@ public class HomeMapFragment extends Fragment {
         mapView.getMapAsync(googleMap -> {
             this.googleMap = googleMap;
             btn_serch.setOnClickListener(v ->{
+
+                loadingBar = new ProgressDialog(activity);
+                loadingBar.setTitle("查詢中");
+                loadingBar.setMessage("請稍候");
+                loadingBar.show();
+
                 scope = Float.parseFloat(String.valueOf(edt_scope.getText())) * 1000;
                 googleMap.clear();
 
@@ -117,9 +124,9 @@ public class HomeMapFragment extends Fragment {
                 circleOptions.center(new LatLng(userlat,userlng));
                 circleOptions.radius(scope);
                 //填滿顏色
-//                    circleOptions.fillColor(Color.BLUE);
+//               circleOptions.fillColor(Color.BLUE);
                 circleOptions.strokeColor(Color.BLUE);
-                circle = googleMap.addCircle(circleOptions);
+                googleMap.addCircle(circleOptions);
                 getUserloaction();
             });
         });
@@ -253,7 +260,10 @@ public class HomeMapFragment extends Fragment {
                                 .snippet("該團購最近面交地址距離您" + dis + "公里")
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.mapview_pin))
                                 .draggable(false);
-                        marker = googleMap.addMarker(mapmarker);
+                        googleMap.addMarker(mapmarker);
+                    }
+                    if (loadingBar != null){
+                        loadingBar.dismiss();
                     }
                 });
             }
