@@ -140,18 +140,6 @@ public class HomeFragment extends Fragment {
         //先前有登入就取會員資料
         if (currentUser != null && member.getuUId() == null) {
 
-            SharedPreferences sharedPreferences = activity.getSharedPreferences(FCM_Token, MODE_PRIVATE);
-            String token = sharedPreferences.getString(FCM_Token, "");
-            member.setFCM_token(token);
-
-            member.setuUId(currentUser.getUid());
-            MemberControl.memberRemoteAccess(activity, member, "updateTokenbyUid");
-            String jsonMember = MemberControl.memberRemoteAccess(activity, member, "findbyUuid");
-
-
-            member = new Gson().fromJson(jsonMember, Member.class);
-            MemberControl.setMember(member);
-            Log.d("TAG_HOME", "Fetch Member Date Complete");
             NavController navController = Navigation.findNavController(view);
             //如果會員被檢舉成功了
             if (member.getDeleteTime() != null){
