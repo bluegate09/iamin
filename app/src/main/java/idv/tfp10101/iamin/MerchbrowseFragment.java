@@ -4,11 +4,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,6 +25,7 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import android.text.Spannable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -205,10 +210,18 @@ public class MerchbrowseFragment extends Fragment {
         if (seller != null){
             txv_Seller.setText(seller.getNickname());
             txv_Email.setText(seller.getEmail());
+            txv_Seller_phone.getPaint().setFlags(Paint. UNDERLINE_TEXT_FLAG ); //下劃線
+            txv_Seller_phone.setTextColor(Color.BLUE);
             txv_Seller_phone.setText(seller.getPhoneNumber());
             txv_followed.setText(String.valueOf(seller.getFollow_count()));
             txv_rating.setText(String.valueOf(seller.getRating()));
         }
+
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("tel:" + seller.getPhoneNumber()));
+        txv_Seller_phone.setOnClickListener(v ->{
+            txv_Seller_phone.setTextColor(Color.rgb(255,0,255));
+            startActivity(intent);
+        });
         if (caution == null){
             txv_caution.setVisibility(View.GONE);
         }else {

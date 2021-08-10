@@ -100,6 +100,7 @@ public class HomeFragment extends Fragment {
     private double userlat,userlng;//使用者的緯經度
     private List<HomeData> localHomeDatas;  //把團購跟使用者最短距離裝成Homedata
     private ProgressDialog Loading;
+    private TextView txv_map;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -193,7 +194,9 @@ public class HomeFragment extends Fragment {
         Loading.setMessage("Loading...");
         Loading.setCancelable(false);
         Loading.show();
-
+        txv_map.setOnClickListener(v ->{
+            Navigation.findNavController(v).navigate(R.id.homeMapFragment);
+        });
         //實作取得買家緯精度方法
         getUserloaction();
 
@@ -453,6 +456,7 @@ public class HomeFragment extends Fragment {
         recyclerViewGroup.setLayoutManager(new LinearLayoutManager(activity));
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         searchView = view.findViewById(R.id.searchview);
+        txv_map = view.findViewById(R.id.txv_map);
     }
 
     private class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyHomeDataViewHolder> {
