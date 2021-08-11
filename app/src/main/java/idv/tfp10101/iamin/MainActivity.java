@@ -37,8 +37,14 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import idv.tfp10101.iamin.member.Member;
+import idv.tfp10101.iamin.member.MemberControl;
 import idv.tfp10101.iamin.message.Message;
 import java.util.Objects;
 
@@ -56,8 +62,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
 
         /** FCMService 本地廣播 */
         broadcastReceiver = new BroadcastReceiver() {
@@ -127,8 +131,8 @@ public class MainActivity extends AppCompatActivity {
                         navController.navigate(R.id.chatFragment, bundle);
                         break;
                     case "Seller_Fragment":
-//                        navController.navigate(R.id.sellerFragment);
-                        navController.navigate(R.id.homeFragment);
+                        navController.navigate(R.id.sellerFragment);
+//                        navController.navigate(R.id.homeFragment);
                         break;
                     default:
                         break;
@@ -161,6 +165,26 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "Token: " + task.getResult());
             }
         });
+        /**提取會員資料**/
+        fetchMember();
+
+    }
+
+    private void fetchMember() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        Member member = MemberControl.getInstance();
+        if (currentUser != null && member.getuUId() == null) {
+            SharedPreferences sharedPreferences = MainActivity.this.getSharedPreferences(FCM_Token, MODE_PRIVATE);
+            String token = sharedPreferences.getString(FCM_Token, "");
+            member.setFCM_token(token);
+            member.setuUId(currentUser.getUid());
+            MemberControl.memberRemoteAccess(MainActivity.this, member, "updateTokenbyUid");
+            String jsonMember = MemberControl.memberRemoteAccess(MainActivity.this, member, "findbyUuid");
+            Gson gson = new GsonBuilder().setDateFormat("MMM d, yyyy h:mm:ss a").create();
+            member = gson.fromJson(jsonMember, Member.class);
+            MemberControl.setMember(member);
+            Log.d(TAG, "Fetch Member Date Complete");
+        }
     }
 
     @Override

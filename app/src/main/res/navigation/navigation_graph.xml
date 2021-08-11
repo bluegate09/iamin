@@ -549,4 +549,9 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
     </fragment>
+    <fragment
+        android:id="@+id/homeMapFragment"
+        android:name="idv.tfp10101.iamin.HomeMapFragment"
+        android:label="fragment_home_map"
+        tools:layout="@layout/fragment_home_map" />
 </navigation>

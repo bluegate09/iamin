@@ -82,9 +82,14 @@
                     android:text="@string/resend" />
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="50dp" />
+            <ProgressBar
+                android:id="@+id/phoneAuthFinalCountDown"
+                style="@style/CircularDeterminateProgressBar"
+                android:indeterminate="false"
+                android:layout_gravity="center"
+                android:max="600"
+                android:layout_width="100dp"
+                android:layout_height="100dp" />
 
             <TextView
                 android:id="@+id/tvPhoneCode"
