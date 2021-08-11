@@ -87,19 +87,9 @@ public class MemeberCenterProfileFragment extends Fragment {
     //callback method來接 Permission
     private ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                // 如果同意開啟權限
                 if (isGranted) {
-                    // Permission is granted. Continue the action or workflow in your
-                    // app.
-                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    File dir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-                    // 建立存放照片的 路徑＆檔名
-                    dir = new File(dir, "picture.jpg");
-                    // 使用FileProvider建立Uri物件 (context, 需與manifest.xml的authorities相同名, 路徑檔名)
-                    contentUri = FileProvider.getUriForFile(
-                            activity, activity.getPackageName() + ".provider", dir);
-                    // intent.putExtra(key, value) -> 帶值
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
-                    takePictureLauncher.launch(intent);
+                    openCamera();
                 } else {
                     // Explain to the user that the feature is unavailable because the
                     // features requires a permission that the user has denied. At the
@@ -245,38 +235,12 @@ public class MemeberCenterProfileFragment extends Fragment {
         }
     }
 
-
-
-
     private void handleImgSelect(int which) {
+        // 相機
         if(which == 0){
-            // Intent -> 相機 ACTION
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                /**
-                 * 照片的存取位置 設定
-                 * API 24 版本以上，Android 不再允許在 app 中透漏 file://Uri 給其他 app
-                 * FileProvider 將隱藏真實的共享檔案路徑，content://Uri 取代 file://Uri
-                 * 注意：FileProvider需要在manifest.xml做設定
-                 */
-                // 1.照片存放目錄 = 取得外部儲存體路徑(Environment.DIRECTORY_路徑種類)
-                File dir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-                // 2.建立存放照片的 路徑＆檔名
-                dir = new File(dir, "picture.jpg");
-                // 3.使用FileProvider建立Uri物件 (context, 需與manifest.xml的authorities相同名, 路徑檔名)
-                contentUri = FileProvider.getUriForFile(
-                        activity, activity.getPackageName() + ".provider", dir);
-                // 4.intent.putExtra(key, value) -> 帶值
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
-                try {
-                    //主動要求權限
-                    checkPermission(intent);
-                    // Launcher() -> 進行跳轉 等待接收回傳結果 -> takePictureResult()
-//                    takePictureLauncher.launch(intent);
-                } catch (ActivityNotFoundException e) {
-                    Toast.makeText(activity, R.string.textNoCameraApp, Toast.LENGTH_SHORT).show();
-                }
+            checkCameraPermission();
         }
-
+        // 抓圖
         if(which == 1){
             Intent intent = new Intent(Intent.ACTION_PICK,
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -284,8 +248,8 @@ public class MemeberCenterProfileFragment extends Fragment {
         }
     }
 
-    //檢查是否有權限
-    private void checkPermission(Intent intent) {
+    // 檢查相機是否有權限
+    private void checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             // 進入這兒表示沒有許可權
 
@@ -300,7 +264,34 @@ public class MemeberCenterProfileFragment extends Fragment {
                 Log.d("CAMERA","2");
             }
         } else {
+            openCamera();
+        }
+    }
+
+    // 開啟相機
+    private void openCamera() {
+        // Intent -> 相機 ACTION
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        /**
+         * 照片的存取位置 設定
+         * API 24 版本以上，Android 不再允許在 app 中透漏 file://Uri 給其他 app
+         * FileProvider 將隱藏真實的共享檔案路徑，content://Uri 取代 file://Uri
+         * 注意：FileProvider需要在manifest.xml做設定
+         */
+        // 1.照片存放目錄 = 取得外部儲存體路徑(Environment.DIRECTORY_路徑種類)
+        File dir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        // 2.建立存放照片的 路徑＆檔名
+        dir = new File(dir, "picture.jpg");
+        // 3.使用FileProvider建立Uri物件 (context, 需與manifest.xml的authorities相同名, 路徑檔名)
+        contentUri = FileProvider.getUriForFile(
+                activity, activity.getPackageName() + ".provider", dir);
+        // 4.intent.putExtra(key, value) -> 帶值
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
+        try {
+            // Launcher() -> 進行跳轉 等待接收回傳結果 -> takePictureResult()
             takePictureLauncher.launch(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(activity, R.string.textNoCameraApp, Toast.LENGTH_SHORT).show();
         }
     }
 
