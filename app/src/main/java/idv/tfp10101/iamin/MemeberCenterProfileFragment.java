@@ -1,19 +1,26 @@
 package idv.tfp10101.iamin;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
@@ -76,6 +83,22 @@ public class MemeberCenterProfileFragment extends Fragment {
     ActivityResultLauncher<Intent> cropPictureLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             this::cropPictureResult);
+
+    //callback method來接 Permission
+    private ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                // 如果同意開啟權限
+                if (isGranted) {
+                    openCamera();
+                } else {
+                    // Explain to the user that the feature is unavailable because the
+                    // features requires a permission that the user has denied. At the
+                    // same time, respect the user's decision. Don't link to system
+                    // settings in an effort to convince the user to change their
+                    // decision.
+                    Toast.makeText(activity, "如需使用相機權限請到系統中將相機權限開啟", Toast.LENGTH_SHORT).show();
+                }
+            });
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -160,6 +183,7 @@ public class MemeberCenterProfileFragment extends Fragment {
 
         //照片修改
         view.findViewById(R.id.ibProfile).setOnClickListener(v -> {
+
             AlertDialog.Builder alert = new AlertDialog.Builder(activity);
             String[] items = {getString(R.string.text_takePicture),getString(R.string.text_pickpicture)};
             alert.setSingleChoiceItems(items, -1, (dialog, which) -> {
@@ -211,53 +235,66 @@ public class MemeberCenterProfileFragment extends Fragment {
         }
     }
 
-//    private void checkPermission(Intent intent) {
-//        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-//            // 進入這兒表示沒有許可權
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.CAMERA)) {
-//                // 提示已經禁止
-//                Toast.makeText(activity, "需要相機權限", Toast.LENGTH_SHORT).show();
-//            } else {
-//                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.CAMERA}, 100);
-//            }
-//        } else {
-//            takePictureLauncher.launch(intent);;
-//        }
-//    }
-
     private void handleImgSelect(int which) {
+        // 相機
         if(which == 0){
-            // Intent -> 相機 ACTION
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            /**
-             * 照片的存取位置 設定
-             * API 24 版本以上，Android 不再允許在 app 中透漏 file://Uri 給其他 app
-             * FileProvider 將隱藏真實的共享檔案路徑，content://Uri 取代 file://Uri
-             * 注意：FileProvider需要在manifest.xml做設定
-             */
-            // 1.照片存放目錄 = 取得外部儲存體路徑(Environment.DIRECTORY_路徑種類)
-            File dir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            // 2.建立存放照片的 路徑＆檔名
-            dir = new File(dir, "picture.jpg");
-            // 3.使用FileProvider建立Uri物件 (context, 需與manifest.xml的authorities相同名, 路徑檔名)
-            contentUri = FileProvider.getUriForFile(
-                    activity, activity.getPackageName() + ".provider", dir);
-            // 4.intent.putExtra(key, value) -> 帶值
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
-            try {
-                // Launcher() -> 進行跳轉 等待接收回傳結果 -> takePictureResult()
-                takePictureLauncher.launch(intent);
-            } catch (ActivityNotFoundException e) {
-                Toast.makeText(activity, R.string.textNoCameraApp, Toast.LENGTH_SHORT).show();
-            }
+            checkCameraPermission();
         }
-
+        // 抓圖
         if(which == 1){
             Intent intent = new Intent(Intent.ACTION_PICK,
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             pickPictureLauncher.launch(intent);
         }
     }
+
+    // 檢查相機是否有權限
+    private void checkCameraPermission() {
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            // 進入這兒表示沒有許可權
+
+            //https://stackoverflow.com/questions/56412401/working-of-shouldshowrequestpermissionrationale-method
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.CAMERA)) {
+                requestPermissionLauncher.launch(Manifest.permission.CAMERA);
+                Log.d("CAMERA","1");
+                // 提示已經禁止
+                Toast.makeText(activity, "需要相機權限", Toast.LENGTH_SHORT).show();
+            } else {
+                requestPermissionLauncher.launch(Manifest.permission.CAMERA);
+                Log.d("CAMERA","2");
+            }
+        } else {
+            openCamera();
+        }
+    }
+
+    // 開啟相機
+    private void openCamera() {
+        // Intent -> 相機 ACTION
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        /**
+         * 照片的存取位置 設定
+         * API 24 版本以上，Android 不再允許在 app 中透漏 file://Uri 給其他 app
+         * FileProvider 將隱藏真實的共享檔案路徑，content://Uri 取代 file://Uri
+         * 注意：FileProvider需要在manifest.xml做設定
+         */
+        // 1.照片存放目錄 = 取得外部儲存體路徑(Environment.DIRECTORY_路徑種類)
+        File dir = activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        // 2.建立存放照片的 路徑＆檔名
+        dir = new File(dir, "picture.jpg");
+        // 3.使用FileProvider建立Uri物件 (context, 需與manifest.xml的authorities相同名, 路徑檔名)
+        contentUri = FileProvider.getUriForFile(
+                activity, activity.getPackageName() + ".provider", dir);
+        // 4.intent.putExtra(key, value) -> 帶值
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, contentUri);
+        try {
+            // Launcher() -> 進行跳轉 等待接收回傳結果 -> takePictureResult()
+            takePictureLauncher.launch(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(activity, R.string.textNoCameraApp, Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     private void takePictureResult(ActivityResult result) {
         if (result.getResultCode() == RESULT_OK) {
@@ -288,7 +325,6 @@ public class MemeberCenterProfileFragment extends Fragment {
         if (result.getResultCode() == RESULT_OK && result.getData() != null) {
             // 截圖的Uri
             Uri cropImageUri = UCrop.getOutput(result.getData());
-//            uploadImage(cropImageUri);
             if (cropImageUri != null) {
                 Bitmap bitmap = null;
                 try {

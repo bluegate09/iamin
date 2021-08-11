@@ -72,13 +72,6 @@ public class MemberCenterMemberOrderFragment extends Fragment {
         activity.setTitle("訂單頁面");
 
         member = MemberControl.getInstance();
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (currentUser != null && member.getuUId() == null){
-            member.setuUId(currentUser.getUid());
-            String jsonMember = MemberControl.memberRemoteAccess(activity, member, "findbyUuid");
-            member = new Gson().fromJson(jsonMember, Member.class);
-            MemberControl.setMember(member);
-        }
 
     }
 

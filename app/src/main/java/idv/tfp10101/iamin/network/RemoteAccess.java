@@ -29,7 +29,9 @@ public class RemoteAccess {
     // 根網址
 //    public static String URL_SERVER = "http://10.0.2.2:8080/iamin_JavaServlet/";
     //實機測試
-    public static String URL_SERVER = "http://219.68.160.213:8080/iamin_JavaServlet/";
+//    public static String URL_SERVER = "http://219.68.160.213:8080/iamin_JavaServlet/";
+//    public static String URL_SERVER = "http://192.168.2.101:8080/iamin_JavaServlet/";
+    public static String URL_SERVER = "http://10.2.13.18:8080/iamin_JavaServlet/";
 
     /**
      * (Json)抓取server資料

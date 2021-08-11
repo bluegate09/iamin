@@ -80,6 +80,7 @@ public class MemberCenterFragment extends Fragment {
         followCount = view.findViewById(R.id.tvMCFollowCount);
         memberClass = view.findViewById(R.id.memberClass);
 
+
         if (member.getPhoneNumber() == null || String.valueOf(member.getPhoneNumber()).trim().isEmpty()) {
             memberClass.setImageResource(R.drawable.silver_member);
         }else{

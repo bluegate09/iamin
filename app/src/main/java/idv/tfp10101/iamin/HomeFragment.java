@@ -100,6 +100,7 @@ public class HomeFragment extends Fragment {
     private double userlat,userlng;//使用者的緯經度
     private List<HomeData> localHomeDatas;  //把團購跟使用者最短距離裝成Homedata
     private ProgressDialog Loading;
+    private TextView txv_map;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -140,18 +141,6 @@ public class HomeFragment extends Fragment {
         //先前有登入就取會員資料
         if (currentUser != null && member.getuUId() == null) {
 
-            SharedPreferences sharedPreferences = activity.getSharedPreferences(FCM_Token, MODE_PRIVATE);
-            String token = sharedPreferences.getString(FCM_Token, "");
-            member.setFCM_token(token);
-
-            member.setuUId(currentUser.getUid());
-            MemberControl.memberRemoteAccess(activity, member, "updateTokenbyUid");
-            String jsonMember = MemberControl.memberRemoteAccess(activity, member, "findbyUuid");
-
-
-            member = new Gson().fromJson(jsonMember, Member.class);
-            MemberControl.setMember(member);
-            Log.d("TAG_HOME", "Fetch Member Date Complete");
             NavController navController = Navigation.findNavController(view);
             //如果會員被檢舉成功了
             if (member.getDeleteTime() != null){
@@ -196,7 +185,9 @@ public class HomeFragment extends Fragment {
         Loading.setMessage("Loading...");
         Loading.setCancelable(false);
         Loading.show();
-
+        txv_map.setOnClickListener(v ->{
+            Navigation.findNavController(v).navigate(R.id.homeMapFragment);
+        });
         //實作取得買家緯精度方法
         getUserloaction();
 
@@ -456,6 +447,7 @@ public class HomeFragment extends Fragment {
         recyclerViewGroup.setLayoutManager(new LinearLayoutManager(activity));
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
         searchView = view.findViewById(R.id.searchview);
+        txv_map = view.findViewById(R.id.txv_map);
     }
 
     private class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyHomeDataViewHolder> {
