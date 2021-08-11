@@ -110,12 +110,16 @@ public class HomeMapFragment extends Fragment {
         //mapView
         mapView = view.findViewById(R.id.homemapView);
         mapView.onCreate(savedInstanceState);
-
         mapView.onStart();
+        scope = 0f;
         mapView.getMapAsync(googleMap -> {
             this.googleMap = googleMap;
+            googleMap.clear();
             btn_serch.setOnClickListener(v ->{
-
+                if (String.valueOf(edt_scope.getText()).isEmpty()){
+                    Toast.makeText(activity, "您沒輸入距離喔", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 loadingBar = new ProgressDialog(activity);
                 loadingBar.setTitle("查詢中");
                 loadingBar.setMessage("請稍候");
@@ -129,10 +133,21 @@ public class HomeMapFragment extends Fragment {
                 circleOptions.center(new LatLng(userlat,userlng));
                 circleOptions.radius(scope);
                 //填滿顏色
-               circleOptions.fillColor(Color.argb(50, 90, 90, 98));
+                circleOptions.fillColor(Color.argb(50, 90, 90, 98));
                 circleOptions.strokeColor(R.color.purple_200);
                 googleMap.addCircle(circleOptions);
                 getUserloaction();
+            });
+
+            googleMap.setOnInfoWindowClickListener(marker -> {
+                MyLoadingBar.setLoadingBar(activity,"正在進入商品頁面","");
+                edt_scope.setText("");
+                Bundle bundle = new Bundle();
+                bundle.putInt("GroupID", (int) marker.getTag());
+                bundle.putDouble("Userlat",userlat);
+                bundle.putDouble("Userlng",userlng);
+
+                Navigation.findNavController(view).navigate(R.id.merchbrowseFragment, bundle);
             });
         });
         getUserloaction();
@@ -159,7 +174,6 @@ public class HomeMapFragment extends Fragment {
                 userlat = location.getLatitude();
                 //取得經度
                 userlng = location.getLongitude();
-
                 mapView.getMapAsync(googleMap -> {
                     this.googleMap = googleMap;
                     UiSettings uiSettings = googleMap.getUiSettings();
@@ -258,7 +272,8 @@ public class HomeMapFragment extends Fragment {
                                 .snippet("該團購最近面交地址距離您" + dis + "公里")
                                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.mapview_pin))
                                 .draggable(false);
-                        googleMap.addMarker(mapmarker);
+                        Marker marker = googleMap.addMarker(mapmarker);
+                        marker.setTag(groupId);
                     }
                     if (loadingBar != null){
                         loadingBar.dismiss();
