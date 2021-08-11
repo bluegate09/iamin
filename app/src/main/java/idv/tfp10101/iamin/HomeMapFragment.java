@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.util.Log;
@@ -35,6 +37,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
@@ -106,6 +109,7 @@ public class HomeMapFragment extends Fragment {
         //mapView
         mapView = view.findViewById(R.id.homemapView);
         mapView.onCreate(savedInstanceState);
+
         mapView.onStart();
         mapView.getMapAsync(googleMap -> {
             this.googleMap = googleMap;
@@ -157,17 +161,9 @@ public class HomeMapFragment extends Fragment {
 
                 mapView.getMapAsync(googleMap -> {
                     this.googleMap = googleMap;
-                    //標記自己的位置
-                    LatLng latLng  = new LatLng(userlat,userlng);
-                    MarkerOptions markerOptions = new MarkerOptions() .position(latLng)
-                            .title("您的位置")
-                            .snippet("")
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.mapview_pin))
-                            .draggable(false);
-
-                    googleMap.addMarker(markerOptions);
-
-                    // 顯示當前位置(小藍點) googleMap.setMyLocationEnabled(true);
+                    UiSettings uiSettings = googleMap.getUiSettings();
+                    uiSettings.setMyLocationButtonEnabled(true);
+                    googleMap.setMyLocationEnabled(true);   //顯示當前位置(小藍點) 
                     CameraPosition cameraPosition = new CameraPosition.Builder() .target(new LatLng(userlat,userlng))
                             .zoom(17)
                             .tilt(45) // 設定縮放倍數
@@ -245,6 +241,7 @@ public class HomeMapFragment extends Fragment {
                     }
                 }
                 mapView.getMapAsync(googleMap -> {
+
                     this.googleMap = googleMap;
                     double latitude, longtitude;
                     for (HomeData mapHomeData : localHomeDatas) {
@@ -320,5 +317,6 @@ public class HomeMapFragment extends Fragment {
                 .addLocationRequest(locationRequest)
                 .build();
     }
+
 
 }
