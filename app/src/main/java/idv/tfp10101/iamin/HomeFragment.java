@@ -138,7 +138,7 @@ public class HomeFragment extends Fragment {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         //先前有登入就取會員資料
-        if (currentUser != null && member.getuUId() == null) {
+        if (currentUser != null) {
 
             NavController navController = Navigation.findNavController(view);
             //如果會員被檢舉成功了
