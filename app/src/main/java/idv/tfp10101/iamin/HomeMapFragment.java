@@ -99,6 +99,7 @@ public class HomeMapFragment extends Fragment {
         // 取得Activity參考
         activity = getActivity();
         view = inflater.inflate(R.layout.fragment_home_map, container, false);
+        activity.setTitle("團購地圖");
         return view;
     }
 
@@ -128,8 +129,8 @@ public class HomeMapFragment extends Fragment {
                 circleOptions.center(new LatLng(userlat,userlng));
                 circleOptions.radius(scope);
                 //填滿顏色
-//               circleOptions.fillColor(Color.BLUE);
-                circleOptions.strokeColor(Color.BLUE);
+               circleOptions.fillColor(Color.argb(50, 90, 90, 98));
+                circleOptions.strokeColor(R.color.purple_200);
                 googleMap.addCircle(circleOptions);
                 getUserloaction();
             });
@@ -224,7 +225,7 @@ public class HomeMapFragment extends Fragment {
                 for (Map.Entry<Float, LatLng> entry : groupMap.entrySet()) {
                     mindis = entry.getKey();
                     latLng = entry.getValue();
-                    if (mindis == 0 || latLng == null) {
+                    if (mindis != 0 || latLng != null) {
                         break;
                     }
                 }
