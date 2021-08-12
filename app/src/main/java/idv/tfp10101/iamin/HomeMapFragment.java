@@ -134,11 +134,12 @@ public class HomeMapFragment extends Fragment {
                 circleOptions.radius(scope);
                 //填滿顏色
                 circleOptions.fillColor(Color.argb(50, 90, 90, 98));
+                //線的顏色
                 circleOptions.strokeColor(R.color.purple_200);
                 googleMap.addCircle(circleOptions);
                 getUserloaction();
             });
-
+            //點擊座標訊息跳轉至商品頁面
             googleMap.setOnInfoWindowClickListener(marker -> {
                 MyLoadingBar.setLoadingBar(activity,"正在進入商品頁面","");
                 edt_scope.setText("");
@@ -153,7 +154,9 @@ public class HomeMapFragment extends Fragment {
         getUserloaction();
     }
 
-    //取得User的當前位置
+    /**
+     * 取得User的當前位置
+     */
     private void getUserloaction() {
         checkPositioning();
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -193,7 +196,9 @@ public class HomeMapFragment extends Fragment {
         });
     }
 
-    //計算使用者與團購的最短距離打包成Homedata(group,distancemin)並排序
+    /**
+     * 計算使用者與團購的最短距離打包成Homedata(group,distancemin)並排序
+     */
     private void coumputeDistancemin(){
         localHomeDatas =  new ArrayList<>();
         localGroups = new ArrayList<>();
