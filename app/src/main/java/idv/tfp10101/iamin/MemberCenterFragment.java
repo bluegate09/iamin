@@ -57,7 +57,13 @@ public class MemberCenterFragment extends Fragment {
         auth = FirebaseAuth.getInstance();
         member = MemberControl.getInstance();
 
+
+
         String jsonMember = MemberControl.memberRemoteAccess(activity, member, "findbyUuid");
+        if(jsonMember == null){
+            Toast.makeText(activity, "網路連線異常", Toast.LENGTH_SHORT).show();
+            return;
+        }
         member = new Gson().fromJson(jsonMember, Member.class);
         MemberControl.setMember(member);
 
@@ -80,8 +86,16 @@ public class MemberCenterFragment extends Fragment {
         followCount = view.findViewById(R.id.tvMCFollowCount);
         memberClass = view.findViewById(R.id.memberClass);
 
+        if(member == null){
+            Toast.makeText(activity, "網路連線異常", Toast.LENGTH_SHORT).show();
+            auth.signOut();
+            //fb登出
+            LoginManager.getInstance().logOut();
+            Navigation.findNavController(view).navigate(R.id.action_memberCenterFragment_to_homeFragment);
+            return;
+        }
 
-        if (member.getPhoneNumber() == null || String.valueOf(member.getPhoneNumber()).trim().isEmpty()) {
+        if (member.getPhoneNumber() == null || member.getPhoneNumber().trim().isEmpty()) {
             memberClass.setImageResource(R.drawable.silver_member);
         }else{
             memberClass.setImageResource(R.drawable.golden_member);

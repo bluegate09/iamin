@@ -138,6 +138,24 @@ public class SignUpFragment extends Fragment {
                 passwordTil2.setErrorEnabled(false);
             }
 
+            if(password.length()<6){
+                passwordTil.setErrorEnabled(true);
+                passwordTil.setError("密碼長度不足");
+                isFormatCorrect = false;
+            }else{
+                passwordTil.setError(null);
+                passwordTil.setErrorEnabled(false);
+            }
+
+            if(password2.length()<6){
+                passwordTil2.setErrorEnabled(true);
+                passwordTil2.setError("密碼長度不足");
+                isFormatCorrect = false;
+            }else{
+                passwordTil2.setError(null);
+                passwordTil2.setErrorEnabled(false);
+            }
+
 
             if(nickname.isEmpty()){
                 nameTil.setErrorEnabled(true);
@@ -148,17 +166,11 @@ public class SignUpFragment extends Fragment {
                 nameTil.setErrorEnabled(false);
             }
 
-//            if(!(phoneNumber.isEmpty())){
-//                if(phoneNumber.length() < 10){
-//                    phoneTil.setErrorEnabled(true);
-//                    phoneTil.setError(getString(R.string.textphoneformaterror));
-//                    isFormatCorrect = false;
-//                }else{
-//                    phoneTil.setError(null);
-//                    phoneTil.setErrorEnabled(false);
-//                    member.setPhoneNumber(phoneNumber);
-//                }
-//            }
+            if(!(password.equals(password2))){
+                passwordTil2.setErrorEnabled(true);
+                passwordTil2.setError(getString(R.string.text_confirm_error));
+                isFormatCorrect = false;
+            }
 
             if(password.equals(password2)&&isFormatCorrect){
                 member.setEmail(email);
@@ -166,9 +178,6 @@ public class SignUpFragment extends Fragment {
                 member.setNickname(nickname);
                 //firebase創帳號
                 createAccount(member);
-            }else{
-                passwordTil2.setErrorEnabled(true);
-                passwordTil2.setError(getString(R.string.text_confirm_error));
             }
         });
         //快速登入
@@ -218,10 +227,10 @@ public class SignUpFragment extends Fragment {
                         Member member2 = gson.fromJson(memberJson,Member.class);
                         MemberControl.setMember(member2);
                         //存memberId與Uid到firebase
-                        if(member2 == null){
-                            Toast.makeText(activity, "Email already in use", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
+//                        if(member2 == null){
+//                            Toast.makeText(activity, "Email already in use", Toast.LENGTH_SHORT).show();
+//                            return;
+//                        }
 //                        firebasedbAddOrReplace(activity,db,new Member(
 //                                member2.getId()
 //                                ,auth.getCurrentUser().getUid()));

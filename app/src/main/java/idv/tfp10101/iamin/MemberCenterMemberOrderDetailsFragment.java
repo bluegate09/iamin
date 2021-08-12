@@ -239,9 +239,6 @@ public class MemberCenterMemberOrderDetailsFragment extends Fragment {
             memberOrders.add(memberOrder);
             MemberOrderControl.updateMemberOrders(activity,memberOrders,"PaymentInformation");
 
-//            22:55 柏文 MemberOrderControl.updateMemberOrders(activity, memberOrders, "PaymentInformation");
-//            22:56 柏文 private List<MemberOrder> memberOrders = new ArrayList<>(); // 目前過濾的買家訂單
-
             Intent intent = new Intent(getActivity(), TappayActivity.class);
             intent.putExtra("totalPrice", totalPrice);
             intent.putExtra("memberOderId", memberOderId);
