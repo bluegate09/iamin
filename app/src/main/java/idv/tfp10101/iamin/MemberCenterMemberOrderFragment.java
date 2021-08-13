@@ -288,11 +288,12 @@ public class MemberCenterMemberOrderFragment extends Fragment {
                         holder.tvRatingButton.setVisibility(View.GONE);
                     }else{
                         holder.tvRatingButton.setVisibility(View.VISIBLE);
+                        holder.tvRatingButton.setEnabled(true);
+                        holder.tvRatingButton.setText("⭐️我要評價");
                     }
                 }else{
                         holder.tvRatingButton.setEnabled(false);
                         holder.tvRatingButton.setText("已評價");
-
                 }
 
 
@@ -335,8 +336,10 @@ public class MemberCenterMemberOrderFragment extends Fragment {
 
                         alertDialog.cancel();
 
-                        Toast.makeText(activity, getString(R.string.text_rating_submit), Toast.LENGTH_SHORT).show();
+                        holder.tvRatingButton.setEnabled(false);
+                        holder.tvRatingButton.setText("已評價");
 
+                        Toast.makeText(activity, getString(R.string.text_rating_submit), Toast.LENGTH_SHORT).show();
 
                     }
                 });

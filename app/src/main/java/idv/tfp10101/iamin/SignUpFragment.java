@@ -227,10 +227,10 @@ public class SignUpFragment extends Fragment {
                         Member member2 = gson.fromJson(memberJson,Member.class);
                         MemberControl.setMember(member2);
                         //存memberId與Uid到firebase
-//                        if(member2 == null){
-//                            Toast.makeText(activity, "Email already in use", Toast.LENGTH_SHORT).show();
-//                            return;
-//                        }
+                        if(member2 == null){
+                            Toast.makeText(activity, "Email already in use", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 //                        firebasedbAddOrReplace(activity,db,new Member(
 //                                member2.getId()
 //                                ,auth.getCurrentUser().getUid()));
