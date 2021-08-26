@@ -53,6 +53,7 @@ import static idv.tfp10101.iamin.Constants.TAG;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "TAG_MainActivity";
+    private static final String TAG2 = "TAG_MainActivity2";
     /**
      * FCMService 本地廣播
      */
