@@ -121,8 +121,9 @@ public class MerchInsertFragment extends Fragment {
             new ActivityResultContracts.StartActivityForResult(),
             this::cropPictureResult);
     // 照相權限 - 發射器＆接收器
-    private ActivityResultLauncher<String> requestPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+    private ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            isGranted -> {
                 // 如果同意開啟權限
                 if (isGranted) {
                     openCamera();

@@ -26,7 +26,6 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup"
         tools:targetApi="m">
-        <activity android:name=".TappayActivity"></activity>
         <!-- TapPay allowBackup= true 需加入這行 -->
         <!-- FileProvider相關設定，若最後要取得 照片原圖 或 圖片裁剪 才需要 -->
         <!-- authorities：自訂授權識別字串(要與getUriForFile的參數對應) -->
@@ -41,25 +40,32 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
-        </provider> <!-- facebook 相關 -->
+        </provider>
+        <!-- facebook 相關 -->
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id" /> <!-- 地理資訊 -->
+            android:value="@string/facebook_app_id" />
+        <!-- 地理資訊 -->
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" /> <!-- 加入金鑰 -->
+            android:value="@integer/google_play_services_version" />
+        <!-- 加入金鑰 -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyB_ENNHaxQHBqIp2KNObr-9p0xB1cNjbrs" /> <!-- FCM: 圖示 -->
+            android:value="AIzaSyB_ENNHaxQHBqIp2KNObr-9p0xB1cNjbrs" />
+        <!-- FCM: 圖示 -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@android:drawable/ic_dialog_info" /> <!-- FCM: 顏色 (會改變訊息圖示顏色 參看 https://goo.gl/6BKBk7) -->
+            android:resource="@android:drawable/ic_dialog_info" />
+        <!-- FCM: 顏色 (會改變訊息圖示顏色 參看 https://goo.gl/6BKBk7) -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/colorSecondary" /> <!-- FCM: ID -->
+            android:resource="@color/colorSecondary" />
+        <!-- FCM: 賣家推播ID -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="seller_notification_channel_id" /> <!-- android:windowSoftInputMode="adjustPan"  防止bottom navigation跟鍵盤一起移往上動 -->
+            android:value="seller_notification_channel_id" />
+        <!-- FCM: 聊天推播ID -->
         <meta-data
             android:name="com.google.firebase.messaging.chat_notification_channel_id"
             android:value="@string/chat_notification_channel_id" />
@@ -77,7 +83,12 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- facebook 相關 -->
+        </activity>
+
+        <!-- Tappay 相關 -->
+        <activity android:name=".TappayActivity"></activity>
+
+        <!-- facebook 相關 -->
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
@@ -93,7 +104,9 @@
 
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
-        </activity> <!-- 註冊Ucrop(裁切器)Activity -->
+        </activity>
+
+        <!-- 註冊Ucrop(裁切器)Activity -->
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
@@ -112,7 +125,9 @@
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </service> <!-- chat service -->
+        </service>
+
+        <!-- chat service -->
         <service
             android:name=".message.FCMChatService"
             android:exported="false">

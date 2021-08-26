@@ -90,22 +90,24 @@ public class MainActivity extends AppCompatActivity {
             String channelName = "seller_notification_channel_name";
             String channelChatId = "chat_notification_channel_id";
             String channelChatName = "chat_notification_channel_name";
-            /*
+            /**
                 NotificationManager -> 需設定2大類
                 1. Notification本身訊息 (icon, 圖示, title, body, 自訂資料)
                 2. NotificationChannel 設定 重要程度 提示燈 ...等
              */
+            // 取得通知服務
             NotificationManager notificationManager =
                     (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
             // Channel
+            // 本身訊息 (icon 圖示 已在manifest設定， 訊息部分由Server發送)
             notificationManager.createNotificationChannel(new NotificationChannel(channelId,
                     channelName, NotificationManager.IMPORTANCE_DEFAULT));
-            // 本身訊息 (icon 圖示 已在manifest設定， 訊息部分由Server發送)
+
             notificationManager.createNotificationChannel(new NotificationChannel(channelChatId,
                     channelChatName, NotificationManager.IMPORTANCE_DEFAULT));
         }
 
-//         當Notification被點擊時會開啟App來到MainActivity，需取得自訂資料後，在跳轉Fragment頁面
+        // 當Notification被點擊時會開啟App來到MainActivity，需取得自訂資料後，在跳轉Fragment頁面
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             String data = bundle.getString("data");

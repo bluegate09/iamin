@@ -27,10 +27,10 @@ import idv.tfp10101.iamin.R;
 public class RemoteAccess {
     private static final String TAG = "TAG_RemoteAccess";
     // 根網址
-//    public static String URL_SERVER = "http://10.0.2.2:8080/iamin_JavaServlet/";
+    public static String URL_SERVER = "http://10.0.2.2:8080/iamin_JavaServlet/";
     //實機測試
 //    public static String URL_SERVER = "http://192.168.2.101:8080/iamin_JavaServlet/";
-    public static String URL_SERVER = "http://10.2.12.146:8080/iamin_JavaServlet/";
+//    public static String URL_SERVER = "http://10.2.12.146:8080/iamin_JavaServlet/";
 
     /**
      * (Json)抓取server資料
@@ -149,7 +149,7 @@ public class RemoteAccess {
                 // (Wifi 行動網路 有線網路)
                 if (networkCapabilities != null) {
                     boolean wifi = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI);
-                    boolean cellular = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI);
+                    boolean cellular = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR);
                     boolean ethernet = networkCapabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET);
                     Log.d(Constants.TAG, "TRANSPORT_WIFI: " + String.valueOf(wifi));
                     Log.d(Constants.TAG, "TRANSPORT_CELLULAR: " + String.valueOf(cellular));

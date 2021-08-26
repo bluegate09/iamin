@@ -28,7 +28,9 @@ public class JsonCallable implements Callable<String> {
         // 網路連線設定
         SetUpConnection();
 
-        /** request */
+        /** request
+         * http.getOutputStream() - 會自動connect
+         */
         try (
                 //OutputStreamWriter: OutputStream(位元) -> Writer(純文字)
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(http.getOutputStream()));
@@ -39,7 +41,7 @@ public class JsonCallable implements Callable<String> {
 
         /** response */
         StringBuilder response = new StringBuilder();
-        int responseCode = http.getResponseCode();
+        int responseCode = http.getResponseCode(); // 獲得 response
         if (responseCode == HttpURLConnection.HTTP_OK) {
             try (
                     // InputStreamReader: InputStream(位元) -> Reader(純文字)
@@ -67,12 +69,15 @@ public class JsonCallable implements Callable<String> {
 
     private void SetUpConnection() throws Exception {
         try {
+            //建立連線
             http = (HttpURLConnection) new URL(url).openConnection();
+            //設定引數
             http.setDoInput(true); // 允許輸入
             http.setDoOutput(true); // 允許輸出
             // 不知道請求內容大小時可以呼叫此方法將請求內容分段傳輸，設定0代表使用預設大小
             http.setChunkedStreamingMode(0);
             http.setUseCaches(false); // 不要使用cached
+            //設定請求屬性
             http.setRequestMethod("POST");
             http.setRequestProperty("content-type", "application/json");
             http.setRequestProperty("charset", "UTF-8");
