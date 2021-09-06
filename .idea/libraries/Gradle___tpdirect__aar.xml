@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: :tpdirect:@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/df75ad34c12867947fefd2236dde570f/tpdirect/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/df75ad34c12867947fefd2236dde570f/tpdirect/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/df75ad34c12867947fefd2236dde570f/tpdirect/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
